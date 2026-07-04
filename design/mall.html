@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>엘포틴 유산균과 발효동충하초의 밸런스 - 엘포틴 코디</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .sticky-panel {
+            position: sticky;
+            top: 100px; /* header height + gap */
+            height: fit-content;
+        }
+        .tabs-sticky {
+            position: sticky;
+            top: 80px; /* Adjusted for nav bar */
+            z-index: 40;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1d1b18",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1d1b18",
+                        "surface-container-highest": "#e8e1dc",
+                        "surface-container": "#f3ede8",
+                        "tertiary": "#464837",
+                        "on-tertiary-container": "#d9dac3",
+                        "tertiary-fixed": "#e3e4cc",
+                        "on-secondary-fixed": "#1e1c11",
+                        "inverse-on-surface": "#f6efeb",
+                        "primary-fixed": "#f2e0c3",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#cec5b9",
+                        "tertiary-container": "#5e604d",
+                        "surface-bright": "#fff8f3",
+                        "secondary-fixed-dim": "#ccc6b5",
+                        "inverse-primary": "#d5c5a8",
+                        "secondary": "#625e50",
+                        "on-primary-container": "#e7d7ba",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "surface-dim": "#E1D9CF",
+                        "surface-container-high": "#eee7e2",
+                        "surface-container-low": "#f9f2ed",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#686456",
+                        "background": "#fff8f3",
+                        "secondary-fixed": "#e9e2d0",
+                        "secondary-container": "#e9e2d0",
+                        "surface": "#FFF8F3",
+                        "outline": "#7D766C",
+                        "surface-variant": "#e8e1dc",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#4b463d",
+                        "on-secondary-fixed-variant": "#4a473a",
+                        "on-primary-fixed-variant": "#504530",
+                        "inverse-surface": "#33302d",
+                        "error": "#BA1A1A",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c8b1",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "primary-container": "#695d46",
+                        "primary": "#504530",
+                        "surface-tint": "#695d46",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#231a08",
+                        "on-tertiary-fixed-variant": "#464836"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "64px",
+                        "md": "24px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "xs": "4px",
+                        "container-max": "440px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- TopNavBar (Matched from mmall.html) -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-[90%] mx-auto py-md h-20">
+<div class="flex items-center gap-md">
+<img src="https://capofcom.cafe24.com/l14_coordy/images/l14.jpeg" style="width: 24px; height: 24px; border-radius: 50%;margin-right: -15px; vertical-align: middle;" alt="L14 Cordy Logo">
+<a class="text-headline-md font-headline-md font-bold text-primary" href="#">L14 Cordy</a>
+</div>
+<div class="flex items-center gap-0.5">
+<button class="relative text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" id="header-cart-btn">
+<span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+<span class="absolute top-0 right-0 bg-error text-on-error text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full" id="cart" style="display: none;"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" id="header-order-btn">
+<span class="material-symbols-outlined text-[22px]">local_shipping</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" id="header-profile-btn">
+<span class="material-symbols-outlined text-[22px]">person</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" id="header-logout-btn">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-md md:px-lg pb-xl mt-md">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Detailed Content -->
+<div class="lg:col-span-8 flex flex-col gap-xl">
+<!-- Navigation Tabs -->
+<div class="tabs-sticky bg-surface/95 backdrop-blur-sm border-b border-outline-variant/30">
+<nav class="flex gap-lg justify-start py-md">
+<a class="text-primary border-b-2 border-primary font-label-md text-label-md tab-link active px-xs pb-1" href="#description">상세정보</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md tab-link px-xs pb-1" href="#reviews">리뷰 (128)</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md tab-link px-xs pb-1" href="#qa">Q&amp;A</a>
+</nav>
+</div>
+<!-- Detailed Description Section (Assets from mmall.html) -->
+<section class="scroll-mt-32" id="description">
+<div class="flex flex-col items-center">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 716px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/5383834b5b3bfe2017b727548b002180.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 626px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/0bbd8661cf5e44d2940ad140fdd2aaa4.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 986px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/f465b3ff7828529a60443f3e9dde2565.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 856px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/057f4f7458e823c395ad01e745e258f6.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 816px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/534ce2f89d0f15a61fa916e58b868362.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 869px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/2a42c0079b8437f54c6881098b815e21.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 595px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/c69d906afdab44b0606e3311e2f2ab97.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 671px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/e5a5b736d98007bde792d0e89da50247.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 59px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/bef810e0d70e04ffe7d78e6b89293313.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 59px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/bef810e0d70e04ffe7d78e6b89293313.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 1077px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/f201d814f5f8236ac9e54f39a0a9058b.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 852px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/0dd6e8af15cd81998a9ba535ad73699f.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 655px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a834b74d9ce275f6d9140cdc80b1e164.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 549px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a95d8e2883844d422f564a8d70d7452d.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 233px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/19cd00cbc42a4ea9ff5011e5cc83b525.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 278px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/038cf370f04ea7be08e40cb8e4a15c4d.jpg">
+<img style="display:block; width:100% !important; max-width:initial !important;" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a230566da601d62335dc84022e021fcb.gif">
+<img style="display:block; width:100% !important; max-width:initial !important;" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a230566da601d62335dc84022e021fcb.gif">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 288px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/4ec7115da2adf4f2188ce57f9648465e.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 288px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/4ec7115da2adf4f2188ce57f9648465e.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 263px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/397b439efd4639d40d0d3a05d8ec0a79.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 855px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/14d6610c3161b57ebb902ad3914d172f.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 602px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/efa6b1b0ca55e6eb4e20794c95c8b0f5.jpg">
+</div>
+</section>
+<!-- Reviews Section -->
+<section class="pt-xl scroll-mt-32" id="reviews">
+<div class="flex flex-col md:flex-row justify-between items-end gap-md mb-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">리뷰</h2>
+<div class="flex items-center gap-xs mt-xs">
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-lg filled">star</span>
+<span class="material-symbols-outlined text-lg filled">star</span>
+<span class="material-symbols-outlined text-lg filled">star</span>
+<span class="material-symbols-outlined text-lg filled">star</span>
+<span class="material-symbols-outlined text-lg filled">star_half</span>
+</div>
+<span class="font-headline-md text-headline-md font-bold ml-xs">4.9</span>
+<span class="font-body-md text-on-surface-variant">/ 5.0</span>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="text-primary font-label-md text-label-md hover:underline transition-all">
+리뷰 전체보기
+</button>
+<span class="text-outline-variant font-label-md text-label-md">|</span>
+<button class="text-primary font-label-md text-label-md hover:underline transition-all">
+후기쓰기
+</button>
+</div>
+</div>
+<!-- Review Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="bg-surface-container-low p-lg rounded-xl border border-outline-variant/20">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-primary font-bold">JK</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Jihye K.</p>
+<p class="font-caption text-caption text-on-surface-variant">26.03.24</p>
+</div>
+</div>
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Exceptional quality. The packaging feels premium, and I've noticed a significant boost in my energy levels since starting this daily ritual.</p>
+</div>
+<div class="bg-surface-container-low p-lg rounded-xl border border-outline-variant/20">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">MP</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Minsoo P.</p>
+<p class="font-caption text-caption text-on-surface-variant">26.03.24</p>
+</div>
+</div>
+<div class="flex text-primary">
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">The taste is surprisingly smooth. I love the minimalist design of the individual pouches—perfect for taking to the office.</p>
+</div>
+</div>
+</section>
+<!-- Q&A Section -->
+<section class="pt-xl pb-xl scroll-mt-32" id="qa">
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-primary">Q&amp;A</h2>
+<div class="flex items-center gap-sm">
+<button class="text-primary font-label-md text-label-md hover:underline transition-all">
+Q&amp;A 전체보기
+</button>
+<span class="text-outline-variant font-label-md text-label-md">|</span>
+<button class="text-primary font-label-md text-label-md hover:underline transition-all">
+문의하기
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-sm">
+<details class="group bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden" open="">
+<summary class="flex justify-between items-center p-md cursor-pointer list-none hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-md">
+<span class="bg-primary-container text-on-primary-container w-8 h-8 rounded-full flex items-center justify-center font-bold">Q</span>
+<span class="font-body-md font-medium text-on-surface">권장 섭취량과 섭취방법을 알려주세요.</span>
+</div>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="p-md pt-0 pl-[72px]">
+<p class="font-body-md text-on-surface-variant">A: 성인 1일 1~2회, 1회 1포씩 섭취하십시오. 잠들기 전 섭취하면 숙면에 더욱 도움이 됩니다. 15세 이하는 성인 섭취량의 절반 정도를 섭취하십시오.</p>
+</div>
+</details>
+<details class="group bg-surface-container-low border border-outline-variant/30 rounded-xl overflow-hidden">
+<summary class="flex justify-between items-center p-md cursor-pointer list-none hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-md">
+<span class="bg-primary-container text-on-primary-container w-8 h-8 rounded-full flex items-center justify-center font-bold">Q</span>
+<span class="font-body-md font-medium text-on-surface">보관 방법은 어떻게 되나요?</span>
+</div>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="p-md pt-0 pl-[72px]">
+<p class="font-body-md text-on-surface-variant">A: 직사광선을 피해 습기가 적은 서늘한 곳에 보관하여 주시기 바랍니다. 개봉 후 변질될 수 있으므로 즉시 섭취하시기 바랍니다.</p>
+</div>
+</details>
+</div>
+</section>
+</div>
+<!-- Right Column: Sticky Purchase Panel -->
+<div class="lg:col-span-4 relative">
+<div class="sticky-panel flex flex-col gap-md">
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant flex flex-col gap-md shadow-sm">
+<h1 class="font-headline-md text-headline-md text-on-surface leading-tight mt-xs">
+            엘포틴 코디 15ml X 15포<br/>
+<span class="font-body-md text-body-md text-on-surface-variant block mt-xs">[발효동충하초추출물, 엘포틴유산균]</span>
+</h1>
+<div class="h-px bg-outline-variant w-full my-xs"></div>
+<!-- Pricing Dropdown -->
+<div class="flex flex-col gap-base">
+<label class="font-label-md text-label-md text-on-surface-variant" for="pricing-options">옵션</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container transition-all cursor-pointer appearance-none" id="pricing-options">
+<option value="1">1개: 65,000원</option>
+<option value="2">2개: 110,000원</option>
+<option value="3">6개: 270,000원</option>
+<option value="4">12개: 480,000원</option>
+</select>
+</div>
+<div class="flex justify-between items-center py-xs">
+<span class="font-label-md text-label-md text-on-surface-variant"></span>
+<span class="font-label-md text-label-md font-bold text-primary">무료배송</span>
+</div>
+<div class="h-px bg-outline-variant w-full my-xs"></div>
+<div class="flex justify-between items-end mb-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">총 금액</span>
+<span class="font-headline-md text-headline-md font-bold text-on-surface" id="total-amount">65,000원</span>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-sm">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs" id="drawer-buy-btn">
+                구매하기
+            </button>
+<button class="w-full bg-transparent border border-primary text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-low active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-cart-btn">
+                장바구니
+            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Matched from mmall.html) -->
+<footer class="bg-surface-container-highest mt-xl w-full">
+<div class="w-[90%] mx-auto py-8 flex flex-col md:flex-row items-start justify-between border-t border-outline-variant gap-md">
+<div class="flex flex-col gap-xs font-caption text-caption text-on-surface-variant text-left">
+<span>대표 조민균</span>
+<span>문의전화 031-755-1568</span>
+<span>사업자등록번호 691-23-02249</span>
+<span>통신판매업 신고번호 2026-성남분당A-0172</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant self-start">© 2026 L14 Cordy. All rights reserved.</div>
+</div>
+</footer>
+<script>
+    // Pricing logic
+    const pricingSelect = document.getElementById('pricing-options');
+    const totalAmountText = document.getElementById('total-amount');
+    const prices = {
+        '1': '65,000원',
+        '2': '110,000원',
+        '3': '270,000원',
+        '4': '480,000원'
+    };
+
+    if (pricingSelect) {
+        pricingSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (prices[val]) {
+                totalAmountText.textContent = prices[val];
+            }
+        });
+    }
+
+    // Tabs Scroll Spy
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const sections = document.querySelectorAll('section[id]');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (window.scrollY >= (sectionTop - 150)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        tabLinks.forEach(link => {
+            link.classList.remove('text-primary', 'border-primary', 'border-b-2', 'active');
+            link.classList.add('text-on-surface-variant');
+            if (link.getAttribute('href').substring(1) === current) {
+                link.classList.add('text-primary', 'border-primary', 'border-b-2', 'active');
+                link.classList.remove('text-on-surface-variant');
+            }
+        });
+    });
+
+    // Smooth scroll for tabs
+    tabLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            document.querySelector(targetId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
+</body></html>

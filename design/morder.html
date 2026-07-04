@@ -1,0 +1,913 @@
+<!DOCTYPE html><html class="light" lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>주문/결제 - 기쁜하루</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<script src="https://unpkg.com/zod@3.22.4/lib/index.umd.js"></script>
+<script src="https://js.tosspayments.com/v2/standard"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e8e1dc",
+                        "surface": "#FFF8F3",
+                        "on-secondary-fixed-variant": "#4a473a",
+                        "on-primary-fixed-variant": "#504530",
+                        "tertiary-container": "#5e604d",
+                        "surface-container-low": "#f9f2ed",
+                        "inverse-primary": "#d5c5a8",
+                        "tertiary": "#464837",
+                        "primary": "#504530",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#E1D9CF",
+                        "surface-container-highest": "#e8e1dc",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "error": "#BA1A1A",
+                        "background": "#fff8f3",
+                        "tertiary-fixed": "#e3e4cc",
+                        "secondary-fixed": "#e9e2d0",
+                        "on-secondary-container": "#686456",
+                        "surface-bright": "#fff8f3",
+                        "outline-variant": "#cec5b9",
+                        "surface-tint": "#695d46",
+                        "primary-fixed": "#f2e0c3",
+                        "outline": "#7D766C",
+                        "secondary-container": "#e9e2d0",
+                        "surface-container-high": "#eee7e2",
+                        "on-tertiary-container": "#d9dac3",
+                        "secondary": "#625e50",
+                        "surface-container": "#F6ECE3",
+                        "on-background": "#1d1b18",
+                        "on-surface": "#1d1b18",
+                        "on-primary-fixed": "#231a08",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#4b463d",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#33302d",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "on-primary-container": "#e7d7ba",
+                        "tertiary-fixed-dim": "#c7c8b1",
+                        "on-secondary-fixed": "#1e1c11",
+                        "on-tertiary-fixed-variant": "#464836",
+                        "primary-container": "#695d46",
+                        "secondary-fixed-dim": "#ccc6b5",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f6efeb",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "sm": "12px",
+                        "xl": "64px",
+                        "container-max": "440px",
+                        "lg": "40px",
+                        "base": "8px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #FFF8F3; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for minimalist feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cec5b9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7D766C; }
+    </style>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface sticky top-0 z-50 border-b border-outline-variant/30">
+<div class="max-w-[440px] mx-auto px-md h-14 flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<img src="https://capofcom.cafe24.com/l14_coordy/images/l14.jpeg" style="width: 20px; height: 20px; border-radius: 50%;" alt="L14 Cordy Logo">
+<a class="text-label-md font-headline-md font-bold text-primary" href="/">L14 Cordy</a>
+</div>
+<div class="flex items-center gap-0.5">
+<button id="header-cart-btn" class="relative text-on-surface-variant hover:text-primary transition-all duration-200 p-1 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+<span id="cart_count" style="display:none;" class="absolute top-0 right-0 bg-error text-on-error text-[8px] font-bold w-3.5 h-3.5 flex items-center justify-center rounded-full"></span>
+</button>
+<button id="header-order-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1 rounded-full hover:bg-surface-container" onclick="window.location.href='morderlist.html'">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+</button>
+<button id="header-profile-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</button>
+<button id="header-logout-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1 rounded-full hover:bg-surface-container" onclick="localStorage.removeItem('isLoggedIn');localStorage.removeItem('userId');alert('로그아웃이 되었습니다.');window.location.href="/";">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center w-full px-md md:px-lg py-xl max-w-7xl mx-auto">
+<div class="w-full max-w-[440px] md:max-w-2xl lg:max-w-4xl flex flex-col gap-lg pb-32">
+<!-- Page Title -->
+<div class="mb-sm">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">주문/결제</h2>
+</div>
+<!-- Shipping Information -->
+<section class="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">배송 정보</h3>
+
+<!-- Tabs -->
+<div class="flex gap-md border-b border-outline-variant/30 mb-md">
+    <button type="button" class="shipping-tab active font-label-md text-label-md pb-xs border-b-2 border-slate-900 text-on-surface font-semibold" data-target="form-recent">최근 배송지</button>
+    <button type="button" class="shipping-tab font-label-md text-label-md pb-xs border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors" data-target="form-manual">직접 입력</button>
+</div>
+
+<!-- 최근 배송지 (Recent) -->
+<div id="form-recent" class="flex flex-col gap-sm">
+    <div class="bg-surface border border-outline-variant rounded-lg p-md relative">
+        <div class="flex justify-between items-start mb-sm">
+            <div class="flex items-center gap-xs">
+                <span id="recent-name" class="font-label-md text-label-md font-bold text-on-surface">홍길동</span>
+                <span id="recent-default-badge" class="bg-surface-container-highest text-on-surface-variant text-[11px] px-2 py-0.5 rounded-sm">기본 배송지</span>
+            </div>
+            <button type="button" class="text-on-surface-variant hover:text-primary font-label-md text-label-md border border-outline-variant rounded px-2 py-1 hover:bg-surface-container transition-colors">배송지 목록</button>
+        </div>
+        <div id="recent-phone" class="font-body-md text-body-md text-on-surface-variant mb-xs">010-1234-5678</div>
+        <div id="recent-address" class="font-body-md text-body-md text-on-surface-variant">
+            [13529] 경기도 성남시 분당구 판교역로 146번길 20<br>
+            현대백화점 판교점 10층
+        </div>
+    </div>
+    
+    <div class="flex flex-col gap-xs mt-sm">
+        <label class="font-label-md text-label-md text-on-surface-variant" for="memo-recent">배송 메모 (선택)</label>
+        <select class="bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors appearance-none" id="memo-recent">
+            <option>배송 전에 미리 연락바랍니다.</option>
+            <option>부재 시 경비실에 맡겨주세요.</option>
+            <option>택배함에 보관해 주세요.</option>
+            <option>부재 시 문앞에 놓아주세요.</option>
+            <option>빠른 배송 부탁드립니다.</option>
+            <option value="direct">직접 입력</option>
+        </select>
+        <input type="text" id="memo-recent-custom" class="hidden mt-2 bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors w-full" placeholder="배송 메모를 입력해주세요.">
+    </div>
+</div>
+
+<!-- 직접 입력 (Manual) -->
+<form class="hidden flex-col gap-sm" id="form-manual">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="firstName">이름</label>
+<input class="bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors" id="firstName" placeholder="홍길동" type="text">
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="phone">연락처</label>
+<input class="bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors" id="phone" placeholder="010-0000-0000" type="tel">
+</div>
+</div>
+<div class="flex flex-col gap-xs mt-sm">
+<label class="font-label-md text-label-md text-on-surface-variant" for="address">주소</label>
+<div class="flex gap-xs mb-xs w-full">
+    <input class="flex-grow min-w-0 bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors" id="zipcode" placeholder="우편번호" type="text" readonly>
+    <button type="button" onclick="execDaumPostcode()" class="flex-shrink-0 bg-white border border-gray-200 text-slate-700 font-medium text-[14px] px-5 rounded-xl hover:bg-gray-50 hover:text-on-surface transition-all duration-200 shadow-sm hover:shadow whitespace-nowrap min-w-fit">주소 검색</button>
+</div>
+<input class="bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors mb-xs" id="address" placeholder="기본 주소" type="text" readonly>
+<input class="bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors" id="addressDetail" placeholder="상세주소" type="text">
+</div>
+<div class="flex flex-col gap-xs mt-sm">
+<label class="font-label-md text-label-md text-on-surface-variant" for="memo">배송 메모 (선택)</label>
+<select class="bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors appearance-none" id="memo">
+            <option>배송 전에 미리 연락바랍니다.</option>
+            <option>부재 시 경비실에 맡겨주세요.</option>
+            <option>택배함에 보관해 주세요.</option>
+            <option>부재 시 문앞에 놓아주세요.</option>
+            <option>빠른 배송 부탁드립니다.</option>
+            <option value="direct">직접 입력</option>
+</select>
+<input type="text" id="memo-custom" class="hidden mt-2 bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-body-md transition-colors w-full" placeholder="배송 메모를 입력해주세요.">
+</div>
+<div class="flex items-center gap-xs mt-sm">
+<input class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2 transition-colors cursor-pointer" id="saveDefault" type="checkbox">
+<label class="font-label-md text-label-md text-on-surface cursor-pointer select-none" for="saveDefault">기본 배송지로 저장</label>
+</div>
+</form>
+</section>
+<!-- Order Items -->
+<section class="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-md">주문 상품</h3>
+<div class="flex flex-col gap-md" id="order-items-container">
+    <!-- Dynamically populated from API -->
+</div>
+</section>
+<!-- Points -->
+<section class="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-sm">포인트</h3>
+<div class="flex items-center gap-2 w-full">
+<input class="flex-grow min-w-0 w-full bg-surface-container border border-outline-variant rounded-lg px-sm py-sm text-body-md transition-colors focus:outline-none text-on-surface-variant text-right" id="pointAmount" type="text" value="5,000원" readonly>
+<div class="flex items-center gap-1 flex-shrink-0">
+<input class="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2 transition-colors cursor-pointer" id="usePoints" type="checkbox">
+<label class="font-label-md text-label-md text-on-surface cursor-pointer select-none whitespace-nowrap" for="usePoints">포인트 사용</label>
+</div>
+</div>
+</section>
+<!-- Payment Method -->
+<section class="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
+    <div id="payment-method" class="w-full"></div>
+    <div class="mt-md flex flex-col items-center justify-center">
+        <div class="flex items-center gap-1">
+            <label class="flex items-center gap-2 cursor-pointer p-sm pr-1">
+                <input class="w-5 h-5 text-primary bg-surface-container border-outline-variant rounded focus:ring-primary focus:ring-2 transition-colors cursor-pointer" id="agree-toss" type="checkbox">
+                <span class="font-label-md text-label-md text-on-surface select-none">[필수] 결제대행서비스 약관 동의</span>
+            </label>
+            <button type="button" id="btn-terms-popup" class="p-1 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center rounded-full hover:bg-surface-container" aria-label="약관 보기">
+                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</section>
+</div>
+</div>
+</main>
+
+<!-- Mobile Sticky Checkout Summary -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-high border-t border-outline-variant p-md shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-40 md:relative md:bg-transparent md:border-none md:shadow-none md:p-0 md:max-w-4xl md:mx-auto md:w-full md:mt-lg md:mb-xl transition-all duration-300">
+<div class="max-w-[440px] md:max-w-full mx-auto w-full flex flex-col gap-sm">
+
+    <!-- COLLAPSED STATE -->
+    <div id="summary-collapsed" class="flex flex-col gap-sm md:hidden">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-xs">
+                <span class="font-label-md text-label-md font-bold text-on-surface">총 결제 금액</span>
+                <span class="font-headline-md text-headline-md font-bold text-primary" id="summary-total-collapsed">0원</span>
+            </div>
+            <button id="btn-expand-summary" class="p-1 text-on-surface-variant hover:text-primary transition-colors bg-surface rounded-full border border-outline-variant shadow-sm flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">keyboard_arrow_up</span>
+            </button>
+        </div>
+        <button class="btn-checkout w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-4 rounded-lg transition-colors flex justify-center items-center gap-sm shadow-sm shadow-primary/10">
+            <span class="material-symbols-outlined text-[18px]">lock</span>
+            결제하기
+        </button>
+    </div>
+
+    <!-- EXPANDED STATE -->
+    <div id="summary-expanded" class="hidden md:flex flex-col gap-sm">
+        <div class="flex justify-center md:hidden mb-xs -mt-2">
+            <button id="btn-collapse-summary" class="p-1 text-on-surface-variant hover:text-primary transition-colors bg-surface rounded-full border border-outline-variant shadow-sm flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+            </button>
+        </div>
+
+        <div class="flex justify-between items-center mb-xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">상품 금액</span>
+            <span class="font-body-md text-body-md text-on-surface" id="summary-product-amount">0원</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="font-label-md text-label-md text-on-surface-variant">배송비</span>
+            <span class="font-body-md text-body-md text-on-surface" id="summary-shipping">+ 0원</span>
+        </div>
+        <div class="flex justify-between items-center border-b border-outline-variant pb-sm mb-sm md:border-none md:pb-0 md:mb-0" id="summary-discount-row" style="display: none;">
+            <span class="font-label-md text-label-md text-on-surface-variant">할인 금액</span>
+            <span class="font-body-md text-body-md text-primary" id="summary-discount">- 0원</span>
+        </div>
+        
+        <div class="flex justify-between items-end mb-md">
+            <span class="font-headline-md text-headline-md font-bold text-on-surface">총 결제 금액</span>
+            <span class="font-headline-lg text-headline-lg font-bold text-primary" id="summary-total-expanded">0원</span>
+        </div>
+        <div class="flex flex-col gap-sm">
+            <p class="font-caption text-caption text-on-surface-variant text-center">위 주문 내용을 확인하였으며, 결제에 동의합니다.</p>
+            <button class="btn-checkout w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-4 rounded-lg transition-colors flex justify-center items-center gap-sm shadow-sm shadow-primary/10">
+                <span class="material-symbols-outlined text-[18px]">lock</span>
+                결제하기
+            </button>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-surface-container-highest mt-xl w-full">
+<div class="w-[90%] mx-auto py-8 flex flex-col md:flex-row items-start justify-between border-t border-outline-variant gap-md">
+<div class="flex flex-col gap-xs font-caption text-caption text-on-surface-variant text-left">
+<span>대표 조민균</span>
+<span>문의전화 031-755-1568</span>
+<span>사업자등록번호 691-23-02249</span>
+<span>통신판매업 신고번호 2026-성남분당A-0172</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant self-start">© 2026 L14 Cordy. All rights reserved.</div>
+</div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const handleMemoChange = (selectId, inputId) => {
+        const select = document.getElementById(selectId);
+        const input = document.getElementById(inputId);
+        if (select && input) {
+            select.addEventListener('change', (e) => {
+                if (e.target.value === 'direct' || e.target.value === '직접 입력' || e.target.value === '직접입력' || (e.target.options[e.target.selectedIndex] && e.target.options[e.target.selectedIndex].text.replace(/\s+/g, '') === '직접입력')) {
+                    input.classList.remove('hidden');
+                    input.focus();
+                } else {
+                    input.classList.add('hidden');
+                }
+            });
+        }
+    };
+    handleMemoChange('memo-recent', 'memo-recent-custom');
+    handleMemoChange('memo', 'memo-custom');
+
+    const btnExpand = document.getElementById('btn-expand-summary');
+    const btnCollapse = document.getElementById('btn-collapse-summary');
+    const summaryCollapsed = document.getElementById('summary-collapsed');
+    const summaryExpanded = document.getElementById('summary-expanded');
+
+    if (btnExpand && btnCollapse && summaryCollapsed && summaryExpanded) {
+        btnExpand.addEventListener('click', () => {
+            summaryCollapsed.classList.add('hidden');
+            summaryCollapsed.classList.remove('flex');
+            summaryExpanded.classList.remove('hidden');
+            summaryExpanded.classList.add('flex');
+        });
+
+        btnCollapse.addEventListener('click', () => {
+            summaryExpanded.classList.add('hidden');
+            summaryExpanded.classList.remove('flex');
+            summaryCollapsed.classList.remove('hidden');
+            summaryCollapsed.classList.add('flex');
+        });
+    }
+
+    const tabs = document.querySelectorAll('.shipping-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            tabs.forEach(t => {
+                t.classList.remove('border-primary', 'text-primary');
+                t.classList.add('border-transparent', 'text-on-surface-variant');
+            });
+            e.currentTarget.classList.remove('border-transparent', 'text-on-surface-variant');
+            e.currentTarget.classList.add('border-primary', 'text-primary');
+            
+            document.getElementById('form-recent').classList.add('hidden');
+            document.getElementById('form-recent').classList.remove('flex');
+            document.getElementById('form-manual').classList.add('hidden');
+            document.getElementById('form-manual').classList.remove('flex');
+            
+            const targetId = e.currentTarget.dataset.target;
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.classList.remove('hidden');
+                targetEl.classList.add('flex');
+            }
+        });
+    });
+
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            let val = this.value.replace(/[^0-9]/g, '');
+            if (val.length > 3 && val.length <= 7) {
+                this.value = val.replace(/(\d{3})(\d{1,4})/, '$1-$2');
+            } else if (val.length > 7) {
+                if (val.length === 10) {
+                    this.value = val.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                } else {
+                    this.value = val.replace(/(\d{3})(\d{4})(\d{1,4})/, '$1-$2-$3');
+                }
+            } else {
+                this.value = val;
+            }
+        });
+    }
+
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        fetch('/api/address?customer_id=' + userId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.address) {
+                    const addr = data.address;
+                    document.getElementById('recent-name').textContent = addr.recipient_name;
+                    const mobileStr = addr.recipient_mobile ? formatPhoneNumber(addr.recipient_mobile) : '';
+                    const phoneStr = addr.recipient_phone ? formatPhoneNumber(addr.recipient_phone) : '';
+                    document.getElementById('recent-phone').textContent = [mobileStr, phoneStr].filter(Boolean).join(' / ');
+                    document.getElementById('recent-address').innerHTML = `[${addr.zip_code}] ${addr.address}<br>${addr.detail_address || ''}`;
+                    if (addr.is_default) {
+                        document.getElementById('recent-default-badge').style.display = 'inline-block';
+                    } else {
+                        document.getElementById('recent-default-badge').style.display = 'none';
+                    }
+                } else {
+                    const manualTab = document.querySelector('.shipping-tab[data-target="form-manual"]');
+                    if (manualTab) manualTab.click();
+                    const saveDefaultCb = document.getElementById('saveDefault');
+                    if (saveDefaultCb) saveDefaultCb.checked = true;
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching address:', err);
+                const manualTab = document.querySelector('.shipping-tab[data-target="form-manual"]');
+                if (manualTab) manualTab.click();
+                const saveDefaultCb = document.getElementById('saveDefault');
+                if (saveDefaultCb) saveDefaultCb.checked = true;
+            });
+    } else {
+        const manualTab = document.querySelector('.shipping-tab[data-target="form-manual"]');
+        if (manualTab) manualTab.click();
+        const saveDefaultCb = document.getElementById('saveDefault');
+        if (saveDefaultCb) saveDefaultCb.checked = true;
+    }
+
+    const updateCartCount = async () => {
+        const cartEl = document.getElementById('cart_count');
+        if (!cartEl) return;
+        const uid = localStorage.getItem('userId');
+        if (uid) {
+            try {
+                const res = await fetch(`/api/cart/count?userId=${uid}&productId=1`);
+                const data = await res.json();
+                if (data.success && data.count !== null && data.count > 0) {
+                    cartEl.textContent = data.count;
+                    cartEl.style.display = 'flex';
+                } else {
+                    cartEl.style.display = 'none';
+                }
+            } catch (err) {
+                cartEl.style.display = 'none';
+            }
+        } else {
+            cartEl.style.display = 'none';
+        }
+    };
+    updateCartCount();
+
+    const headerCartBtn = document.getElementById('header-cart-btn');
+    if (headerCartBtn) {
+        headerCartBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const uid = localStorage.getItem('userId');
+            if (uid) {
+                window.location.href = 'mcart.html?userId=' + encodeURIComponent(uid);
+            } else {
+                window.location.href = 'mlogin.html';
+            }
+        });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source');
+    const priceId = urlParams.get('priceId');
+    
+    if (source && userId) {
+        let apiUrl = `/api/order/items?source=${source}&userId=${userId}`;
+        if (source === 'buy' && priceId) {
+            apiUrl += `&priceId=${priceId}`;
+        }
+        
+        fetch(apiUrl)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.items) {
+                    const container = document.getElementById('order-items-container');
+                    container.innerHTML = '';
+                    let productTotal = 0;
+                    
+                    data.items.forEach(item => {
+                        const qty = Number(item.order_quantity) || 1;
+                        const price = Number(item.price) || 0;
+                        productTotal += (qty * price);
+                        
+                        const itemHtml = `
+                        <div class="flex items-center gap-md pb-md border-b border-outline-variant/30 last:border-0 last:pb-0">
+                            <div class="w-24 h-24 bg-surface-container rounded-lg overflow-hidden flex-shrink-0">
+                                <img alt="${item.product_name}" class="w-full h-full object-cover mix-blend-multiply" src="${item.image || ''}">
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <h4 class="font-body-lg text-body-lg text-on-surface truncate">${item.product_name}</h4>
+                                <p class="font-caption text-caption text-on-surface-variant mt-xs line-clamp-1">옵션: ${item.option_name} | Qty: ${qty}</p>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <span class="font-label-md text-label-md font-semibold text-on-surface">${(price * qty).toLocaleString()}원</span>
+                            </div>
+                        </div>`;
+                        container.innerHTML += itemHtml;
+                    });
+                    
+                    let shipping = 0; // 무료배송
+                    let productTotalFinal = productTotal;
+                    
+                    const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+                    const customerKey = "customer_" + Date.now();
+                    const tossPayments = TossPayments(clientKey);
+                    const widgets = tossPayments.widgets({ customerKey });
+                    
+                    let userMaxPoint = 0;
+                    fetch(`/api/customers/init`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: userId })
+                    }).then(r => r.json()).then(d => {
+                        if (d.success) {
+                            userMaxPoint = Number(d.point) || 0;
+                            const pointInput = document.getElementById('pointAmount');
+                            if (pointInput && !document.getElementById('usePoints')?.checked) {
+                                pointInput.value = userMaxPoint.toLocaleString() + '원';
+                            }
+                        }
+                    });
+
+                    const pointInput = document.getElementById('pointAmount');
+                    const usePointsCb = document.getElementById('usePoints');
+
+                    const getDiscountValue = () => {
+                        if (!usePointsCb?.checked) return 0;
+                        if (!pointInput) return 0;
+                        return parseInt(pointInput.value.replace(/[^0-9]/g, '')) || 0;
+                    };
+
+                    const updateSummary = async () => {
+                        const usePoints = usePointsCb?.checked;
+                        const discount = getDiscountValue();
+                        let total = productTotalFinal + shipping - discount;
+                        if (total < 0) total = 0;
+                        
+                        const pAmt = productTotalFinal.toLocaleString() + '원';
+                        const sAmt = '무료배송';
+                        const dAmt = '- ' + discount.toLocaleString() + '원';
+                        const tAmt = total.toLocaleString() + '원';
+                        
+                        const elProduct = document.getElementById('summary-product-amount');
+                        if(elProduct) elProduct.textContent = pAmt;
+                        const elShipping = document.getElementById('summary-shipping');
+                        if(elShipping) elShipping.textContent = sAmt;
+                        
+                        const discountRow = document.getElementById('summary-discount-row');
+                        if (usePoints && discount > 0) {
+                            if (discountRow) discountRow.style.display = 'flex';
+                            const elDiscount = document.getElementById('summary-discount');
+                            if(elDiscount) elDiscount.textContent = dAmt;
+                        } else {
+                            if (discountRow) discountRow.style.display = 'none';
+                        }
+                        
+                        const elTotalExp = document.getElementById('summary-total-expanded');
+                        if(elTotalExp) elTotalExp.textContent = tAmt;
+                        const elTotalCol = document.getElementById('summary-total-collapsed');
+                        if(elTotalCol) elTotalCol.textContent = tAmt;
+                        
+                        try {
+                            await widgets.setAmount({
+                                currency: "KRW",
+                                value: total
+                            });
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    };
+                    
+                    if (usePointsCb && pointInput) {
+                        usePointsCb.addEventListener('change', (e) => {
+                            if (e.target.checked) {
+                                pointInput.readOnly = false;
+                                let val = parseInt(pointInput.value.replace(/[^0-9]/g, '')) || 0;
+                                val = Math.min(val, productTotalFinal + shipping);
+                                if (val === 0 && userMaxPoint > 0) {
+                                    val = Math.min(userMaxPoint, productTotalFinal + shipping);
+                                }
+                                pointInput.value = val.toLocaleString() + '원';
+                                pointInput.focus();
+                            } else {
+                                pointInput.readOnly = true;
+                                pointInput.value = userMaxPoint.toLocaleString() + '원';
+                            }
+                            updateSummary();
+                        });
+
+                        pointInput.addEventListener('focus', function() {
+                            if (this.readOnly) return;
+                            let val = parseInt(this.value.replace(/[^0-9]/g, '')) || 0;
+                            this.value = val === 0 ? '' : val;
+                        });
+
+                        pointInput.addEventListener('input', function() {
+                            this.value = this.value.replace(/[^0-9]/g, '');
+                            let val = parseInt(this.value) || 0;
+                            if (val > userMaxPoint) {
+                                val = userMaxPoint;
+                                this.value = val;
+                            }
+                            const maxUsable = productTotalFinal + shipping;
+                            if (val > maxUsable) {
+                                val = maxUsable;
+                                this.value = val;
+                            }
+                            updateSummary();
+                        });
+
+                        pointInput.addEventListener('blur', function() {
+                            let val = parseInt(this.value.replace(/[^0-9]/g, '')) || 0;
+                            this.value = val.toLocaleString() + '원';
+                            updateSummary();
+                        });
+                    }
+                    
+                    updateSummary().then(async () => {
+                        window.paymentMethodWidget = await widgets.renderPaymentMethods({
+                            selector: "#payment-method",
+                            variantKey: "DEFAULT",
+                        });
+                        window.paymentMethodWidget.on('paymentMethodSelect', (methodInfo) => {
+                            let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
+                            if (methodInfo.easyPay && methodInfo.easyPay.provider) pName = methodInfo.easyPay.provider;
+                            if (methodInfo.easypay && methodInfo.easypay.provider) pName = methodInfo.easypay.provider;
+                            if (methodInfo.transfer && methodInfo.transfer.provider) pName = methodInfo.transfer.provider;
+                            if (pName === 'QUICK_TRANSFER') pName = '퀵계좌이체';
+                            if (pName === 'CUSTOM') pName = methodInfo.paymentMethodKey || '퀵계좌이체';
+                            if (!pName) pName = '퀵계좌이체';
+                            sessionStorage.setItem('selectedPaymentMethod', pName);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.btn-checkout').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.preventDefault();
+
+                            const isManual = !document.getElementById('form-manual')?.classList.contains('hidden');
+                            
+                            const schemaObj = {};
+
+                            if (isManual) {
+                                schemaObj.firstName = Zod.z.string().min(1, '이름을 입력해주세요.');
+                                schemaObj.phone = Zod.z.string().regex(/^01[016789]-?\d{3,4}-?\d{4}$/, '올바른 연락처 형식(010-0000-0000)으로 입력해주세요.');
+                                schemaObj.zipcode = Zod.z.string().min(1, '우편번호를 검색해주세요.');
+                                schemaObj.address = Zod.z.string().min(1, '주소를 입력해주세요.');
+                                schemaObj.addressDetail = Zod.z.string().min(1, '상세주소를 입력해주세요.');
+                            }
+
+                            const orderSchema = Zod.z.object(schemaObj);
+                            
+                            const formData = {};
+
+                            if (isManual) {
+                                formData.firstName = document.getElementById('firstName')?.value || '';
+                                formData.phone = document.getElementById('phone')?.value || '';
+                                formData.zipcode = document.getElementById('zipcode')?.value || '';
+                                formData.address = document.getElementById('address')?.value || '';
+                                formData.addressDetail = document.getElementById('addressDetail')?.value || '';
+                            }
+
+                            const result = orderSchema.safeParse(formData);
+
+                            const showError = (inputId, message) => {
+                                const input = document.getElementById(inputId);
+                                if (!input) return;
+                                let errEl = document.getElementById(`err-${inputId}`);
+                                if (!errEl) {
+                                    errEl = document.createElement('p');
+                                    errEl.id = `err-${inputId}`;
+                                    errEl.className = 'text-red-500 text-[12px] mt-1 w-full';
+                                    
+                                    if (inputId === 'zipcode') {
+                                        input.parentNode.parentNode.insertBefore(errEl, input.parentNode.nextSibling);
+                                    } else {
+                                        input.parentNode.appendChild(errEl);
+                                    }
+                                }
+                                errEl.textContent = message;
+                                errEl.classList.remove('hidden');
+                                input.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                            };
+
+                            const clearError = (inputId) => {
+                                const errEl = document.getElementById(`err-${inputId}`);
+                                const input = document.getElementById(inputId);
+                                if (errEl) errEl.classList.add('hidden');
+                                if (input) {
+                                    input.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                                }
+                            };
+
+                            Object.keys(schemaObj).forEach(key => clearError(key));
+
+                            if (!result.success && isManual) {
+                                        let firstErrorField = null;
+                                        result.error.issues.forEach(issue => {
+                                            const field = issue.path[0];
+                                            if (!firstErrorField) firstErrorField = field;
+                                            showError(field, issue.message);
+                                        });
+                                        
+                                        if (firstErrorField) {
+                                            const el = document.getElementById(firstErrorField);
+                                            if (el) {
+                                                el.focus();
+                                                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            }
+                                        }
+                                        return;
+                                    }
+                                    
+                                    const agreeToss = document.getElementById('agree-toss');
+                                    if (agreeToss && !agreeToss.checked) {
+                                        alert('결제대행서비스 약관에 동의하셔야 합니다.');
+                                        agreeToss.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        setTimeout(() => agreeToss.focus(), 100);
+                                        return;
+                                    }
+                                    
+                                    try {
+                                        const methodInfo = await window.paymentMethodWidget.getSelectedPaymentMethod();
+                                        let paymentMethodName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || '퀵계좌이체';
+                                        if (methodInfo.easyPay && methodInfo.easyPay.provider) paymentMethodName = methodInfo.easyPay.provider;
+                                        if (methodInfo.easypay && methodInfo.easypay.provider) paymentMethodName = methodInfo.easypay.provider;
+                                        if (methodInfo.transfer && methodInfo.transfer.provider) paymentMethodName = methodInfo.transfer.provider;
+                                        
+                                        if (paymentMethodName === 'QUICK_TRANSFER') paymentMethodName = '퀵계좌이체';
+                                        if (paymentMethodName === 'CUSTOM' || paymentMethodName === 'NORMAL') {
+                                            paymentMethodName = methodInfo.paymentMethodKey || '퀵계좌이체';
+                                        }
+                                        sessionStorage.setItem('selectedPaymentMethod', paymentMethodName);
+                                    } catch (e) {
+                                        sessionStorage.setItem('selectedPaymentMethod', '퀵계좌이체');
+                                    }
+
+                                    let deliveryMessage = '';
+                                    let receiverName = '';
+                                    let receiverMobile = '';
+                                    let receiverPhone = '';
+                                    let receiverAddress = '';
+
+                                    if (isManual) {
+                                        const memoSelect = document.getElementById('memo');
+                                        const memoCustom = document.getElementById('memo-custom');
+                                        deliveryMessage = (memoSelect && memoSelect.value === '직접 입력') ? (memoCustom ? memoCustom.value : '') : (memoSelect ? memoSelect.value : '');
+                                        receiverName = formData.firstName;
+                                        receiverMobile = formData.phone;
+                                        receiverAddress = `[${formData.zipcode}] ${formData.address} ${formData.addressDetail}`;
+                                    } else {
+                                        const memoRecent = document.getElementById('memo-recent');
+                                        const memoRecentCustom = document.getElementById('memo-recent-custom');
+                                        deliveryMessage = (memoRecent && memoRecent.value === '직접 입력') ? (memoRecentCustom ? memoRecentCustom.value : '') : (memoRecent ? memoRecent.value : '');
+                                        receiverName = document.getElementById('recent-name')?.textContent || '';
+                                        const phoneText = document.getElementById('recent-phone')?.textContent || '';
+                                        const phones = phoneText.split(' / ');
+                                        receiverMobile = phones[0] || '';
+                                        receiverPhone = phones[1] || '';
+                                        receiverAddress = document.getElementById('recent-address')?.innerText || '';
+                                    }
+
+                                    const orderInfoObj = {
+                                        source: source,
+                                        priceId: priceId,
+                                        userId: userId,
+                                        receiverName,
+                                        receiverMobile,
+                                        receiverPhone,
+                                        receiverAddress: receiverAddress.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim(),
+                                        deliveryMessage
+                                    };
+
+                                    try {
+                                        const generatedOrderId = "order_" + Date.now();
+                                        
+                                        sessionStorage.setItem('pendingOrderInfo', JSON.stringify(orderInfoObj));
+
+                                        await widgets.requestPayment({
+                                            orderId: generatedOrderId,
+                                            orderName: "L14 Cordy 상품",
+                                            successUrl: window.location.origin + "/mpayment_done.html?usedPoints=" + getDiscountValue() + "&userId=" + encodeURIComponent(userId) + "&source=" + encodeURIComponent(source || '') + "&priceId=" + encodeURIComponent(priceId || ''),
+                                            failUrl: window.location.origin + "/fail",
+                                            customerEmail: "customer123@gmail.com",
+                                            customerName: isManual ? formData.firstName : document.getElementById('recent-name')?.textContent || "고객",
+                                            customerMobilePhone: (isManual ? formData.phone : document.getElementById('recent-phone')?.textContent || "01000000000").replace(/[^0-9]/g, '')
+                                        });
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                        });
+                    });
+                }
+            })
+            .catch(err => console.error('Error fetching order items:', err));
+    }
+
+    const btnTermsPopup = document.getElementById('btn-terms-popup');
+    const termsPopup = document.getElementById('terms-popup');
+    const btnCloseTerms = document.getElementById('btn-close-terms');
+    const btnConfirmTerms = document.getElementById('btn-confirm-terms');
+
+    if (btnTermsPopup && termsPopup) {
+        btnTermsPopup.addEventListener('click', (e) => {
+            e.preventDefault();
+            termsPopup.classList.remove('hidden');
+            termsPopup.classList.add('flex');
+        });
+
+        const closePopup = () => {
+            termsPopup.classList.add('hidden');
+            termsPopup.classList.remove('flex');
+        };
+
+        if (btnCloseTerms) btnCloseTerms.addEventListener('click', closePopup);
+        if (btnConfirmTerms) btnConfirmTerms.addEventListener('click', closePopup);
+        
+        termsPopup.addEventListener('click', (e) => {
+            if (e.target === termsPopup) closePopup();
+        });
+    }
+});
+
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            var addr = '';
+            var extraAddr = '';
+
+            if (data.userSelectedType === 'R') {
+                addr = data.roadAddress;
+            } else {
+                addr = data.jibunAddress;
+            }
+
+            if(data.userSelectedType === 'R'){
+                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                    extraAddr += data.bname;
+                }
+                if(data.buildingName !== '' && data.apartment === 'Y'){
+                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                }
+                if(extraAddr !== ''){
+                    extraAddr = ' (' + extraAddr + ')';
+                }
+                addr += extraAddr;
+            }
+
+            document.getElementById('zipcode').value = data.zonecode;
+            document.getElementById('address').value = addr;
+            document.getElementById('addressDetail').focus();
+        }
+    }).open();
+}
+</script>
+<!-- Terms Popup -->
+<div id="terms-popup" class="fixed inset-0 z-50 hidden bg-black/50 items-center justify-center p-md">
+    <div class="bg-surface rounded-xl w-full max-w-[400px] flex flex-col shadow-lg overflow-hidden">
+        <div class="flex items-center justify-between p-md border-b border-outline-variant/30">
+            <h3 class="font-headline-md text-headline-md text-on-surface font-bold">전자금융거래 이용약관</h3>
+            <button type="button" id="btn-close-terms" class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center">
+                <span class="material-symbols-outlined text-[24px]">close</span>
+            </button>
+        </div>
+        <div class="p-md max-h-[60vh] overflow-y-auto">
+            <div class="bg-white border border-outline-variant/30 rounded-xl p-md shadow-sm">
+                <iframe src="https://m-img.cafe24.com/images/terms/ec/optional/pg_dacom_financial.html" frameborder="0" style="width:100%; height:400px; display:block; background-color: white;"></iframe>
+            </div>
+        </div>
+        <div class="p-md pb-lg flex justify-center">
+            <button type="button" id="btn-confirm-terms" class="bg-[#5a4d41] text-white font-label-md text-label-md px-[60px] py-3 rounded-lg hover:bg-[#4a3f35] transition-colors shadow-sm active:scale-95">
+                확인
+            </button>
+        </div>
+    </div>
+</div>
+</body></html>

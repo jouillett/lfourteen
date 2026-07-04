@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>엘포틴 유산균과 발효동충하초의 밸런스 - 엘포틴 코디</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#5d5f4c",
+                        "surface-container-high": "#f0e7dd",
+                        "surface-bright": "#fff8f3",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "outline": "#7d766c",
+                        "secondary-container": "#e6dfcd",
+                        "on-primary-fixed-variant": "#504530",
+                        "surface-variant": "#eae1d7",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "on-secondary-fixed": "#1e1c10",
+                        "on-primary-container": "#685c45",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1f1b15",
+                        "on-secondary": "#ffffff",
+                        "primary": "#695d46",
+                        "primary-fixed": "#f2e0c3",
+                        "on-surface-variant": "#4c463d",
+                        "on-secondary-container": "#676354",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#eae1d7",
+                        "tertiary-fixed-dim": "#c8c8b0",
+                        "on-error": "#ffffff",
+                        "surface": "#fff8f3",
+                        "surface-tint": "#695d46",
+                        "on-primary-fixed": "#231a08",
+                        "tertiary-fixed": "#e4e4cc",
+                        "on-tertiary-fixed-variant": "#474836",
+                        "tertiary-container": "#d8d9c1",
+                        "primary-container": "#e6d5b8",
+                        "inverse-on-surface": "#f8efe5",
+                        "outline-variant": "#cec5b9",
+                        "secondary": "#625e50",
+                        "inverse-surface": "#343029",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fff8f3",
+                        "surface-container": "#f6ece3",
+                        "secondary-fixed": "#e9e2d0",
+                        "surface-dim": "#e1d9cf",
+                        "surface-container-low": "#fbf2e8",
+                        "inverse-primary": "#d5c5a8",
+                        "tertiary": "#5e604d",
+                        "error": "#ba1a1a",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1f1b15",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "on-tertiary-fixed": "#1b1d0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "64px",
+                        "lg": "40px",
+                        "xs": "4px",
+                        "md": "24px",
+                        "container-max": "440px",
+                        "base": "8px",
+                        "sm": "12px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; scroll-padding-top: 120px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-28">
+<!-- TopNavBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-[90%] mx-auto py-md h-20">
+<div class="flex items-center gap-md">
+<img src="https://capofcom.cafe24.com/l14_coordy/images/l14.jpeg" style="width: 24px; height: 24px; border-radius: 50%;margin-right: -15px; vertical-align: middle;" alt="L14 Cordy Logo">
+<a class="text-headline-md font-headline-md font-bold text-primary" href="#">L14 Cordy</a>
+</div>
+<div class="flex items-center gap-0.5">
+<button id="header-cart-btn" class="relative text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+<span id="cart" style="display: none;" class="absolute top-0 right-0 bg-error text-on-error text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full"></span>
+</button>
+<button id="header-order-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" onclick="window.location.href='morderlist.html'">
+<span class="material-symbols-outlined text-[22px]">local_shipping</span>
+</button>
+<button id="header-profile-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[22px]">person</span>
+</button>
+<button id="header-logout-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" onclick="localStorage.removeItem('isLoggedIn');localStorage.removeItem('userId');alert('로그아웃이 되었습니다.');window.location.reload();">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-[90%] mx-auto py-xl flex flex-col gap-lg items-start">
+<!-- Left Frame (100%) -->
+<div class="w-full flex flex-col gap-xl">
+<!-- Product Image -->
+<div class="rounded-xl overflow-hidden bg-surface-container-low flex justify-center items-center">
+<img alt="L14 Cordy Product Image" class="max-w-full h-auto object-cover object-center rounded-xl shadow-sm border border-surface-variant" style="margin:0 auto; display: block; max-width:100%;min-height: 716px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/5383834b5b3bfe2017b727548b002180.jpg"/>
+</div>
+<div class="flex flex-col gap-xl">
+<!-- Navigation Tabs -->
+<div class="border-b border-outline-variant sticky top-[80px] bg-surface pt-md z-40 -mx-xs px-xs">
+<nav class="flex gap-lg" id="product-tabs">
+<a class="text-primary border-b-2 border-primary pb-sm font-label-md text-label-md px-xs -mb-[1px]" href="#description">상세정보</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors pb-sm font-label-md text-label-md px-xs" href="#reviews">리뷰</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors pb-sm font-label-md text-label-md px-xs" href="#qa">Q&amp;A</a>
+</nav>
+</div>
+<!-- Detailed Description -->
+<section class="bg-[#FDF8F4] rounded-xl shadow-sm border border-surface-variant overflow-hidden" id="description">
+<div class="prose prose-on-surface max-w-none font-body-md text-body-md text-on-surface-variant space-y-sm">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 716px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/5383834b5b3bfe2017b727548b002180.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 626px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/0bbd8661cf5e44d2940ad140fdd2aaa4.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 986px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/f465b3ff7828529a60443f3e9dde2565.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 856px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/057f4f7458e823c395ad01e745e258f6.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 816px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/534ce2f89d0f15a61fa916e58b868362.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 869px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/2a42c0079b8437f54c6881098b815e21.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 595px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/c69d906afdab44b0606e3311e2f2ab97.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 671px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/e5a5b736d98007bde792d0e89da50247.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 59px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/bef810e0d70e04ffe7d78e6b89293313.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 59px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/bef810e0d70e04ffe7d78e6b89293313.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 1077px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/f201d814f5f8236ac9e54f39a0a9058b.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 852px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/0dd6e8af15cd81998a9ba535ad73699f.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 655px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a834b74d9ce275f6d9140cdc80b1e164.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 549px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a95d8e2883844d422f564a8d70d7452d.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 233px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/19cd00cbc42a4ea9ff5011e5cc83b525.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 278px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/038cf370f04ea7be08e40cb8e4a15c4d.jpg">
+<img style="display:block; width:100% !important; max-width:initial !important;" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a230566da601d62335dc84022e021fcb.gif">
+<img style="display:block; width:100% !important; max-width:initial !important;" src="https://welcomekunde.com/web/upload/NNEditor/20260324/a230566da601d62335dc84022e021fcb.gif">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 288px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/4ec7115da2adf4f2188ce57f9648465e.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 288px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/4ec7115da2adf4f2188ce57f9648465e.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 263px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/397b439efd4639d40d0d3a05d8ec0a79.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 855px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/14d6610c3161b57ebb902ad3914d172f.jpg">
+<img style="margin:0 auto; display: block; max-width:100%;min-height: 602px" src="https://welcomekunde.com/web/upload/NNEditor/20260324/efa6b1b0ca55e6eb4e20794c95c8b0f5.jpg">
+</div>
+</section>
+<!-- Reviews -->
+<section class="bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-surface-variant flex flex-col gap-md" id="reviews">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-headline-md text-on-surface">고객 리뷰</h2>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">4.9</span>
+<span class="font-caption text-caption text-on-surface-variant">(128개)</span>
+</div>
+</div>
+<div class="flex flex-col gap-md divide-y divide-surface-variant">
+<div class="pt-md pb-xs">
+<div class="flex flex-col gap-xs mb-base">
+<div class="flex justify-end text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="flex items-center justify-start">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Jihye K.</span>
+<span class="font-label-md text-label-md font-normal text-on-surface-variant ml-xs">26.03.24</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Exceptional quality. The packaging feels premium, and I've noticed a significant boost in my energy levels since starting this daily ritual.</p>
+</div>
+<div class="pt-md pb-xs">
+<div class="flex flex-col gap-xs mb-base">
+<div class="flex justify-end text-primary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="flex items-center justify-start">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Minsoo P.</span>
+<span class="font-label-md text-label-md font-normal text-on-surface-variant ml-xs">26.03.24</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">The taste is surprisingly smooth. I love the minimalist design of the individual pouches—perfect for taking to the office.</p>
+</div>
+</div>
+<div class="mt-sm self-start flex items-center gap-sm">
+    <button id="view-all-reviews-btn" class="text-primary font-label-md text-label-md hover:underline transition-all">
+        리뷰 전체보기
+    </button>
+    <span class="text-outline-variant font-label-md text-label-md">|</span>
+    <button id="write-review-btn" class="text-primary font-label-md text-label-md hover:underline transition-all">
+        후기쓰기
+    </button>
+</div>
+</section>
+<!-- Q&A -->
+<section class="bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-surface-variant" id="qa">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">Q&amp;A</h2>
+<div class="space-y-md">
+<div class="bg-surface-container-low rounded-lg p-md">
+<p class="font-label-md text-label-md font-semibold text-on-surface mb-xs">Q: 권장 섭취량과 섭취방법을 알려주세요.</p>
+<p class="font-body-md text-body-md text-on-surface-variant">A: 성인 1일 1~2회, 1회 1포씩 섭취하십시오. 잠들기 전 섭취하면 숙면에 더욱 도움이 됩니다. 15세 이하는 성인 섭취량의 절반 정도를 섭취하십시오.</p>
+</div>
+<div class="bg-surface-container-low rounded-lg p-md">
+<p class="font-label-md text-label-md font-semibold text-on-surface mb-xs">Q: 보관 방법은 어떻게 되나요?</p>
+<p class="font-body-md text-body-md text-on-surface-variant">A: 직사광선을 피해 습기가 적은 서늘한 곳에 보관하여 주시기 바랍니다. 개봉 후 변질될 수 있으므로 즉시 섭취하시기 바랍니다.</p>
+</div>
+</div>
+<div class="mt-sm self-start flex items-center gap-sm">
+    <button id="view-all-qna-btn" class="text-primary font-label-md text-label-md hover:underline transition-all">
+        Q&amp;A 전체보기
+    </button>
+    <span class="text-outline-variant font-label-md text-label-md">|</span>
+    <button id="write-qna-btn" class="text-primary font-label-md text-label-md hover:underline transition-all">
+        문의하기
+    </button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest mt-xl w-full">
+<div class="w-[90%] mx-auto py-8 flex flex-col md:flex-row items-start justify-between border-t border-outline-variant gap-md">
+<div class="flex flex-col gap-xs font-caption text-caption text-on-surface-variant text-left">
+<span>대표 조민균</span>
+<span>문의전화 031-755-1568</span>
+<span>사업자등록번호 691-23-02249</span>
+<span>통신판매업 신고번호 2026-성남분당A-0172</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant self-start">© 2026 L14 Cordy. All rights reserved.</div>
+</div>
+</footer>
+<!-- Back to Top Button -->
+<button id="back-to-top" class="fixed bottom-24 right-8 z-50 bg-primary text-on-primary w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 opacity-0 pointer-events-none translate-y-4 hover:opacity-90 hover:scale-110 active:scale-95 focus:outline-none" aria-label="Back to top">
+    <span class="material-symbols-outlined">arrow_upward</span>
+</button>
+
+<!-- Fixed Bottom Bar -->
+<div id="fixed-bottom-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-outline-variant p-md flex justify-center items-center">
+    <button id="open-purchase" class="w-full max-w-[400px] bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs">
+        구매하기 (Buy Now)
+    </button>
+</div>
+
+<!-- Purchase Drawer Overlay -->
+<div id="purchase-overlay" class="fixed inset-0 z-50 bg-black/45 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none flex items-end justify-center">
+    <!-- Clickable backdrop area to close -->
+    <div class="absolute inset-0" id="backdrop-close"></div>
+    <!-- Drawer Content -->
+    <div id="purchase-drawer" class="relative w-full max-w-[400px] bg-surface-container-lowest rounded-t-2xl p-lg shadow-2xl border-t border-outline-variant flex flex-col gap-md transform translate-y-full transition-transform duration-300 ease-out z-10">
+        <!-- Close Button at the very top -->
+        <div class="flex justify-between items-center pb-2 border-b border-outline-variant">
+            <span class="font-label-md text-label-md font-bold text-on-surface-variant">옵션 선택</span>
+            <button id="close-purchase" class="text-on-surface-variant hover:text-primary transition-all p-1 rounded-full hover:bg-surface-container flex items-center justify-center">
+                <span class="material-symbols-outlined text-[24px]">close</span>
+            </button>
+        </div>
+        <!-- Right panel content goes here -->
+        <h1 class="font-headline-md text-headline-md text-on-surface leading-tight mt-xs">
+            엘포틴 코디 15ml X 15포<br/>
+            <span class="font-body-md text-body-md text-on-surface-variant block mt-xs">[발효동충하초추출물, 엘포틴유산균]</span>
+        </h1>
+        <div class="h-px bg-outline-variant w-full my-xs"></div>
+        <!-- Pricing Dropdown -->
+        <div class="flex flex-col gap-base">
+            <label class="font-label-md text-label-md text-on-surface-variant" for="pricing-options">Select Option</label>
+            <select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container transition-all cursor-pointer appearance-none" id="pricing-options">
+                <option value="1">1개: 65,000원</option>
+                <option value="2">2개: 110,000원</option>
+                <option value="3">6개: 270,000원</option>
+                <option value="4">12개: 480,000원</option>
+            </select>
+        </div>
+        <div class="flex justify-between items-center py-xs">
+            <span class="font-label-md text-label-md text-on-surface-variant"></span>
+            <span class="font-label-md text-label-md font-bold text-primary">무료배송</span>
+        </div>
+        <div class="h-px bg-outline-variant w-full my-xs"></div>
+        <div class="flex justify-between items-end mb-sm">
+            <span class="font-body-md text-body-md text-on-surface-variant">총 금액</span>
+            <span id="total-amount" class="font-headline-md text-headline-md font-bold text-on-surface">65,000원</span>
+        </div>
+        <!-- Actions -->
+        <div class="flex flex-col gap-sm">
+            <button id="drawer-buy-btn" class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs">
+                구매하기 (Buy Now)
+            </button>
+            <button id="drawer-cart-btn" class="w-full bg-transparent border border-primary text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-low active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs">
+                장바구니 (Add to Cart)
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const initApp = () => {
+        const updateCartCount = async () => {
+            const cartEl = document.getElementById('cart');
+            if (!cartEl) return;
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userId = localStorage.getItem('userId');
+
+            if (!isLoggedIn || !userId) {
+                cartEl.textContent = '';
+                cartEl.style.display = 'none';
+            } else {
+                try {
+                    const res = await fetch(`/api/cart/count?userId=${userId}&productId=1`);
+                    const data = await res.json();
+                    if (data.success && data.count !== null) {
+                        cartEl.textContent = data.count;
+                        cartEl.style.display = data.count > 0 ? 'flex' : 'none';
+                    } else {
+                        cartEl.textContent = '';
+                        cartEl.style.display = 'none';
+                    }
+                } catch (err) {
+                    console.error('Error fetching cart count:', err);
+                    cartEl.textContent = '';
+                    cartEl.style.display = 'none';
+                }
+            }
+        };
+
+        const isHttpContext = location.protocol.startsWith('http');
+        if (isHttpContext) updateCartCount();
+
+        const fetchReviews = async () => {
+            try {
+                const res = await fetch('/api/review?productId=1', { cache: 'no-store' });
+                const data = await res.json();
+                if (data.success && data.totalRecords > 0) {
+                    const reviewTab = document.querySelector('a[href="#reviews"]');
+                    if (reviewTab) {
+                        reviewTab.textContent = `리뷰(${data.totalRecords})`;
+                    }
+                    
+                    const reviewsSection = document.getElementById('reviews');
+                    if (reviewsSection) {
+                        const ratingEl = reviewsSection.querySelector('.font-bold.text-on-surface');
+                        const countEl = reviewsSection.querySelector('.text-caption');
+                        if (ratingEl) ratingEl.textContent = data.averageRating;
+                        if (countEl) countEl.textContent = `(${data.totalRecords}개)`;
+                        
+                        const reviewsContainer = reviewsSection.querySelector('.divide-y');
+                        if (reviewsContainer) {
+                            reviewsContainer.innerHTML = '';
+                            data.reviews.sort((a, b) => (Number(a.focus) || 0) - (Number(b.focus) || 0)).slice(0, 2).forEach(review => {
+                                const starsCount = Math.round(Number(review.rating) || 0);
+                                const stars = Array.from({ length: 5 }).map((_, i) => {
+                                    return `<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' ${i < starsCount ? 1 : 0};">star</span>`;
+                                }).join('');
+                                let formattedDate = '';
+                                if (review.created_at) {
+                                    const dateObj = new Date(review.created_at);
+                                    if (!isNaN(dateObj.getTime())) {
+                                        const yy = String(dateObj.getFullYear()).slice(-2);
+                                        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                                        const dd = String(dateObj.getDate()).padStart(2, '0');
+                                        formattedDate = `${yy}.${mm}.${dd}`;
+                                    }
+                                }
+                                reviewsContainer.innerHTML += `
+                                <div class="pt-md pb-xs">
+                                    <div class="flex flex-col gap-xs mb-base">
+                                        <div class="flex justify-end text-primary">
+                                            ${stars}
+                                        </div>
+                                        <div class="flex items-center justify-start">
+                                            <span class="font-label-md text-label-md font-semibold text-on-surface">${review.customer_name}</span>
+                                            ${formattedDate ? `<span class="font-label-md text-label-md font-normal text-on-surface-variant ml-xs">${formattedDate}</span>` : ''}
+                                        </div>
+                                    </div>
+                                    <p class="font-body-md text-body-md text-on-surface-variant">${review.content}</p>
+                                </div>
+                                `;
+                            });
+                        }
+                        
+                        const viewAllBtn = reviewsSection.querySelector('button');
+                        if (viewAllBtn) {
+                            viewAllBtn.style.display = data.totalRecords > 2 ? 'block' : 'none';
+                        }
+                    }
+                } else {
+                    const viewAllBtn = document.querySelector('#reviews button');
+                    if (viewAllBtn) viewAllBtn.style.display = 'none';
+                    const reviewsContainer = document.querySelector('#reviews .divide-y');
+                    if (reviewsContainer) reviewsContainer.innerHTML = `<p>리뷰가 없습니다. (API 성공여부: ${data.success}, 레코드수: ${data.totalRecords})</p>`;
+                }
+            } catch (err) {
+                console.error('Error fetching reviews:', err);
+                const reviewsContainer = document.querySelector('#reviews .divide-y');
+                if (reviewsContainer) reviewsContainer.innerHTML = `<p class="text-error">리뷰를 불러오는 중 오류가 발생했습니다: ${err.message}</p>`;
+            }
+        };
+
+        if (isHttpContext) fetchReviews();
+
+        const tabs = document.querySelectorAll('#product-tabs a');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                tabs.forEach(t => {
+                    t.classList.remove('text-primary', 'border-b-2', 'border-primary', '-mb-[1px]');
+                    t.classList.add('text-on-surface-variant', 'hover:text-primary');
+                });
+                tab.classList.add('text-primary', 'border-b-2', 'border-primary', '-mb-[1px]');
+                tab.classList.remove('text-on-surface-variant', 'hover:text-primary');
+            });
+        });
+
+        // Back to Top functionality
+        const backToTopBtn = document.getElementById('back-to-top');
+        if (backToTopBtn) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                    backToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                } else {
+                    backToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                    backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                }
+            });
+        }
+
+        if (backToTopBtn) {
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Mobile Purchase Drawer logic
+        const purchaseOverlay = document.getElementById('purchase-overlay');
+        const purchaseDrawer = document.getElementById('purchase-drawer');
+        const openPurchaseBtn = document.getElementById('open-purchase');
+        const closePurchaseBtn = document.getElementById('close-purchase');
+        const backdropClose = document.getElementById('backdrop-close');
+
+        function openDrawer() {
+            purchaseOverlay.classList.remove('opacity-0', 'pointer-events-none');
+            purchaseOverlay.classList.add('opacity-100', 'pointer-events-auto');
+            purchaseDrawer.classList.remove('translate-y-full');
+            purchaseDrawer.classList.add('translate-y-0');
+        }
+
+        function closeDrawer() {
+            purchaseOverlay.classList.remove('opacity-100', 'pointer-events-auto');
+            purchaseOverlay.classList.add('opacity-0', 'pointer-events-none');
+            purchaseDrawer.classList.remove('translate-y-0');
+            purchaseDrawer.classList.add('translate-y-full');
+        }
+
+        if (openPurchaseBtn) openPurchaseBtn.addEventListener('click', openDrawer);
+        if (closePurchaseBtn) closePurchaseBtn.addEventListener('click', closeDrawer);
+        if (backdropClose) backdropClose.addEventListener('click', closeDrawer);
+
+        // Pricing Dropdown change handler
+        const pricingSelect = document.getElementById('pricing-options');
+        const totalAmountText = document.getElementById('total-amount');
+        const prices = {
+            '1': '65,000원',
+            '2': '110,000원',
+            '3': '270,000원',
+            '4': '480,000원'
+        };
+
+        if (pricingSelect) {
+            pricingSelect.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (prices[val]) {
+                    totalAmountText.textContent = prices[val];
+                }
+            });
+        }
+
+        // Cart button redirection logic
+        const handleCartClick = (e) => {
+            e.preventDefault();
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = 'mcart.html';
+            } else {
+                localStorage.setItem('loginRedirect', 'mcart.html');
+                window.location.href = 'mlogin.html';
+            }
+        };
+
+        const handleBuyClick = (e) => {
+            e.preventDefault();
+            const pricingOptions = document.getElementById('pricing-options');
+            const priceId = pricingOptions ? pricingOptions.value : '1';
+            const redirectUrl = 'morder.html?source=buy&priceId=' + encodeURIComponent(priceId);
+            
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = redirectUrl;
+            } else {
+                localStorage.setItem('loginRedirect', redirectUrl);
+                window.location.href = 'mlogin.html';
+            }
+        };
+
+        const headerCartBtn = document.getElementById('header-cart-btn');
+        const drawerCartBtn = document.getElementById('drawer-cart-btn');
+        const drawerBuyBtn = document.getElementById('drawer-buy-btn');
+
+        if (headerCartBtn) {
+            headerCartBtn.addEventListener('click', handleCartClick);
+        }
+        if (drawerCartBtn) {
+            drawerCartBtn.addEventListener('click', handleCartClick);
+        }
+        if (drawerBuyBtn) {
+            drawerBuyBtn.addEventListener('click', handleBuyClick);
+        }
+
+        const headerProfileBtn = document.getElementById('header-profile-btn');
+        if (headerProfileBtn) {
+            headerProfileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (localStorage.getItem('isLoggedIn') === 'true') {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userId');
+                    alert('로그아웃 되었습니다.');
+                    window.location.reload();
+                } else {
+                    localStorage.setItem('loginRedirect', 'mmall.html');
+                    window.location.href = 'mlogin.html';
+                }
+            });
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+        initApp();
+    }
+</script>
+<!-- Review Modal -->
+<div id="review-modal" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-end">
+    <div class="bg-surface w-full h-[90vh] rounded-t-2xl shadow-2xl flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300">
+        <div class="hidden flex justify-between items-center p-md border-b border-outline-variant bg-surface-container-lowest">
+            <h3 class="font-headline-md text-headline-md text-on-surface">고객 리뷰</h3>
+            <button id="close-review-modal" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="flex-grow relative bg-surface">
+            <iframe id="review-iframe" data-src="mreview.html" class="absolute inset-0 w-full h-full border-0"></iframe>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const viewAllBtn = document.getElementById('view-all-reviews-btn');
+        const reviewModal = document.getElementById('review-modal');
+        const closeReviewModal = document.getElementById('close-review-modal');
+        
+        if(viewAllBtn && reviewModal && closeReviewModal) {
+            viewAllBtn.addEventListener('click', () => {
+                const rIframe = document.getElementById('review-iframe');
+                if (rIframe && !rIframe.src && rIframe.dataset.src) rIframe.src = rIframe.dataset.src;
+                reviewModal.classList.remove('opacity-0', 'pointer-events-none');
+                reviewModal.classList.add('opacity-100', 'pointer-events-auto');
+                reviewModal.querySelector('div').classList.remove('translate-y-full');
+                reviewModal.querySelector('div').classList.add('translate-y-0');
+            });
+            closeReviewModal.addEventListener('click', () => {
+                reviewModal.classList.add('opacity-0', 'pointer-events-none');
+                reviewModal.classList.remove('opacity-100', 'pointer-events-auto');
+                reviewModal.querySelector('div').classList.add('translate-y-full');
+                reviewModal.querySelector('div').classList.remove('translate-y-0');
+            });
+            window.addEventListener('message', (event) => {
+                if (event.data === 'closeReviewModal') {
+                    closeReviewModal.click();
+                }
+            });
+        }
+        
+        const viewAllQnaBtn = document.getElementById('view-all-qna-btn');
+        const qnaModal = document.getElementById('qna-modal');
+        const closeQnaModal = document.getElementById('close-qna-modal');
+        
+        if(viewAllQnaBtn && qnaModal && closeQnaModal) {
+
+            function patchQnaIframe() {
+                const qnaIframe = document.getElementById('qna-iframe');
+                try {
+                    const doc = qnaIframe.contentDocument;
+                    if (!doc) return;
+                    // Restore atmospheric background image
+                    const atmbg = doc.querySelector('main > div.absolute');
+                    if (atmbg) atmbg.style.removeProperty('display');
+                    // Add top padding so content has breathing room
+                    const main = doc.querySelector('main');
+                    if (main) {
+                        main.style.setProperty('margin-top', '0', 'important');
+                        main.style.setProperty('padding-top', '24px', 'important');
+                    }
+                } catch(e) { console.warn('iframe patch failed', e); }
+            }
+
+
+
+            viewAllQnaBtn.addEventListener('click', () => {
+                const qIframe = document.getElementById('qna-iframe');
+                if (qIframe) {
+                    if (!qIframe.src && qIframe.dataset.src) {
+                        qIframe.src = qIframe.dataset.src;
+                        qIframe.addEventListener('load', patchQnaIframe, { once: true });
+                    } else if (qIframe.src) {
+                        qIframe.contentWindow.location.reload();
+                        qIframe.addEventListener('load', patchQnaIframe, { once: true });
+                    }
+                }
+                qnaModal.classList.remove('opacity-0', 'pointer-events-none');
+                qnaModal.classList.add('opacity-100', 'pointer-events-auto');
+                qnaModal.querySelector('div').classList.remove('translate-y-full');
+                qnaModal.querySelector('div').classList.add('translate-y-0');
+            });
+            closeQnaModal.addEventListener('click', () => {
+                qnaModal.classList.add('opacity-0', 'pointer-events-none');
+                qnaModal.classList.remove('opacity-100', 'pointer-events-auto');
+                qnaModal.querySelector('div').classList.add('translate-y-full');
+                qnaModal.querySelector('div').classList.remove('translate-y-0');
+            });
+            window.addEventListener('message', (event) => {
+                if (event.data === 'closeQnaModal') {
+                    closeQnaModal.click();
+                } else if (event.data === 'openWriteQnaModal') {
+                    const writeBtn = document.getElementById('write-qna-btn');
+                    if(writeBtn) writeBtn.click();
+                }
+            });
+        }
+    });
+</script>
+<!-- Q&A Modal -->
+<div id="qna-modal" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-end">
+    <div class="bg-surface w-full h-[90vh] rounded-t-2xl shadow-2xl flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300">
+        <div class="hidden flex justify-between items-center p-md border-b border-outline-variant bg-surface-container-lowest">
+            <h3 class="font-headline-md text-headline-md text-on-surface">Q&amp;A</h3>
+            <button id="close-qna-modal" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="flex-grow relative bg-surface">
+            <iframe id="qna-iframe" data-src="mqna.html" class="absolute inset-0 w-full h-full border-0"></iframe>
+        </div>
+    </div>
+</div>
+<!-- Write Q&A Modal (inlined, no iframe) -->
+<div id="write-qna-modal" class="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col justify-end">
+    <div class="bg-surface w-full h-[90vh] rounded-t-2xl shadow-2xl flex flex-col overflow-hidden transform translate-y-full transition-transform duration-300">
+        <!-- Close bar -->
+        <div class="flex justify-between items-center p-md border-b border-outline-variant bg-surface-container-lowest shrink-0">
+            <h3 class="font-headline-md text-headline-md text-on-surface">1:1 문의하기</h3>
+            <button id="close-write-qna-modal" class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container flex items-center justify-center">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <!-- Scrollable form body -->
+        <div class="flex-grow overflow-y-auto bg-surface p-md">
+            <p class="font-body-md text-body-md text-on-surface-variant mb-md">상품, 배송, 교환/반품 등 궁금하신 점을 남겨주시면 정성껏 답변해 드리겠습니다.</p>
+            <form id="write-qna-form" class="flex flex-col gap-md bg-surface-container-low p-md rounded-lg">
+                <!-- Product Selection -->
+                <div class="flex flex-col gap-base">
+                    <label class="font-label-md text-label-md text-on-surface font-medium" for="wq-product-select">문의 상품</label>
+                    <div class="relative">
+                        <select class="w-full bg-surface-container border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg px-sm py-[10px] appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="wq-product-select" name="product_select">
+                            <option value="">상품을 선택해주세요</option>
+                            <option value="item1">엘포틴 코디 15ml X 15포</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-sm text-on-surface-variant">
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Content Textarea -->
+                <div class="flex flex-col gap-base">
+                    <label class="font-label-md text-label-md text-on-surface font-medium" for="wq-inquiry-content">내용</label>
+                    <textarea class="w-full bg-surface-container border border-outline-variant text-on-surface font-body-md text-body-md rounded-lg px-sm py-[10px] resize-y focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="wq-inquiry-content" name="inquiry_content" placeholder="문의 내용을 상세히 적어주세요. 개인정보(주민번호, 연락처 등)가 포함되지 않도록 주의해주세요." rows="6"></textarea>
+                </div>
+                <!-- Secret Post Checkbox -->
+                <div class="flex items-center gap-sm mt-xs">
+                    <input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container cursor-pointer" id="wq-secret-post" name="secret_post" type="checkbox">
+                    <label class="font-label-md text-label-md text-on-surface-variant cursor-pointer select-none" for="wq-secret-post">비밀글로 문의하기</label>
+                    <span class="material-symbols-outlined text-outline text-[18px]">lock</span>
+                </div>
+                <!-- Submit Button -->
+                <div class="mt-md pt-md border-t border-outline-variant/30 flex justify-end">
+                    <button class="w-full bg-primary text-on-primary font-label-md text-label-md px-lg py-sm rounded-lg hover:bg-primary/90 transition-colors duration-200 flex items-center justify-center gap-base" type="submit">
+                        <span>문의 등록</span>
+                        <span class="material-symbols-outlined text-[18px]">send</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const writeQnaModal = document.getElementById('write-qna-modal');
+        const closeWriteQnaModal = document.getElementById('close-write-qna-modal');
+
+        function openWriteQnaModal() {
+            writeQnaModal.classList.remove('opacity-0', 'pointer-events-none');
+            writeQnaModal.classList.add('opacity-100', 'pointer-events-auto');
+            writeQnaModal.querySelector('div').classList.remove('translate-y-full');
+            writeQnaModal.querySelector('div').classList.add('translate-y-0');
+        }
+        function closeWriteQnaModalFn() {
+            writeQnaModal.classList.add('opacity-0', 'pointer-events-none');
+            writeQnaModal.classList.remove('opacity-100', 'pointer-events-auto');
+            writeQnaModal.querySelector('div').classList.add('translate-y-full');
+            writeQnaModal.querySelector('div').classList.remove('translate-y-0');
+        }
+
+        const writeQnaBtn = document.getElementById('write-qna-btn');
+        if (writeQnaBtn) writeQnaBtn.addEventListener('click', () => {
+            if (localStorage.getItem('isLoggedIn') === 'true' && localStorage.getItem('userId')) {
+                window.location.href = 'mwriteqna.html';
+            } else {
+                localStorage.setItem('loginRedirect', 'mwriteqna.html');
+                window.location.href = 'mlogin.html';
+            }
+        });
+        if (closeWriteQnaModal) closeWriteQnaModal.addEventListener('click', closeWriteQnaModalFn);
+
+        const writeQnaForm = document.getElementById('write-qna-form');
+        if (writeQnaForm) {
+            writeQnaForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('문의가 등록되었습니다.');
+                closeWriteQnaModalFn();
+            });
+        }
+    });
+</script>
+<!-- Inline Login Modal for QnA -->
+<div id="mall-login-modal" class="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-center p-4">
+    <div class="bg-surface w-full max-w-sm rounded-xl shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-transform duration-300 relative">
+        <div class="flex justify-between items-center p-md border-b border-outline-variant bg-surface-container-lowest">
+            <h3 class="font-headline-md text-headline-md text-on-surface">로그인</h3>
+            <button id="close-mall-login-modal" class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-container flex items-center justify-center">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-md flex flex-col gap-md">
+            <p class="font-body-md text-body-md text-on-surface-variant">문의하기는 로그인이 필요합니다.</p>
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-md text-label-md text-on-surface" for="mall-login-phone">휴대폰 번호</label>
+                <input class="w-full px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50" id="mall-login-phone" placeholder="010-0000-0000" type="tel">
+                <div id="mall-login-phone-err" class="text-error font-caption text-caption hidden"></div>
+            </div>
+            <div class="flex flex-col gap-xs">
+                <label class="font-label-md text-label-md text-on-surface" for="mall-login-pw">비밀번호</label>
+                <input class="w-full px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50" id="mall-login-pw" placeholder="비밀번호를 입력해주세요" type="password">
+                <div id="mall-login-pw-err" class="text-error font-caption text-caption hidden"></div>
+            </div>
+            <div id="mall-login-general-err" class="text-error font-caption text-caption hidden"></div>
+            <button id="mall-login-submit" class="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-sm active:scale-95">로그인</button>
+        </div>
+    </div>
+</div>
+<script>
+(function() {
+    let _loginSuccessCb = null;
+
+    function openMallLoginModal(onSuccess) {
+        _loginSuccessCb = onSuccess || null;
+        const modal = document.getElementById('mall-login-modal');
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+        modal.querySelector('div').classList.remove('scale-95');
+        modal.querySelector('div').classList.add('scale-100');
+        document.getElementById('mall-login-phone').value = '';
+        document.getElementById('mall-login-pw').value = '';
+        document.getElementById('mall-login-phone-err').classList.add('hidden');
+        document.getElementById('mall-login-pw-err').classList.add('hidden');
+        document.getElementById('mall-login-general-err').classList.add('hidden');
+    }
+    window.openMallLoginModal = openMallLoginModal;
+
+    function closeMallLoginModal() {
+        const modal = document.getElementById('mall-login-modal');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100', 'pointer-events-auto');
+        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('div').classList.remove('scale-100');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('close-mall-login-modal').addEventListener('click', closeMallLoginModal);
+
+        function formatPhone(val) {
+            let d = val.replace(/\D/g, '');
+            if (!d.startsWith('010')) d = '010' + d.replace(/^010/, '');
+            d = d.substring(0, 11);
+            if (d.length <= 3) return d;
+            if (d.length <= 7) return d.substring(0,3) + '-' + d.substring(3);
+            return d.substring(0,3) + '-' + d.substring(3,7) + '-' + d.substring(7);
+        }
+
+        const phoneInput = document.getElementById('mall-login-phone');
+        phoneInput.addEventListener('input', () => {
+            let v = phoneInput.value;
+            if (v === '') return;
+            if (!v.startsWith('010-')) v = '010-' + v.replace(/\D/g, '').replace(/^010/, '');
+            phoneInput.value = formatPhone(v);
+        });
+
+        document.getElementById('mall-login-submit').addEventListener('click', async () => {
+            const phone = phoneInput.value.trim();
+            const pw = document.getElementById('mall-login-pw').value;
+            const phoneErr = document.getElementById('mall-login-phone-err');
+            const pwErr = document.getElementById('mall-login-pw-err');
+            const genErr = document.getElementById('mall-login-general-err');
+
+            phoneErr.classList.add('hidden');
+            pwErr.classList.add('hidden');
+            genErr.classList.add('hidden');
+
+            if (!phone) { phoneErr.textContent = '휴대폰 번호를 입력해주세요.'; phoneErr.classList.remove('hidden'); return; }
+            if (!pw) { pwErr.textContent = '비밀번호를 입력해주세요.'; pwErr.classList.remove('hidden'); return; }
+
+            const btn = document.getElementById('mall-login-submit');
+            btn.disabled = true;
+            btn.textContent = '로그인 중...';
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobile: phone, password: pw })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userId', data.userId);
+                    closeMallLoginModal();
+                    if (_loginSuccessCb) { _loginSuccessCb(); _loginSuccessCb = null; }
+                } else {
+                    genErr.textContent = '로그인이 필요한 페이지입니다.';
+                    genErr.classList.remove('hidden');
+                }
+            } catch(e) {
+                genErr.textContent = '로그인이 필요한 페이지입니다.';
+                genErr.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '로그인';
+            }
+        });
+    });
+})();
+</script>
+</body>
+</html>

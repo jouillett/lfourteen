@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>장바구니 - 기쁜하루</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#5e604d",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#33302d",
+                    "surface-container-low": "#f9f2ed",
+                    "tertiary-fixed": "#e3e4cc",
+                    "secondary": "#625e50",
+                    "on-tertiary-fixed": "#1b1d0e",
+                    "error": "#BA1A1A",
+                    "on-tertiary-container": "#d9dac3",
+                    "primary": "#504530",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e8e1dc",
+                    "surface-dim": "#dfd9d4",
+                    "on-background": "#1d1b18",
+                    "on-surface": "#1F1B15",
+                    "primary-fixed-dim": "#d5c5a8",
+                    "background": "#fff8f3",
+                    "tertiary-fixed-dim": "#c7c8b1",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e8e1dc",
+                    "primary-container": "#695d46",
+                    "primary-fixed": "#f2e0c3",
+                    "on-secondary-container": "#686456",
+                    "inverse-primary": "#d5c5a8",
+                    "on-secondary-fixed": "#1e1c11",
+                    "outline": "#7D766C",
+                    "secondary-fixed-dim": "#ccc6b5",
+                    "surface-bright": "#fff8f3",
+                    "on-primary-fixed-variant": "#504530",
+                    "inverse-on-surface": "#f6efeb",
+                    "on-primary-container": "#e7d7ba",
+                    "surface-tint": "#695d46",
+                    "on-primary-fixed": "#231a08",
+                    "surface-container": "#f3ede8",
+                    "surface-container-high": "#eee7e2",
+                    "tertiary": "#464837",
+                    "on-tertiary-fixed-variant": "#464836",
+                    "on-secondary-fixed-variant": "#4a473a",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#cec5b9",
+                    "secondary-container": "#e9e2d0",
+                    "secondary-fixed": "#e9e2d0",
+                    "on-surface-variant": "#4b463d",
+                    "surface": "#FFF8F3"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "container-max": "440px",
+                    "xl": "64px",
+                    "sm": "12px",
+                    "lg": "40px",
+                    "xs": "4px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "caption": [
+                            "Inter"
+                    ],
+                    "label-md": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "caption": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-lg": [
+                            "30px",
+                            {
+                                    "lineHeight": "38px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-[90%] mx-auto py-md h-20">
+<div class="flex items-center gap-md">
+<img src="https://capofcom.cafe24.com/l14_coordy/images/l14.jpeg" style="width: 24px; height: 24px; border-radius: 50%;margin-right: -15px; vertical-align: middle;" alt="L14 Cordy Logo">
+<a class="text-headline-md font-headline-md font-bold text-primary" href="mmall.html">L14 Cordy</a>
+</div>
+<div class="flex items-center gap-0.5">
+<button id="header-cart-btn" class="relative text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+<span id="cart" style="display: none;" class="absolute top-0 right-0 bg-error text-on-error text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full"></span>
+</button>
+<button id="header-order-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" onclick="window.location.href='morderlist.html'">
+<span class="material-symbols-outlined text-[22px]">local_shipping</span>
+</button>
+<button id="header-profile-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[22px]">person</span>
+</button>
+<button id="header-logout-btn" class="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container" onclick="localStorage.removeItem('isLoggedIn');localStorage.removeItem('userId');alert('로그아웃이 되었습니다.');window.location.href='mmall.html';">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center w-full px-md md:px-lg py-xl max-w-7xl mx-auto">
+<div class="w-full max-w-[440px] md:max-w-2xl lg:max-w-4xl flex flex-col gap-lg">
+<!-- Page Header -->
+<div class="flex items-center justify-between border-b border-outline-variant pb-md">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">장바구니</h1>
+</div>
+<!-- Cart Action Bar -->
+<div class="flex items-center justify-between py-sm text-on-surface-variant">
+<label class="flex items-center gap-sm cursor-pointer hover:opacity-70 transition-opacity">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface bg-surface-container w-5 h-5 cursor-pointer" type="checkbox"/>
+<span class="font-label-md text-label-md">전체 선택</span>
+</label>
+<div class="flex items-center gap-sm">
+<button class="font-label-md text-label-md text-outline hover:text-error transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                    선택 삭제
+                </button>
+<button id="empty-cart-btn" class="font-label-md text-label-md text-outline hover:text-primary transition-colors flex items-center gap-xs ml-sm">
+                    장바구니 비우기
+                </button>
+</div>
+</div>
+<!-- Cart Items List -->
+<div class="flex flex-col gap-md" id="cart section">
+<!-- Item 1 -->
+<div class="bg-surface-container-low rounded-lg p-md flex flex-col sm:flex-row gap-md relative group">
+<div class="absolute top-md left-md z-10">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface bg-surface-container w-5 h-5 cursor-pointer shadow-sm" type="checkbox"/>
+</div>
+<!-- Image -->
+<div class="w-full sm:w-[120px] aspect-square rounded-DEFAULT overflow-hidden bg-surface-container relative shrink-0 ml-8 sm:ml-0">
+<img alt="Cushion Cover" class="w-full h-full object-cover mix-blend-multiply" data-alt="A square cushion cover featuring a detailed, whimsical illustration of various stylized animals and abstract shapes in soft blues, yellows, and grays, resting on a clean, light beige minimal studio surface. The lighting is soft and even, typical of high-end e-commerce photography, casting no harsh shadows. The aesthetic is warm, organic modernism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQRQfy_IQ3z-3IqFWCYn0rOfdFFZUm9q_dTkNOjgF_rJRBu9lUXbNkKNl48mMMuVLFLSeHj7-SOZvSTGPo0he9xh2Z9pbfTjgBY8CDKXYh8YLnROv_GNkB7ZHKIYGV9X6xkkicnyFOk7Iu6n6qrcSOIncbnJe1iszVK64K2VGNN8O5H-ZBfetsaqlVhhAvr71zqr-Ta_IbNWFtPTJrLOE6ZJVDlEQHiAEQTJHv1hnMt7ApJ75Q8D1aozf-gItsnX4xvXr_85w3_g"/>
+</div>
+<!-- Details -->
+<div class="flex-grow flex flex-col justify-between pl-8 sm:pl-0">
+<div class="flex flex-col gap-xs mb-md">
+<h3 class="font-label-md text-label-md text-on-surface font-semibold line-clamp-2 pr-8">[쿠션커버] MATCHMAKING</h3>
+<p class="font-caption text-caption text-on-surface-variant">Standard Size / Natural</p>
+</div>
+<div class="flex items-end justify-between mt-auto">
+<!-- Quantity -->
+<div class="flex items-center border border-outline-variant rounded-DEFAULT bg-surface h-8">
+<button class="px-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center h-full border-r border-outline-variant">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-label-md text-label-md text-on-surface w-8 text-center bg-surface">1</span>
+<button class="px-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center h-full border-l border-outline-variant">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+<!-- Price -->
+<div class="text-right">
+<span class="font-body-lg text-body-lg text-on-surface font-medium">25,600원</span>
+</div>
+</div>
+</div>
+<!-- Individual Remove (Desktop mostly, but useful here too) -->
+<button class="absolute top-md right-md text-outline-variant hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-low rounded-lg p-md flex flex-col sm:flex-row gap-md relative group">
+<div class="absolute top-md left-md z-10">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary focus:ring-offset-surface bg-surface-container w-5 h-5 cursor-pointer shadow-sm" type="checkbox"/>
+</div>
+<!-- Image -->
+<div class="w-full sm:w-[120px] aspect-square rounded-DEFAULT overflow-hidden bg-surface-container relative shrink-0 ml-8 sm:ml-0">
+<img alt="Tote Bag" class="w-full h-full object-cover mix-blend-multiply" data-alt="A light yellow canvas tote bag featuring a grid-like printed pattern of small, stylized illustrations, possibly of characters or nature elements. The bag is presented flat against a pristine, soft beige background. The lighting is diffused and bright, creating a clean, minimal, and organic product presentation typical of a modern lifestyle brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqTH3VSwWxzQOiF_g2SoTCmnOdaIer5vgw658VlBsGf2WXYh5hqRYs0zOWfMc9JItVVJYBGg74ZBTrpV5i-5JQuyKG_KD6K3tP3QgpxwsOFOt_USQGff4pPp9dCFUsX9nkXKfJEXIa3hLICytVo7BFLb4JiwlajxoQPEPu9nKEtYuYw342lbsj3Ag2LxDWjao49VDhdQ1VVehGf-R_3fSzkp5IoiTpF1g3GP9fafGN4Faz15mcYNchBlpPrSwBGn8icDeKEYr2qQ"/>
+</div>
+<!-- Details -->
+<div class="flex-grow flex flex-col justify-between pl-8 sm:pl-0">
+<div class="flex flex-col gap-xs mb-md">
+<h3 class="font-label-md text-label-md text-on-surface font-semibold line-clamp-2 pr-8">[6/1 순차출고] [핸들파우치] 미피와 데이지(옐로우)</h3>
+<p class="font-caption text-caption text-on-surface-variant">One Size / Yellow</p>
+</div>
+<div class="flex items-end justify-between mt-auto">
+<!-- Quantity -->
+<div class="flex items-center border border-outline-variant rounded-DEFAULT bg-surface h-8">
+<button class="px-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center h-full border-r border-outline-variant">
+<span class="material-symbols-outlined text-[16px]">remove</span>
+</button>
+<span class="font-label-md text-label-md text-on-surface w-8 text-center bg-surface">3</span>
+<button class="px-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center h-full border-l border-outline-variant">
+<span class="material-symbols-outlined text-[16px]">add</span>
+</button>
+</div>
+<!-- Price -->
+<div class="text-right">
+<span class="font-body-lg text-body-lg text-on-surface font-medium">55,200원</span>
+</div>
+</div>
+</div>
+<!-- Individual Remove -->
+<button class="absolute top-md right-md text-outline-variant hover:text-error transition-colors p-1">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- Mobile Sticky Footer Area Spacer -->
+<div class="h-32 md:h-0"></div>
+</div>
+</main>
+<!-- Mobile Sticky Checkout Summary -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-high border-t border-outline-variant p-md shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-40 md:relative md:bg-transparent md:border-none md:shadow-none md:p-0 md:max-w-4xl md:mx-auto md:w-full md:mt-lg md:mb-xl transition-all duration-300">
+<div class="max-w-[440px] md:max-w-full mx-auto w-full flex flex-col gap-sm">
+
+    <!-- COLLAPSED STATE -->
+    <div id="summary-collapsed" class="flex flex-col gap-sm md:hidden">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center gap-xs">
+                <span class="font-label-md text-label-md font-bold text-on-surface">결제예정금액</span>
+                <span class="font-headline-md text-headline-md font-bold text-primary">80,800원</span>
+            </div>
+            <button id="btn-expand-summary" class="p-1 text-on-surface-variant hover:text-primary transition-colors bg-surface rounded-full border border-outline-variant shadow-sm flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">keyboard_arrow_up</span>
+            </button>
+        </div>
+        <div class="flex flex-row gap-sm">
+            <button class="flex-1 bg-surface border border-outline-variant text-on-surface font-label-md text-label-md py-3 rounded-lg hover:bg-surface-container-high transition-colors flex justify-center items-center">
+                쇼핑 계속
+            </button>
+            <button onclick="window.location.href='morder.html?source=cart'" class="flex-1 bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-3 rounded-lg transition-colors flex justify-center items-center">
+                주문 하기
+            </button>
+        </div>
+    </div>
+
+    <!-- EXPANDED STATE -->
+    <div id="summary-expanded" class="hidden md:flex flex-col gap-sm">
+        <div class="flex justify-center md:hidden mb-xs -mt-2">
+            <button id="btn-collapse-summary" class="p-1 text-on-surface-variant hover:text-primary transition-colors bg-surface rounded-full border border-outline-variant shadow-sm flex items-center justify-center">
+                <span class="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+            </button>
+        </div>
+
+        <div class="flex justify-between items-center mb-xs">
+        <span class="font-label-md text-label-md text-on-surface-variant">총 상품금액</span>
+        <span class="font-body-md text-body-md text-on-surface">80,800원</span>
+        </div>
+        <div class="flex justify-between items-center border-b border-outline-variant pb-sm mb-sm md:border-none md:pb-0 md:mb-0">
+        <span class="font-label-md text-label-md text-on-surface-variant">배송비</span>
+        <span class="font-body-md text-body-md text-on-surface">+ 0원</span>
+        </div>
+        <div class="flex justify-between items-end mb-md">
+        <span class="font-headline-md text-headline-md font-bold text-on-surface">결제예정금액</span>
+        <span class="font-headline-lg text-headline-lg font-bold text-primary">80,800원</span>
+        </div>
+        <div class="flex flex-col gap-sm">
+        <button onclick="window.location.href='morder.html?source=cart'" class="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-4 rounded-lg transition-colors flex justify-center items-center gap-sm">
+                            주문 하기
+        </button>
+        <button class="w-full bg-surface-container hover:bg-surface-container-low border border-outline-variant text-on-surface font-label-md text-label-md py-3 rounded-lg transition-colors">
+                            쇼핑 계속
+                        </button>
+        </div>
+    </div>
+
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const btnExpand = document.getElementById('btn-expand-summary');
+    const btnCollapse = document.getElementById('btn-collapse-summary');
+    const summaryCollapsed = document.getElementById('summary-collapsed');
+    const summaryExpanded = document.getElementById('summary-expanded');
+
+    if (btnExpand && btnCollapse && summaryCollapsed && summaryExpanded) {
+        btnExpand.addEventListener('click', () => {
+            summaryCollapsed.classList.add('hidden');
+            summaryCollapsed.classList.remove('flex');
+            summaryExpanded.classList.remove('hidden');
+            summaryExpanded.classList.add('flex');
+        });
+
+        btnCollapse.addEventListener('click', () => {
+            summaryExpanded.classList.add('hidden');
+            summaryExpanded.classList.remove('flex');
+            summaryCollapsed.classList.remove('hidden');
+            summaryCollapsed.classList.add('flex');
+        });
+    }
+});
+</script>
+<!-- Footer -->
+<footer class="bg-surface-container-highest mt-xl w-full">
+<div class="w-[90%] mx-auto py-8 flex flex-col md:flex-row items-start justify-between border-t border-outline-variant gap-md">
+<div class="flex flex-col gap-xs font-caption text-caption text-on-surface-variant text-left">
+<span>대표 조민균</span>
+<span>문의전화 031-755-1568</span>
+<span>사업자등록번호 691-23-02249</span>
+<span>통신판매업 신고번호 2026-성남분당A-0172</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant self-start">© 2026 L14 Cordy. All rights reserved.</div>
+</div>
+</footer>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'mlogin.html';
+        }
+
+        
+        const userId = localStorage.getItem('userId');
+        const cartEl = document.getElementById('cart') || document.getElementById('cart_count');
+        const cartSection = document.getElementById('cart section');
+
+        const updateTotal = () => {
+            let totalPrice = 0;
+            const items = cartSection ? cartSection.querySelectorAll('.cart-item-row') : [];
+            let allChecked = true;
+            let anyExists = false;
+
+            items.forEach(item => {
+                anyExists = true;
+                const checkbox = item.querySelector('.item-checkbox');
+                const priceEl = item.querySelector('.item-total-price');
+                const qtyInput = item.querySelector('.item-qty-input');
+                
+                const unitPrice = parseFloat(item.dataset.unitPrice || 0);
+                let qty = parseInt(qtyInput.value);
+                if (isNaN(qty) || qty < 1) qty = 1;
+                
+                const currentItemPrice = unitPrice * qty;
+                if (priceEl) priceEl.textContent = currentItemPrice.toLocaleString() + '원';
+
+                if (checkbox && checkbox.checked) {
+                    totalPrice += currentItemPrice;
+                } else {
+                    allChecked = false;
+                }
+            });
+
+            if (!anyExists) allChecked = false;
+
+            // Sync all "Select All" checkboxes in the document
+            const selectAllCheckboxes = Array.from(document.querySelectorAll('input[type="checkbox"]')).filter(cb => {
+                const parent = cb.closest('label') || cb.parentElement;
+                return parent && parent.textContent.includes('전체 선택');
+            });
+            selectAllCheckboxes.forEach(cb => {
+                cb.checked = allChecked;
+            });
+
+            // Sync all "Select All" buttons in the document
+            const selectAllBtns = Array.from(document.querySelectorAll('button')).filter(btn => btn.textContent.includes('전체 선택'));
+            selectAllBtns.forEach(btn => {
+                const icon = btn.querySelector('.material-symbols-outlined');
+                if (icon) {
+                    icon.textContent = allChecked ? 'check_box' : 'check_box_outline_blank';
+                }
+            });
+
+            // Update summary
+            const summarySpans = document.querySelectorAll('span');
+            for (let i = 0; i < summarySpans.length; i++) {
+                const txt = summarySpans[i].textContent.trim();
+                if (txt === '총 상품금액' || txt === '최종 결제 금액' || txt === '결제예정금액') {
+                    if (summarySpans[i+1]) {
+                        summarySpans[i+1].textContent = totalPrice.toLocaleString() + '원';
+                    }
+                }
+            }
+            // Make the number of cart icons in the header reflect whenever an item is deleted.
+            if (cartEl) {
+                cartEl.textContent = items.length;
+                cartEl.style.display = items.length > 0 ? 'flex' : 'none';
+            }
+        };
+
+        // Event Delegation for all interactive elements
+        document.addEventListener('change', (e) => {
+            if (e.target.matches('input[type="checkbox"]')) {
+                const parent = e.target.closest('label') || e.target.parentElement;
+                if (parent && parent.textContent.includes('전체 선택')) {
+                    const isChecked = e.target.checked;
+                    const allItemsCb = document.querySelectorAll('.item-checkbox');
+                    allItemsCb.forEach(icb => {
+                        icb.checked = isChecked;
+                    });
+                    updateTotal();
+                } else if (e.target.matches('.item-checkbox')) {
+                    updateTotal();
+                }
+            } else if (e.target.matches('.item-qty-input')) {
+                let v = parseInt(e.target.value);
+                if (isNaN(v) || v < 1) e.target.value = 1;
+                updateTotal();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const btnContinueShopping = e.target.closest('button');
+            if (btnContinueShopping && btnContinueShopping.textContent.includes('쇼핑 계속')) {
+                e.preventDefault();
+                const isMobile = window.location.pathname.includes('mcart.html') || window.innerWidth < 768;
+                window.location.href = isMobile ? 'mmall.html' : 'mall.html';
+                return;
+            }
+
+            const btnSelectAll = e.target.closest('button');
+            if (btnSelectAll && btnSelectAll.textContent.includes('전체 선택')) {
+                e.preventDefault();
+                const allItemsCb = document.querySelectorAll('.item-checkbox');
+                let allChecked = true;
+                allItemsCb.forEach(icb => {
+                    if (!icb.checked) allChecked = false;
+                });
+                
+                const newState = !allChecked;
+                allItemsCb.forEach(icb => {
+                    icb.checked = newState;
+                });
+                updateTotal();
+                return;
+            }
+
+            const btnEmptyCart = e.target.closest('#empty-cart-btn');
+            if (btnEmptyCart && btnEmptyCart.textContent.includes('장바구니 비우기')) {
+                e.preventDefault();
+                if (confirm('장바구니를 전부 비우시겠습니까?')) {
+                    const doRedirect = () => {
+                        alert('장바구니를 비웠습니다.');
+                        const isMobile = window.location.pathname.includes('mcart.html') || window.innerWidth < 768;
+                        window.location.href = isMobile ? 'mmall.html' : 'mall.html';
+                    };
+
+                    if (!userId) {
+                        doRedirect();
+                        return;
+                    }
+
+                    fetch('/api/cart/empty', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: Number(userId) })
+                    }).then(res => res.json()).then(data => {
+                        doRedirect();
+                    }).catch(err => {
+                        console.error(err);
+                        doRedirect();
+                    });
+                }
+                return;
+            }
+
+            const btnDeleteSelected = e.target.closest('button');
+            if (btnDeleteSelected && btnDeleteSelected.textContent.includes('선택 삭제')) {
+                e.preventDefault();
+                if (confirm('선택하신 상품을 삭제하시겠습니까?')) {
+                    const checkedItems = document.querySelectorAll('.cart-item-row .item-checkbox:checked');
+                    
+                    if (userId) {
+                        const deletePromises = Array.from(checkedItems).map(cb => {
+                            const row = cb.closest('.cart-item-row');
+                            if (row && row.dataset.cartId) {
+                                return fetch('/api/cart/remove', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ cartItemId: Number(row.dataset.cartId) })
+                                }).then(() => {
+                                    if (row) row.remove();
+                                }).catch(err => {
+                                    console.error(err);
+                                    if (row) row.remove();
+                                });
+                            }
+                            return Promise.resolve();
+                        });
+
+                        Promise.all(deletePromises).then(() => {
+                            updateTotal();
+                        });
+                    } else {
+                        checkedItems.forEach(cb => {
+                            const row = cb.closest('.cart-item-row');
+                            if (row) row.remove();
+                        });
+                        updateTotal();
+                    }
+                }
+                return;
+            }
+
+            const btnRemove = e.target.closest('button[aria-label="Remove item"]');
+            const btnDec = e.target.closest('.btn-decrease');
+            const btnInc = e.target.closest('.btn-increase');
+            
+            if (btnRemove) {
+                e.preventDefault();
+                const itemRow = btnRemove.closest('.cart-item-row');
+                if (itemRow) {
+                    const cartId = itemRow.dataset.cartId;
+                    if (cartId && userId) {
+                        fetch('/api/cart/remove', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ cartItemId: Number(cartId) })
+                        }).then(res => res.json()).then(data => {
+                            itemRow.remove();
+                            updateTotal();
+                        }).catch(err => {
+                            console.error(err);
+                            itemRow.remove();
+                            updateTotal();
+                        });
+                    } else {
+                        itemRow.remove();
+                        updateTotal();
+                    }
+                }
+            } else if (btnDec) {
+                e.preventDefault();
+                const qtyInput = btnDec.parentElement.querySelector('.item-qty-input');
+                if (qtyInput) {
+                    let v = parseInt(qtyInput.value) || 1;
+                    if (v > 1) {
+                        qtyInput.value = v - 1;
+                        updateTotal();
+                    }
+                }
+            } else if (btnInc) {
+                e.preventDefault();
+                const qtyInput = btnInc.parentElement.querySelector('.item-qty-input');
+                if (qtyInput) {
+                    let v = parseInt(qtyInput.value) || 1;
+                    qtyInput.value = v + 1;
+                    updateTotal();
+                }
+            }
+        });
+
+        if (userId) {
+            fetch('/api/cart/list?userId=' + userId)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.items) {
+                        const N = data.items.length;
+                        if (cartEl) {
+                            cartEl.textContent = N;
+                            cartEl.style.display = N > 0 ? 'flex' : 'none';
+                        }
+
+                        if (cartSection) {
+                            const children = Array.from(cartSection.children);
+                            const lastChild = children[children.length - 1];
+                            let bulkNode = null;
+                            if (lastChild && lastChild.innerHTML.includes('전체 선택')) {
+                                bulkNode = lastChild.cloneNode(true);
+                            }
+
+                            cartSection.innerHTML = '';
+
+                            data.items.forEach(item => {
+                                const itemPrice = item.cart_quantity * item.price;
+
+                                const itemHtml = `
+                                <div class="cart-item-row bg-surface-container-low rounded-lg p-md flex flex-col md:flex-row items-start md:items-center gap-md border border-outline-variant/30 transition-all hover:bg-surface-container relative group" data-cart-id="${item.cart_item_id}" data-unit-price="${item.price}">
+                                    <div class="absolute top-md left-md z-10 md:static md:flex md:h-5 md:items-center md:mr-2">
+                                        <input checked class="item-checkbox h-5 w-5 md:h-4 md:w-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container cursor-pointer shadow-sm md:shadow-none" type="checkbox"/>
+                                    </div>
+                                    <div class="flex items-center gap-md w-full md:w-auto flex-grow">
+                                        <div class="w-24 h-24 md:w-20 md:h-20 flex-shrink-0 bg-surface-container rounded-lg overflow-hidden relative border border-outline-variant/20 ml-8 md:ml-0">
+                                            <img alt="Product Image" class="w-full h-full object-cover" src="${item.image || ''}"/>
+                                        </div>
+                                        <div class="flex flex-col flex-grow">
+                                            <h3 class="font-label-md text-label-md text-on-surface mb-xs font-semibold line-clamp-2">${item.description || ''}</h3>
+                                            <p class="font-caption text-caption text-on-surface-variant">${item.priced_quantity}개</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between w-full md:w-auto gap-md md:gap-lg mt-sm md:mt-0 pt-sm md:pt-0 border-t border-outline-variant/30 md:border-none">
+                                        <div class="flex items-center border border-outline-variant rounded-lg bg-surface h-10 w-24">
+                                            <button aria-label="Decrease quantity" class="btn-decrease px-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center h-full w-1/3 border-r border-outline-variant">
+                                                <span class="material-symbols-outlined text-[16px]" data-icon="remove">remove</span>
+                                            </button>
+                                            <input class="item-qty-input w-1/3 h-full border-none bg-transparent text-center font-label-md text-label-md text-on-surface p-0 focus:ring-0" min="1" type="number" value="${item.cart_quantity}"/>
+                                            <button aria-label="Increase quantity" class="btn-increase px-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center h-full w-1/3 border-l border-outline-variant">
+                                                <span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+                                            </button>
+                                        </div>
+                                        <div class="text-right flex-shrink-0 min-w-[80px]">
+                                            <span class="item-total-price font-label-md text-label-md text-on-surface font-semibold">${itemPrice.toLocaleString()}원</span>
+                                        </div>
+                                        <button aria-label="Remove item" class="text-on-surface-variant hover:text-error transition-colors p-xs rounded-full hover:bg-error-container absolute top-2 right-2 md:static md:p-xs">
+                                            <span class="material-symbols-outlined text-xl" data-icon="close">close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                `;
+                                cartSection.insertAdjacentHTML('beforeend', itemHtml);
+                            });
+
+                            if (bulkNode) {
+                                cartSection.appendChild(bulkNode);
+                            }
+
+                            updateTotal(); // Calculate initial total
+                        }
+                    } else {
+                        if (cartEl) { cartEl.textContent = ''; cartEl.style.display = 'none'; }
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    if (cartEl) { cartEl.textContent = ''; cartEl.style.display = 'none'; }
+                });
+        } else {
+            if (cartEl) { cartEl.textContent = ''; cartEl.style.display = 'none'; }
+        }
+
+        const headerProfileBtn = document.getElementById('header-profile-btn');
+        if (headerProfileBtn) {
+            headerProfileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('userId');
+                alert('로그아웃 되었습니다.');
+                window.location.href = 'mmall.html';
+            });
+        }
+    });
+</script>
+</body></html>

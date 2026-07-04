@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<title>기쁜하루 후기</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#464837",
+                        "on-primary-fixed-variant": "#504530",
+                        "tertiary-container": "#5e604d",
+                        "on-tertiary-fixed-variant": "#464836",
+                        "surface-dim": "#E1D9CF",
+                        "secondary-fixed-dim": "#ccc6b5",
+                        "surface-container-low": "#f9f2ed",
+                        "surface-container-highest": "#e8e1dc",
+                        "on-surface-variant": "#4b463d",
+                        "inverse-primary": "#d5c5a8",
+                        "on-surface": "#1d1b18",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "surface-container-high": "#eee7e2",
+                        "tertiary-fixed": "#e3e4cc",
+                        "on-tertiary-container": "#d9dac3",
+                        "inverse-surface": "#33302d",
+                        "primary-fixed": "#f2e0c3",
+                        "surface-tint": "#695d46",
+                        "on-background": "#1d1b18",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "on-primary-fixed": "#231a08",
+                        "surface-container": "#f3ede8",
+                        "primary": "#504530",
+                        "secondary": "#625e50",
+                        "primary-container": "#695d46",
+                        "on-secondary-fixed": "#1e1c11",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#e9e2d0",
+                        "on-secondary-container": "#686456",
+                        "surface": "#FFF8F3",
+                        "background": "#fff8f3",
+                        "surface-bright": "#fff8f3",
+                        "surface-variant": "#e8e1dc",
+                        "on-secondary-fixed-variant": "#4a473a",
+                        "outline-variant": "#cec5b9",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#e9e2d0",
+                        "error": "#BA1A1A",
+                        "outline": "#7D766C",
+                        "on-primary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c7c8b1",
+                        "inverse-on-surface": "#f6efeb",
+                        "on-primary-container": "#e7d7ba"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "64px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "lg": "40px",
+                        "container-max": "440px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #FFF8F3; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+    </style>
+</head>
+<body class="font-body-md text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed m-0 p-0 overflow-x-hidden">
+
+<script>
+    function resizeMainContainer() {
+        const main = document.getElementById('main-container');
+        if (main) {
+            main.style.width = window.innerWidth + 'px';
+            main.style.minHeight = window.innerHeight + 'px';
+        }
+    }
+    window.addEventListener('resize', resizeMainContainer);
+    window.addEventListener('load', resizeMainContainer);
+    resizeMainContainer();
+</script>
+
+<main id="main-container" class="w-full flex-1 flex flex-col relative m-0 p-md md:p-lg box-border">
+<!-- Summary Section: Bento Style -->
+<section class="mb-lg">
+<div class="flex justify-between items-center mb-md">
+    <h1 class="font-headline-lg text-headline-lg text-primary">고객 리뷰</h1>
+    <button onclick="document.referrer ? window.location.href = document.referrer : window.location.href = 'mall.html'" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer flex items-center justify-center p-2 rounded-full hover:bg-surface-container">
+        <span class="material-symbols-outlined text-[28px]">close</span>
+    </button>
+</div>
+<div class="w-full">
+<!-- Total Reviews Card -->
+<div class="bg-surface-container-low rounded-xl p-md flex items-center justify-between shadow-sm transition-transform hover:scale-[1.01] duration-300">
+<div>
+<div class="flex items-baseline gap-xs mb-xs">
+<span id="avg-rating" class="text-[32px] font-bold text-primary leading-tight">평균별점 4.8/5.0</span>
+</div>
+<div id="avg-stars-container" class="flex text-primary mt-xs">
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-md text-label-md text-on-surface-variant mb-xs">총 리뷰 수</p>
+<span id="total-reviews" class="text-[48px] font-bold text-primary leading-tight">1,284</span>
+</div>
+</div>
+
+</div>
+</section>
+<!-- Filtering/Sorting Bar -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md mb-md border-b border-outline-variant pb-md">
+<div class="flex gap-sm">
+<button id="sort-date-btn" class="rounded-full px-md py-xs bg-primary text-on-primary font-label-md text-label-md transition-all active:scale-95">최신순</button>
+<button id="sort-rating-btn" class="rounded-full px-md py-xs bg-secondary-container text-on-secondary-container font-label-md text-label-md hover:bg-outline-variant transition-all active:scale-95">별점 높은 순</button>
+</div>
+<div class="relative w-full sm:w-auto">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">search</span>
+<input id="search-input" class="w-full sm:w-64 pl-xl pr-md py-xs bg-surface-container border border-outline-variant rounded-lg focus:outline-none focus:border-primary text-label-md font-label-md transition-colors" placeholder="리뷰 검색" type="text" lang="ko" style="ime-mode:active;"/>
+</div>
+</div>
+<!-- Review List -->
+<div id="reviews-container" class="space-y-md">
+</div>
+<!-- Pagination -->
+<div id="pagination-container" class="mt-xl flex justify-center items-center gap-md">
+</div>
+<!-- Bottom Actions -->
+<div class="flex justify-end p-md mt-auto">
+    <button onclick="window.location.href='writereview.html'" class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-lg hover:bg-inverse-surface transition-colors shadow-[0_4px_12px_rgba(80,69,48,0.08)] flex items-center gap-2">
+        <span class="material-symbols-outlined text-[20px]">edit</span>
+        후기쓰기
+    </button>
+</div>
+</main>
+
+<script>
+        // Micro-interaction for review items
+        document.querySelectorAll('article').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-2px)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/review?productId=1', { cache: 'no-store' });
+            const data = await res.json();
+            
+            if (data.success && data.reviews) {
+                let allReviews = data.reviews;
+                const totalCount = allReviews.length;
+                let avg = '0.0';
+                if (totalCount > 0) {
+                    const sum = allReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+                    avg = (sum / totalCount).toFixed(1);
+                }
+                
+                const avgRatingEl = document.getElementById('avg-rating');
+                if (avgRatingEl) avgRatingEl.textContent = '평균별점 ' + avg + '/5.0';
+                
+                const avgStarsContainer = document.getElementById('avg-stars-container');
+                if (avgStarsContainer) {
+                    let rating = Number(avg);
+                    let html = '';
+                    for (let i = 1; i <= 5; i++) {
+                        if (rating >= i - 0.25) {
+                            html += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                        } else if (rating >= i - 0.75) {
+                            html += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star_half</span>`;
+                        } else {
+                            html += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">star</span>`;
+                        }
+                    }
+                    avgStarsContainer.innerHTML = html;
+                }
+                
+                const totalReviewsEl = document.getElementById('total-reviews');
+                if (totalReviewsEl) totalReviewsEl.textContent = totalCount;
+
+                let currentPage = 1;
+                const itemsPerPage = 3;
+                let sortType = 'date';
+                let dateOrder = 'desc';
+                let ratingOrder = 'desc';
+                let searchQuery = '';
+
+                const searchInput = document.getElementById('search-input');
+                const sortDateBtn = document.getElementById('sort-date-btn');
+                const sortRatingBtn = document.getElementById('sort-rating-btn');
+                const reviewsContainer = document.getElementById('reviews-container');
+                const paginationContainer = document.getElementById('pagination-container');
+
+                function updateSortButtons() {
+                    if (sortDateBtn) {
+                        sortDateBtn.textContent = dateOrder === 'desc' ? '최신순' : '과거순';
+                        if (sortType === 'date') {
+                            sortDateBtn.className = "rounded-full px-md py-xs bg-primary text-on-primary font-label-md text-label-md transition-all active:scale-95";
+                        } else {
+                            sortDateBtn.className = "rounded-full px-md py-xs bg-secondary-container text-on-secondary-container font-label-md text-label-md hover:bg-outline-variant transition-all active:scale-95";
+                        }
+                    }
+                    if (sortRatingBtn) {
+                        sortRatingBtn.textContent = ratingOrder === 'desc' ? '별점 높은 순' : '별점 낮은 순';
+                        if (sortType === 'rating') {
+                            sortRatingBtn.className = "rounded-full px-md py-xs bg-primary text-on-primary font-label-md text-label-md transition-all active:scale-95";
+                        } else {
+                            sortRatingBtn.className = "rounded-full px-md py-xs bg-secondary-container text-on-secondary-container font-label-md text-label-md hover:bg-outline-variant transition-all active:scale-95";
+                        }
+                    }
+                }
+
+                function render() {
+                    let filteredReviews = allReviews;
+                    if (searchQuery.trim()) {
+                        const q = searchQuery.toLowerCase();
+                        filteredReviews = allReviews.filter(r => 
+                            (r.content && r.content.toLowerCase().includes(q)) ||
+                            (r.customer_name && r.customer_name.toLowerCase().includes(q))
+                        );
+                    }
+
+                    filteredReviews.sort((a, b) => {
+                        if (sortType === 'date') {
+                            const valA = new Date(a.created_at).getTime();
+                            const valB = new Date(b.created_at).getTime();
+                            return dateOrder === 'desc' ? valB - valA : valA - valB;
+                        } else {
+                            const valA = Number(a.rating) || 0;
+                            const valB = Number(b.rating) || 0;
+                            return ratingOrder === 'desc' ? valB - valA : valA - valB;
+                        }
+                    });
+
+                    const totalPages = Math.ceil(filteredReviews.length / itemsPerPage) || 1;
+                    if (currentPage > totalPages) currentPage = totalPages;
+                    
+                    const startIndex = (currentPage - 1) * itemsPerPage;
+                    const paginated = filteredReviews.slice(startIndex, startIndex + itemsPerPage);
+
+                    if (reviewsContainer) {
+                        reviewsContainer.innerHTML = '';
+                        paginated.forEach(review => {
+                            let rVal = Number(review.rating) || 0;
+                            let stars = '';
+                            for (let i = 1; i <= 5; i++) {
+                                if (rVal >= i - 0.25) {
+                                    stars += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                                } else if (rVal >= i - 0.75) {
+                                    stars += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star_half</span>`;
+                                } else {
+                                    stars += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">star</span>`;
+                                }
+                            }
+                            
+                            let formattedDate = '';
+                            if (review.created_at) {
+                                const dateObj = new Date(review.created_at);
+                                if (!isNaN(dateObj.getTime())) {
+                                    const yy = String(dateObj.getFullYear());
+                                    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                                    const dd = String(dateObj.getDate()).padStart(2, '0');
+                                    formattedDate = `${yy}.${mm}.${dd}`;
+                                }
+                            }
+
+                            let contentStr = review.content || '';
+                            let nameStr = review.customer_name || '';
+                            if (searchQuery.trim()) {
+                                const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp('(' + escapeRegExp(searchQuery.trim()) + ')', 'gi');
+                                contentStr = contentStr.replace(regex, '<strong class="font-bold text-primary">$1</strong>');
+                                nameStr = nameStr.replace(regex, '<strong class="font-bold text-primary">$1</strong>');
+                            }
+                            
+                            reviewsContainer.innerHTML += `
+                            <article class="bg-surface-container-low rounded-xl p-md border border-transparent hover:border-outline-variant transition-all duration-300">
+                                <div class="flex justify-between items-start mb-sm">
+                                    <div class="flex flex-col">
+                                        <div class="flex text-primary mb-xs">
+                                            ${stars}
+                                        </div>
+                                        <div class="flex gap-sm items-center">
+                                            <span class="font-label-md text-label-md text-on-surface font-bold">${nameStr}</span>
+                                            <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+                                            <span class="font-caption text-caption text-outline">${formattedDate}</span>
+                                        </div>
+                                    </div>
+                                    <button class="material-symbols-outlined text-outline hover:text-primary transition-colors">more_horiz</button>
+                                </div>
+                                <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                    ${contentStr}
+                                </p>
+                            </article>
+                            `;
+                        });
+                    }
+
+                    if (paginationContainer) {
+                        let html = '';
+                        const prevDisabled = currentPage === 1 ? 'disabled opacity-30' : '';
+                        html += `<button class="material-symbols-outlined text-outline hover:text-primary transition-colors ${prevDisabled}" onclick="window.goToPage(${currentPage - 1})">chevron_left</button>`;
+                        html += `<div class="flex gap-sm">`;
+                        for (let i = 1; i <= totalPages; i++) {
+                            if (i === currentPage) {
+                                html += `<button class="w-8 h-8 rounded-full bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center">${i}</button>`;
+                            } else {
+                                html += `<button class="w-8 h-8 rounded-full hover:bg-surface-container font-label-md text-label-md flex items-center justify-center transition-colors" onclick="window.goToPage(${i})">${i}</button>`;
+                            }
+                        }
+                        html += `</div>`;
+                        const nextDisabled = currentPage === totalPages ? 'disabled opacity-30' : '';
+                        html += `<button class="material-symbols-outlined text-outline hover:text-primary transition-colors ${nextDisabled}" onclick="window.goToPage(${currentPage + 1})">chevron_right</button>`;
+                        paginationContainer.innerHTML = html;
+                    }
+
+                    updateSortButtons();
+                }
+
+                window.goToPage = function(page) {
+                    let activeReviews = allReviews;
+                    if (searchQuery.trim()) {
+                        const q = searchQuery.toLowerCase();
+                        activeReviews = allReviews.filter(r => 
+                            (r.content && r.content.toLowerCase().includes(q)) ||
+                            (r.customer_name && r.customer_name.toLowerCase().includes(q))
+                        );
+                    }
+                    const totalPages = Math.ceil(activeReviews.length / itemsPerPage) || 1;
+                    if (page >= 1 && page <= totalPages) {
+                        currentPage = page;
+                        render();
+                    }
+                };
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        searchQuery = e.target.value;
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                if (sortDateBtn) {
+                    sortDateBtn.addEventListener('click', () => {
+                        if (sortType === 'date') {
+                            dateOrder = dateOrder === 'desc' ? 'asc' : 'desc';
+                        } else {
+                            sortType = 'date';
+                        }
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                if (sortRatingBtn) {
+                    sortRatingBtn.addEventListener('click', () => {
+                        if (sortType === 'rating') {
+                            ratingOrder = ratingOrder === 'desc' ? 'asc' : 'desc';
+                        } else {
+                            sortType = 'rating';
+                        }
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                render();
+            }
+        } catch (err) {
+            console.error('Error fetching reviews:', err);
+        }
+    });
+</script>
+</body></html>

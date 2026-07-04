@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>마이페이지 - 기쁜하루</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 via CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Custom configuration for specific colors from the design -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-error-container": "#93000a",
+                "tertiary-container": "#cfcdc8",
+                "surface-container-lowest": "#ffffff",
+                "surface-variant": "#eae1d9",
+                "on-primary-fixed": "#211b0c",
+                "on-secondary": "#ffffff",
+                "on-secondary-container": "#68615c",
+                "on-surface-variant": "#4b463e",
+                "on-primary-fixed-variant": "#4e4635",
+                "outline-variant": "#cdc5ba",
+                "surface-tint": "#665d4b",
+                "error-container": "#ffdad6",
+                "on-tertiary": "#ffffff",
+                "surface-container-high": "#f0e7de",
+                "on-tertiary-fixed-variant": "#474744",
+                "inverse-on-surface": "#f9efe7",
+                "on-tertiary-fixed": "#1b1c19",
+                "on-primary-container": "#5e5644",
+                "on-background": "#1f1b16",
+                "secondary-container": "#e8ded7",
+                "on-error": "#ffffff",
+                "surface-dim": "#e1d8d0",
+                "inverse-primary": "#d1c5ae",
+                "background": "#fff8f3",
+                "error": "#ba1a1a",
+                "secondary-fixed-dim": "#cec5be",
+                "surface": "#fff8f3",
+                "tertiary-fixed-dim": "#c8c6c2",
+                "on-primary": "#ffffff",
+                "surface-bright": "#fff8f3",
+                "on-surface": "#1f1b16",
+                "on-secondary-fixed": "#1f1b17",
+                "tertiary-fixed": "#e4e2dd",
+                "secondary": "#645d58",
+                "primary-container": "#d8ccb5",
+                "primary-fixed-dim": "#d1c5ae",
+                "inverse-surface": "#34302a",
+                "surface-container-low": "#fcf2ea",
+                "outline": "#7c766d",
+                "secondary-fixed": "#ebe1da",
+                "on-secondary-fixed-variant": "#4c4641",
+                "surface-container-highest": "#eae1d9",
+                "primary": "#665d4b",
+                "on-tertiary-container": "#575753",
+                "tertiary": "#5e5e5b",
+                "primary-fixed": "#eee1c9",
+                "surface-container": "#f6ece4"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-mobile": "20px",
+                "gutter": "24px",
+                "margin-desktop": "64px",
+                "unit": "4px",
+                "container-max": "1200px",
+                "xs": "4px",
+                "base": "8px",
+                "sm": "12px",
+                "md": "24px",
+                "lg": "40px",
+                "xl": "64px"
+        },
+        "fontFamily": {
+                "sans": ["Manrope", "Noto Sans KR", "sans-serif"],
+                "inter": ["Inter", "sans-serif"],
+                "headline-lg": [
+                        "Manrope"
+                ],
+                "headline-md": [
+                        "Manrope"
+                ],
+                "body-lg": [
+                        "Manrope"
+                ],
+                "label-md": [
+                        "Manrope"
+                ],
+                "headline-xl": [
+                        "Manrope"
+                ],
+                "headline-xl-mobile": [
+                        "Manrope"
+                ],
+                "label-sm": [
+                        "Manrope"
+                ],
+                "body-md": [
+                        "Manrope"
+                ],
+                "headline-lg-mobile": [
+                        "Manrope"
+                ],
+                "caption": [
+                        "Manrope"
+                ]
+        },
+        "fontSize": {
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.3",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.4",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "headline-xl": [
+                        "40px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-xl-mobile": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.6",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "fontWeight": "600"
+                        }
+                ],
+                "caption": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- BEGIN: MainHeader -->
+<!-- TopNavBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-[90%] mx-auto py-md h-20">
+<div class="flex items-center gap-md">
+<img src="https://capofcom.cafe24.com/l14_coordy/images/l14.jpeg" style="width: 24px; height: 24px; border-radius: 50%;margin-right: -15px; vertical-align: middle;" alt="L14 Cordy Logo">
+<a class="text-[24px] font-bold text-primary tracking-[-0.01em]" style="font-family: 'Inter', sans-serif; line-height: 32px;" href="#">L14 Cordy</a>
+</div>
+<div class="flex items-center gap-0">
+<button class="relative text-on-surface-variant hover:text-primary transition-all duration-200 p-base rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="absolute top-1 right-1 bg-error text-on-error text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">2</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all duration-200 p-base rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row pt-16 px-8 md:px-16 pb-24 gap-12 lg:gap-24" data-purpose="mypage-layout">
+<!-- BEGIN: SidebarMenu -->
+<nav aria-label="My Page Navigation" class="w-full md:w-48 flex-shrink-0">
+<h1 class="text-[22px] font-bold mb-8 text-on-surface">마이페이지</h1>
+<ul class="flex flex-col space-y-5 text-[15px] text-on-surface-variant">
+<!-- Requested Change: Added space to "주문/배송 내역" -->
+<li><a class="font-bold text-on-surface hover:underline underline-offset-4" href="#">주문/배송 내역</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">취소/교환/반품</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">상품문의</a></li>
+<li><a class="hover:text-on-surface transition-colors flex items-center justify-between" href="#">구매후기 작성 <span class="text-outline text-sm">4</span></a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">내가 쓴 구매후기</a></li>
+<!-- Requested Change: Inserted "배송지 관리" -->
+<li><a class="hover:text-on-surface transition-colors" href="#">배송지 관리</a></li>
+<li><a class="hover:text-on-surface transition-colors" href="#">회원정보 수정</a></li>
+</ul>
+</nav>
+<!-- END: SidebarMenu -->
+<!-- BEGIN: ContentArea -->
+<section class="flex-1 flex flex-col space-y-6" data-purpose="order-history-content">
+<!-- Content Heading -->
+<!-- Requested Change: Added space to "주문/배송 내역" -->
+<h2 class="text-[22px] font-bold mb-2 text-on-surface">주문/배송 내역</h2>
+<!-- Filter and Search Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant flex flex-col md:flex-row justify-between items-start md:items-center gap-4" data-purpose="filter-bar">
+<!-- Status Tabs -->
+<div class="flex space-x-6 text-[15px]">
+<button class="font-bold text-on-surface border-b-2 border-on-surface pb-1 px-1">전체</button>
+<button class="text-on-surface-variant hover:text-on-surface pb-1 px-1 transition-colors">취소/교환/반품 3</button>
+</div>
+<!-- Search Input -->
+<div class="relative w-full md:w-72">
+<input aria-label="Search orders" class="w-full bg-surface-container-lowest border border-outline-variant text-on-surface text-sm rounded-full py-2.5 pl-5 pr-10 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder-on-surface-variant" placeholder="검색어를 입력하세요" type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-on-surface-variant">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Order List Items -->
+<div class="space-y-4" data-purpose="order-list">
+<!-- Individual Order Card -->
+<article class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-outline-variant flex flex-col relative">
+<!-- Order Meta Info -->
+<div class="flex justify-between items-center mb-5">
+<div class="text-[13px] text-on-surface-variant">5.9. 07:13 주문</div>
+<a class="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors absolute top-6 right-6" href="#">상세보기 &gt;</a>
+</div>
+<!-- Product Details -->
+<div class="flex flex-col sm:flex-row gap-6">
+<!-- Product Image -->
+<div class="flex-shrink-0">
+<img alt="엘포틴 코디 15ml X 15포" class="w-[120px] h-[120px] rounded-lg object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQGq5OqykcE-elmyBXi8h71OqyJokOSJOHkXZdYKY7KffWgbDkK7mXGP5W8roAHlPDnN12GRyH512wrW5zhIBB0eE-HkNGINNLuZQbpqKrNOO9kO0Yb_Wwac6JDZGtpeEA58zSlwZL0u3mBIsjk8wnoauAPD-aWL2eGv5hcA0VCjVsNd6VwcpNPaZM1QFeS2Gx70B0oyKLXqZppRK9kBrcVrtVfsRd80cnSrFxA1EZH4kVKBOs3DIMsaQSi5d4AR9K0Bfe7ayFTg"/>
+</div>
+<!-- Product Info & Actions -->
+<div class="flex-1 flex flex-col justify-center">
+<h3 class="text-[17px] font-medium text-on-surface mb-1">엘포틴 코디 15ml X 15포</h3>
+<p class="text-[22px] font-bold text-on-surface mb-5">65,000원</p>
+<!-- Action Buttons -->
+<div class="flex justify-between items-center mt-auto w-full">
+<button class="bg-surface-container-lowest border border-outline text-on-surface py-2 px-5 rounded-md text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+<div class="flex space-x-2">
+<button class="bg-surface-container-lowest border border-outline text-on-surface py-2 px-5 rounded-md text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">장바구니 담기</button>
+<button class="bg-primary-container text-on-primary-container py-2 px-5 rounded-md text-[14px] font-medium hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary outline-none">바로 구매하기</button>
+</div>
+</div>
+</div>
+</div>
+</article>
+<!-- End Individual Order Card -->
+</div>
+</section>
+<!-- END: ContentArea -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: Footer -->
+<footer class="bg-surface-container-highest mt-xl w-full">
+<div class="w-[90%] mx-auto py-8 flex flex-col md:flex-row items-start justify-between border-t border-outline-variant gap-md">
+<div class="flex flex-col gap-xs font-caption text-caption text-on-surface-variant text-left">
+<span>대표 조민균</span>
+<span>문의전화 031-755-1568</span>
+<span>사업자등록번호 691-23-02249</span>
+<span>통신판매업 신고번호 2026-성남분당A-0172</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant self-start">© 2026 L14 Cordy. All rights reserved.</div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>

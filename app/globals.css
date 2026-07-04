@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  --color-on-background: #1d1b18;
+  --color-on-primary: #ffffff;
+  --color-on-surface: #1d1b18;
+  --color-surface-container-highest: #e8e1dc;
+  --color-surface-container: #f3ede8;
+  --color-tertiary: #464837;
+  --color-on-tertiary-container: #d9dac3;
+  --color-tertiary-fixed: #e3e4cc;
+  --color-on-secondary-fixed: #1e1c11;
+  --color-inverse-on-surface: #f6efeb;
+  --color-primary-fixed: #f2e0c3;
+  --color-on-error-container: #93000a;
+  --color-outline-variant: #cec5b9;
+  --color-tertiary-container: #5e604d;
+  --color-surface-bright: #fff8f3;
+  --color-secondary-fixed-dim: #ccc6b5;
+  --color-inverse-primary: #d5c5a8;
+  --color-secondary: #625e50;
+  --color-on-primary-container: #e7d7ba;
+  --color-primary-fixed-dim: #d5c5a8;
+  --color-surface-dim: #E1D9CF;
+  --color-surface-container-high: #eee7e2;
+  --color-surface-container-low: #f9f2ed;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #686456;
+  --color-background: #fff8f3;
+  --color-secondary-fixed: #e9e2d0;
+  --color-secondary-container: #e9e2d0;
+  --color-surface: #FFF8F3;
+  --color-outline: #7D766C;
+  --color-surface-variant: #e8e1dc;
+  --color-error-container: #ffdad6;
+  --color-on-surface-variant: #4b463d;
+  --color-on-secondary-fixed-variant: #4a473a;
+  --color-on-primary-fixed-variant: #504530;
+  --color-inverse-surface: #33302d;
+  --color-error: #BA1A1A;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-error: #ffffff;
+  --color-tertiary-fixed-dim: #c7c8b1;
+  --color-on-tertiary-fixed: #1b1d0e;
+  --color-primary-container: #695d46;
+  --color-primary: #504530;
+  --color-surface-tint: #695d46;
+  --color-on-tertiary: #ffffff;
+  --color-on-primary-fixed: #231a08;
+  --color-on-tertiary-fixed-variant: #464836;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  --spacing-xl: 64px;
+  --spacing-md: 24px;
+  --spacing-sm: 12px;
+  --spacing-lg: 40px;
+  --spacing-xs: 4px;
+  --spacing-container-max: 440px;
+  --spacing-base: 8px;
+
+  --font-headline-lg: "Inter", sans-serif;
+  --font-headline-md: "Inter", sans-serif;
+  --font-body-lg: "Inter", sans-serif;
+  --font-label-md: "Inter", sans-serif;
+  --font-caption: "Inter", sans-serif;
+  --font-body-md: "Inter", sans-serif;
+
+  --text-headline-lg: 30px;
+  --text-headline-lg--line-height: 38px;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-headline-lg--font-weight: 600;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 32px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 500;
+
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 28px;
+  --text-body-lg--font-weight: 400;
+
+  --text-label-md: 14px;
+  --text-label-md--line-height: 20px;
+  --text-label-md--letter-spacing: 0.01em;
+  --text-label-md--font-weight: 500;
+
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-caption--font-weight: 400;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-body-md);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.filled {
+  font-variation-settings: 'FILL' 1;
+}
+.sticky-panel {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+.tabs-sticky {
+  position: sticky;
+  top: 80px;
+  z-index: 40;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+
+/* Hardcoded desktop/mobile visibility classes to guarantee correct rendering */
+@media (min-width: 768px) {
+  .desktop-only-view { display: block !important; }
+  .mobile-only-view { display: none !important; }
+}
+@media (max-width: 767px) {
+  .desktop-only-view { display: none !important; }
+  .mobile-only-view { display: block !important; }
+}

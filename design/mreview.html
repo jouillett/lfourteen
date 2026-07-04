@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>기쁜하루 - 고객 리뷰</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#464837",
+                      "background": "#fff8f3",
+                      "tertiary-fixed-dim": "#c7c8b1",
+                      "on-tertiary-fixed": "#1b1d0e",
+                      "on-primary-fixed-variant": "#504530",
+                      "surface": "#FFF8F3",
+                      "surface-container": "#F6ECE3",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed-dim": "#ccc6b5",
+                      "outline": "#7D766C",
+                      "outline-variant": "#cec5b9",
+                      "on-secondary-fixed-variant": "#4a473a",
+                      "secondary-fixed": "#e9e2d0",
+                      "inverse-primary": "#d5c5a8",
+                      "tertiary-fixed": "#e3e4cc",
+                      "surface-container-high": "#eee7e2",
+                      "primary-container": "#695d46",
+                      "secondary": "#625e50",
+                      "surface-dim": "#dfd9d4",
+                      "inverse-surface": "#33302d",
+                      "surface-variant": "#e8e1dc",
+                      "on-primary": "#ffffff",
+                      "primary": "#504530",
+                      "on-background": "#1d1b18",
+                      "primary-fixed": "#f2e0c3",
+                      "on-tertiary-fixed-variant": "#464836",
+                      "on-error-container": "#93000a",
+                      "surface-container-low": "#f9f2ed",
+                      "on-tertiary-container": "#d9dac3",
+                      "secondary-container": "#e9e2d0",
+                      "on-surface": "#1F1B15",
+                      "on-secondary-fixed": "#1e1c11",
+                      "tertiary-container": "#5e604d",
+                      "surface-container-highest": "#e8e1dc",
+                      "error-container": "#ffdad6",
+                      "error": "#BA1A1A",
+                      "on-secondary-container": "#686456",
+                      "on-primary-container": "#e7d7ba",
+                      "surface-tint": "#695d46",
+                      "surface-bright": "#fff8f3",
+                      "primary-fixed-dim": "#d5c5a8",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-surface-variant": "#4b463d",
+                      "on-primary-fixed": "#231a08",
+                      "inverse-on-surface": "#f6efeb",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "lg": "40px",
+                      "sm": "12px",
+                      "md": "24px",
+                      "xl": "64px",
+                      "base": "8px",
+                      "container-max": "440px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "caption": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                      "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.surface'); color: theme('colors.on-surface'); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col items-center">
+
+<!-- Main Content Container -->
+<main class="w-full max-w-[440px] px-md py-md flex-grow flex flex-col gap-lg">
+<!-- Page Title -->
+<header class="flex justify-between items-center">
+<h1 class="font-headline-md text-headline-md text-primary">고객 리뷰</h1>
+<button onclick="if(window.self !== window.top) { window.parent.postMessage('closeReviewModal', '*'); } else { document.referrer ? window.location.href = document.referrer : window.location.href = 'mmall.html'; }" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer flex items-center justify-center p-1 rounded-full hover:bg-surface-container">
+    <span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</header>
+<!-- Review Summary -->
+<section class="bg-surface-container-low rounded-[16px] p-md flex items-center justify-between shadow-sm">
+<div>
+<div class="flex items-baseline gap-xs mb-xs">
+<span id="avg-rating" class="font-headline-md text-headline-md font-bold text-primary">평균별점 4.8/5.0</span>
+</div>
+<div id="avg-stars-container" class="flex text-primary mt-xs">
+</div>
+</div>
+<div class="text-right">
+<p class="font-caption text-caption text-on-surface-variant mb-xs">총 리뷰 수</p>
+<span id="total-reviews" class="font-headline-md text-headline-md font-bold text-primary">1,284</span>
+</div>
+</section>
+<!-- Search & Sorting -->
+<section class="flex flex-col gap-sm">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input id="search-input" class="w-full bg-surface-container border border-outline-variant rounded-lg py-sm pl-[40px] pr-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="리뷰 검색" type="text" lang="ko" style="ime-mode:active;"/>
+</div>
+<div class="flex gap-sm overflow-x-auto pb-xs snap-x">
+<button id="sort-date-btn" class="snap-start shrink-0 bg-primary-container text-on-primary-container px-md py-xs rounded-full font-label-md text-label-md">최신순</button>
+<button id="sort-rating-btn" class="snap-start shrink-0 bg-surface-container border border-outline-variant text-on-surface px-md py-xs rounded-full font-label-md text-label-md">별점 높은 순</button>
+
+</div>
+</section>
+<!-- Review List -->
+<section id="reviews-container" class="flex flex-col gap-md">
+</section>
+<!-- Pagination -->
+<nav id="pagination-container" class="flex justify-center items-center gap-sm mt-md">
+</nav>
+<!-- Bottom Actions -->
+<div class="p-md mt-auto mb-xl">
+    <button onclick="window.location.href='mwritereview.html'" class="w-full bg-primary text-on-primary font-label-md text-label-md py-2 rounded-lg hover:bg-inverse-surface transition-colors shadow-[0_4px_12px_rgba(80,69,48,0.08)]">
+        후기쓰기
+    </button>
+</div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const res = await fetch('/api/review?productId=1', { cache: 'no-store' });
+            const data = await res.json();
+            
+            if (data.success && data.reviews) {
+                let allReviews = data.reviews;
+                const totalCount = allReviews.length;
+                let avg = '0.0';
+                if (totalCount > 0) {
+                    const sum = allReviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+                    avg = (sum / totalCount).toFixed(1);
+                }
+                
+                const avgRatingEl = document.getElementById('avg-rating');
+                if (avgRatingEl) avgRatingEl.textContent = '평균별점 ' + avg + '/5.0';
+                
+                const avgStarsContainer = document.getElementById('avg-stars-container');
+                if (avgStarsContainer) {
+                    let rating = Number(avg);
+                    let html = '';
+                    for (let i = 1; i <= 5; i++) {
+                        if (rating >= i - 0.25) {
+                            html += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                        } else if (rating >= i - 0.75) {
+                            html += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star_half</span>`;
+                        } else {
+                            html += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">star</span>`;
+                        }
+                    }
+                    avgStarsContainer.innerHTML = html;
+                }
+                
+                const totalReviewsEl = document.getElementById('total-reviews');
+                if (totalReviewsEl) totalReviewsEl.textContent = totalCount;
+
+                let currentPage = 1;
+                const itemsPerPage = 3;
+                let sortType = 'date';
+                let dateOrder = 'desc';
+                let ratingOrder = 'desc';
+                let searchQuery = '';
+
+                const searchInput = document.getElementById('search-input');
+                const sortDateBtn = document.getElementById('sort-date-btn');
+                const sortRatingBtn = document.getElementById('sort-rating-btn');
+                const reviewsContainer = document.getElementById('reviews-container');
+                const paginationContainer = document.getElementById('pagination-container');
+
+                function updateSortButtons() {
+                    if (sortDateBtn) {
+                        sortDateBtn.textContent = dateOrder === 'desc' ? '최신순' : '과거순';
+                        if (sortType === 'date') {
+                            sortDateBtn.className = "snap-start shrink-0 bg-primary-container text-on-primary-container px-md py-xs rounded-full font-label-md text-label-md";
+                        } else {
+                            sortDateBtn.className = "snap-start shrink-0 bg-surface-container border border-outline-variant text-on-surface px-md py-xs rounded-full font-label-md text-label-md";
+                        }
+                    }
+                    if (sortRatingBtn) {
+                        sortRatingBtn.textContent = ratingOrder === 'desc' ? '별점 높은 순' : '별점 낮은 순';
+                        if (sortType === 'rating') {
+                            sortRatingBtn.className = "snap-start shrink-0 bg-primary-container text-on-primary-container px-md py-xs rounded-full font-label-md text-label-md";
+                        } else {
+                            sortRatingBtn.className = "snap-start shrink-0 bg-surface-container border border-outline-variant text-on-surface px-md py-xs rounded-full font-label-md text-label-md";
+                        }
+                    }
+                }
+
+                function render() {
+                    let filteredReviews = allReviews;
+                    if (searchQuery.trim()) {
+                        const q = searchQuery.toLowerCase();
+                        filteredReviews = allReviews.filter(r => 
+                            (r.content && r.content.toLowerCase().includes(q)) ||
+                            (r.customer_name && r.customer_name.toLowerCase().includes(q))
+                        );
+                    }
+
+                    filteredReviews.sort((a, b) => {
+                        if (sortType === 'date') {
+                            const valA = new Date(a.created_at).getTime();
+                            const valB = new Date(b.created_at).getTime();
+                            return dateOrder === 'desc' ? valB - valA : valA - valB;
+                        } else {
+                            const valA = Number(a.rating) || 0;
+                            const valB = Number(b.rating) || 0;
+                            return ratingOrder === 'desc' ? valB - valA : valA - valB;
+                        }
+                    });
+
+                    const totalPages = Math.ceil(filteredReviews.length / itemsPerPage) || 1;
+                    if (currentPage > totalPages) currentPage = totalPages;
+                    
+                    const startIndex = (currentPage - 1) * itemsPerPage;
+                    const paginated = filteredReviews.slice(startIndex, startIndex + itemsPerPage);
+
+                    if (reviewsContainer) {
+                        reviewsContainer.innerHTML = '';
+                        paginated.forEach((review, idx) => {
+                            let rVal = Number(review.rating) || 0;
+                            let stars = '';
+                            for (let i = 1; i <= 5; i++) {
+                                if (rVal >= i - 0.25) {
+                                    stars += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>`;
+                                } else if (rVal >= i - 0.75) {
+                                    stars += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star_half</span>`;
+                                } else {
+                                    stars += `<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">star</span>`;
+                                }
+                            }
+                            
+                            let formattedDate = '';
+                            if (review.created_at) {
+                                const dateObj = new Date(review.created_at);
+                                if (!isNaN(dateObj.getTime())) {
+                                    const yy = String(dateObj.getFullYear());
+                                    const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                                    const dd = String(dateObj.getDate()).padStart(2, '0');
+                                    formattedDate = `${yy}.${mm}.${dd}`;
+                                }
+                            }
+
+                            let contentStr = review.content || '';
+                            let nameStr = review.customer_name || '';
+                            if (searchQuery.trim()) {
+                                const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const regex = new RegExp('(' + escapeRegExp(searchQuery.trim()) + ')', 'gi');
+                                contentStr = contentStr.replace(regex, '<strong class="font-bold text-primary">$1</strong>');
+                                nameStr = nameStr.replace(regex, '<strong class="font-bold text-primary">$1</strong>');
+                            }
+                            
+                            const extraClasses = idx > 0 ? " border-t border-outline-variant mt-sm" : "";
+                            
+                            reviewsContainer.innerHTML += `
+                            <article class="bg-surface-container-low rounded-lg p-md flex flex-col gap-sm shadow-sm relative${extraClasses}">
+                                <button class="absolute top-md right-md text-on-surface-variant hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined">more_horiz</span>
+                                </button>
+                                <div class="flex items-center gap-xs text-primary text-sm">
+                                    ${stars}
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-label-md text-label-md text-on-surface font-semibold">${nameStr}</span>
+                                    <span class="font-caption text-caption text-on-surface-variant">${formattedDate}</span>
+                                </div>
+                                <p class="font-body-md text-body-md text-on-surface leading-relaxed">
+                                    ${contentStr}
+                                </p>
+                            </article>
+                            `;
+                        });
+                    }
+
+                    if (paginationContainer) {
+                        let html = '';
+                        const prevDisabled = currentPage === 1 ? 'disabled opacity-50' : '';
+                        html += `<button class="w-[32px] h-[32px] flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors ${prevDisabled}" onclick="window.goToPage(${currentPage - 1})"><span class="material-symbols-outlined">chevron_left</span></button>`;
+                        html += `<div class="flex gap-xs">`;
+                        for (let i = 1; i <= totalPages; i++) {
+                            if (i === currentPage) {
+                                html += `<button class="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-primary text-on-primary font-label-md text-label-md">${i}</button>`;
+                            } else {
+                                html += `<button class="w-[32px] h-[32px] flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container transition-colors font-label-md text-label-md" onclick="window.goToPage(${i})">${i}</button>`;
+                            }
+                        }
+                        html += `</div>`;
+                        const nextDisabled = currentPage === totalPages ? 'disabled opacity-50' : '';
+                        html += `<button class="w-[32px] h-[32px] flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors ${nextDisabled}" onclick="window.goToPage(${currentPage + 1})"><span class="material-symbols-outlined">chevron_right</span></button>`;
+                        paginationContainer.innerHTML = html;
+                    }
+
+                    updateSortButtons();
+                }
+
+                window.goToPage = function(page) {
+                    let activeReviews = allReviews;
+                    if (searchQuery.trim()) {
+                        const q = searchQuery.toLowerCase();
+                        activeReviews = allReviews.filter(r => 
+                            (r.content && r.content.toLowerCase().includes(q)) ||
+                            (r.customer_name && r.customer_name.toLowerCase().includes(q))
+                        );
+                    }
+                    const totalPages = Math.ceil(activeReviews.length / itemsPerPage) || 1;
+                    if (page >= 1 && page <= totalPages) {
+                        currentPage = page;
+                        render();
+                    }
+                };
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        searchQuery = e.target.value;
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                if (sortDateBtn) {
+                    sortDateBtn.addEventListener('click', () => {
+                        if (sortType === 'date') {
+                            dateOrder = dateOrder === 'desc' ? 'asc' : 'desc';
+                        } else {
+                            sortType = 'date';
+                        }
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                if (sortRatingBtn) {
+                    sortRatingBtn.addEventListener('click', () => {
+                        if (sortType === 'rating') {
+                            ratingOrder = ratingOrder === 'desc' ? 'asc' : 'desc';
+                        } else {
+                            sortType = 'rating';
+                        }
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                render();
+            }
+        } catch (err) {
+            console.error('Error fetching reviews:', err);
+        }
+    });
+</script>
+</body></html>
