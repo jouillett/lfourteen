@@ -54,47 +54,94 @@ export default function OrderPage() {
     }
   }, [currentTab]);
 
-  const handleDeleteOrder = async (orderId: number, status: number, paymentKey: string) => {
-    if (status === 0) {
-      if (confirm("결제를 취소하시겠습니까?")) {
-        try {
-          const res = await fetch(`/api/payment/cancel`, {
+  const handleCancelDeliveredOrder = async (orderId: number, paymentKey: string) => {
+    if (confirm("정말 취소하시겠습니까?")) {
+      try {
+        const res = await fetch(`/api/payment/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
+        });
+        const data = await res.json();
+        if (data.success) {
+          const res2 = await fetch(`/api/orders/cancel-completed`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
+            body: JSON.stringify({ orderId })
           });
-          const data = await res.json();
-          if (data.success) {
-            await fetch(`/api/orders/status`, {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id: orderId, status: 3 })
-            });
+          const data2 = await res2.json();
+          if (data2.success) {
             alert("결제가 취소되었습니다.");
             window.location.href = "/mypage/cancel";
           } else {
-            alert("결제 취소에 실패했습니다: " + (data.message || ''));
+            alert("취소 처리에 실패했습니다.");
           }
-        } catch (e) {
-          console.error(e);
-          alert("오류가 발생했습니다.");
+        } else {
+          alert("결제 취소에 실패했습니다: " + (data.message || ''));
         }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
       }
-    } else if (status === 1) {
-      alert("배송중이므로 취소할 수 없습니다.");
-    } else {
-      if (confirm('정말로 이 주문을 삭제하시겠습니까?')) {
-        fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              setOrders(prev => prev.filter(order => order.id !== orderId));
-            } else {
-              alert('주문 삭제에 실패했습니다.');
-            }
-          })
-          .catch(console.error);
+    }
+  };
+
+  const handleCancelOrder = async (orderId: number, paymentKey: string) => {
+    if (confirm("정말 취소하시겠습니까?")) {
+      try {
+        const res = await fetch(`/api/payment/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetch(`/api/orders/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: orderId, status: 3 })
+          });
+          alert("결제가 취소되었습니다.");
+          window.location.href = "/mypage/cancel";
+        } else {
+          alert("결제 취소에 실패했습니다: " + (data.message || ''));
+        }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
       }
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: number, status: number) => {
+    if (status === 0) {
+      alert("배송 준비중이어서 삭제할 수 없습니다.");
+      return;
+    }
+    if (status === 1) {
+      alert("배송중이어서 삭제할 수 없습니다.");
+      return;
+    }
+    if (status === 4 || status === 5) {
+      alert("교환중이어서 삭제할 수 없습니다.");
+      return;
+    }
+    if (status === 7) {
+      alert("반품 진행중이어서 삭제할 수 없습니다.");
+      return;
+    }
+    
+    if (confirm('정말로 이 주문을 삭제하시겠습니까?')) {
+      fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setOrders(prev => prev.filter(order => order.id !== orderId));
+          } else {
+            alert('주문 삭제에 실패했습니다.');
+          }
+        })
+        .catch(console.error);
     }
   };
 
@@ -235,12 +282,22 @@ export default function OrderPage() {
                   <div className="flex justify-between items-center mb-5">
                     <div className="text-[13px] text-on-surface-variant flex items-center gap-2">
                       <span>{formattedDate}</span>
-                      {order.status === 3 && <span className="text-red-500 font-bold">취소</span>}
-                      {order.status === 4 && <span className="text-red-500 font-bold">교환</span>}
-                      {order.status === 5 && <span className="text-red-500 font-bold">반품</span>}
+                      <span className={`font-bold ${order.status > 2 ? 'text-red-500' : 'text-on-surface'}`}>
+                        {{
+                          0: '결제완료',
+                          1: '배송중',
+                          2: '배송완료',
+                          3: '취소',
+                          4: '교환시작',
+                          5: '교환진행',
+                          6: '교환완료',
+                          7: '반품진행',
+                          8: '반품'
+                        }[order.status as number] || ''}
+                      </span>
                     </div>
                     <div className="absolute top-6 right-6 flex flex-col items-end gap-1">
-                      <button onClick={() => handleDeleteOrder(order.id, order.status, order.payment_key)} className="text-[16px] font-bold text-on-surface-variant hover:text-on-surface transition-colors" title="삭제">
+                      <button onClick={() => handleDeleteOrder(order.id, order.status)} className="text-[16px] font-bold text-on-surface-variant hover:text-on-surface transition-colors" title="삭제">
                         ✕
                       </button>
                       <Link className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors" href={`/mypage/detail?id=${order.id}`}>상세보기 &gt;</Link>
@@ -271,7 +328,23 @@ export default function OrderPage() {
                       </p>
                       {/* Action Buttons */}
                       <div className="flex justify-between items-center mt-auto w-full">
-                        <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        <div className="flex items-center gap-4">
+                          <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                          {order.status === 0 && (
+                            <div className="flex items-center text-on-surface-variant text-[12px] md:text-[13px] gap-2">
+                              <button onClick={() => handleCancelOrder(order.id, order.payment_key)} className="hover:underline">취소</button>
+                            </div>
+                          )}
+                          {order.status === 2 && (
+                            <div className="flex items-center text-on-surface-variant text-[12px] md:text-[13px] gap-2">
+                              <button onClick={() => handleCancelDeliveredOrder(order.id, order.payment_key)} className="hover:underline">취소</button>
+                              <span className="text-outline-variant">|</span>
+                              <Link href="/mypage/cancel" className="hover:underline">교환</Link>
+                              <span className="text-outline-variant">|</span>
+                              <Link href="/mypage/cancel" className="hover:underline">반품</Link>
+                            </div>
+                          )}
+                        </div>
                         <div className="flex space-x-2">
                           <button onClick={() => handleAddToCart(order.id)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">
                             장바구니

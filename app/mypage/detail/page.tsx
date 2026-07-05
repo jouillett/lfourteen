@@ -169,7 +169,7 @@ export default function OrderDetailPage() {
                   </div>
                   {order.original_price && order.original_price !== order.total_price && (
                     <div className="flex justify-between">
-                      <span className="text-primary/80">할인 금액</span>
+                      <span className="text-primary/80">포인트 삭감</span>
                       <span className="text-primary font-medium">-{ (order.original_price - order.total_price).toLocaleString() }원</span>
                     </div>
                   )}

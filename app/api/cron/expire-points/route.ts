@@ -128,7 +128,7 @@ export async function GET(req: Request) {
             // Check if delivered
             if (data && data.state && data.state.id === 'delivered') {
               await connection.execute(
-                'UPDATE orders SET status = 2 WHERE id = ?',
+                'UPDATE orders SET status = 2, received_at = NOW() WHERE id = ?',
                 [order.id]
               );
               
