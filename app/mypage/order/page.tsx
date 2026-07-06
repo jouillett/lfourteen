@@ -113,6 +113,50 @@ export default function OrderPage() {
     }
   };
 
+  const handleExchange = async (orderId: number) => {
+    if (confirm("교환을 정말 원하십니까?")) {
+      try {
+        const res = await fetch(`/api/orders/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: 4 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("교환 요청이 접수되었습니다.");
+          window.location.href = "/mypage/cancel";
+        } else {
+          alert("교환 처리에 실패했습니다.");
+        }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
+      }
+    }
+  };
+
+  const handleReturn = async (orderId: number) => {
+    if (confirm("반품을 정말 원하십니까?")) {
+      try {
+        const res = await fetch(`/api/orders/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: 7 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("반품 요청이 접수되었습니다.");
+          window.location.href = "/mypage/cancel";
+        } else {
+          alert("반품 처리에 실패했습니다.");
+        }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
+      }
+    }
+  };
+
   const handleDeleteOrder = async (orderId: number, status: number) => {
     if (status === 0) {
       alert("배송 준비중이어서 삭제할 수 없습니다.");
@@ -307,13 +351,17 @@ export default function OrderPage() {
                   <div className="flex flex-col sm:flex-row gap-6">
                     {/* Product Image */}
                     <div className="flex-shrink-0">
-                      <img alt={order.order_name || "상품 이미지"} className="w-[120px] h-[120px] rounded-lg object-cover shadow-sm" src={order.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAQGq5OqykcE-elmyBXi8h71OqyJokOSJOHkXZdYKY7KffWgbDkK7mXGP5W8roAHlPDnN12GRyH512wrW5zhIBB0eE-HkNGINNLuZQbpqKrNOO9kO0Yb_Wwac6JDZGtpeEA58zSlwZL0u3mBIsjk8wnoauAPD-aWL2eGv5hcA0VCjVsNd6VwcpNPaZM1QFeS2Gx70B0oyKLXqZppRK9kBrcVrtVfsRd80cnSrFxA1EZH4kVKBOs3DIMsaQSi5d4AR9K0Bfe7ayFTg"}/>
+                      <Link href="/">
+                        <img alt={order.order_name || "상품 이미지"} className="w-[120px] h-[120px] rounded-lg object-cover shadow-sm cursor-pointer" src={order.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAQGq5OqykcE-elmyBXi8h71OqyJokOSJOHkXZdYKY7KffWgbDkK7mXGP5W8roAHlPDnN12GRyH512wrW5zhIBB0eE-HkNGINNLuZQbpqKrNOO9kO0Yb_Wwac6JDZGtpeEA58zSlwZL0u3mBIsjk8wnoauAPD-aWL2eGv5hcA0VCjVsNd6VwcpNPaZM1QFeS2Gx70B0oyKLXqZppRK9kBrcVrtVfsRd80cnSrFxA1EZH4kVKBOs3DIMsaQSi5d4AR9K0Bfe7ayFTg"}/>
+                      </Link>
                     </div>
                     {/* Product Info & Actions */}
                     <div className="flex-1 flex flex-col justify-center">
-                      <h3 className={`text-[17px] font-medium mb-1 ${order.status === 3 ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
-                        {order.order_name || '엘포틴 코디 15ml X 15포'}
-                      </h3>
+                      <Link href="/">
+                        <h3 className={`text-[17px] font-medium mb-1 hover:underline cursor-pointer ${order.status === 3 ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
+                          {order.order_name || '엘포틴 코디 15ml X 15포'}
+                        </h3>
+                      </Link>
                       <p className="text-[22px] font-bold text-on-surface mb-5">
                         {order.original_price && order.original_price !== order.total_price ? (
                           <>
@@ -337,11 +385,9 @@ export default function OrderPage() {
                           )}
                           {order.status === 2 && (
                             <div className="flex items-center text-on-surface-variant text-[12px] md:text-[13px] gap-2">
-                              <button onClick={() => handleCancelDeliveredOrder(order.id, order.payment_key)} className="hover:underline">취소</button>
+                              <button onClick={() => handleExchange(order.id)} className="hover:underline">교환</button>
                               <span className="text-outline-variant">|</span>
-                              <Link href="/mypage/cancel" className="hover:underline">교환</Link>
-                              <span className="text-outline-variant">|</span>
-                              <Link href="/mypage/cancel" className="hover:underline">반품</Link>
+                              <button onClick={() => handleReturn(order.id)} className="hover:underline">반품</button>
                             </div>
                           )}
                         </div>

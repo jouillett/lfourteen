@@ -21,13 +21,32 @@ export default function SharePopup({ reviewId, onClose }: SharePopupProps) {
     }
   };
 
-  const handleCopyUrl = () => {
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      alert('URL이 복사되었습니다.');
-    }).catch(err => {
+  const handleCopyUrl = async () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('URL이 복사되었습니다.');
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) {
+          alert('URL이 복사되었습니다.');
+        } else {
+          throw new Error('Fallback copy failed');
+        }
+      }
+    } catch (err) {
       console.error('Failed to copy link: ', err);
       alert('URL 복사에 실패했습니다.');
-    });
+    }
   };
 
   const shareToKakao = () => {

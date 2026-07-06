@@ -5,6 +5,7 @@ import Footer from "../../../components/Footer";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import TrackingModal from "../../../components/TrackingModal";
 
 export default function OrderDetailPage() {
   const [reviewCount, setReviewCount] = useState<number | null>(null);
@@ -13,6 +14,9 @@ export default function OrderDetailPage() {
   const [items, setItems] = useState<any[]>([]);
   const searchParams = useSearchParams();
   const orderId = searchParams?.get('id');
+  const [selectedTrackingNumber, setSelectedTrackingNumber] = useState<string | null>(null);
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [selectedShipmentType, setSelectedShipmentType] = useState<string>('shipment');
 
   useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
@@ -62,14 +66,80 @@ export default function OrderDetailPage() {
     window.open('/review/write', 'writeReviewPopup', 'width=500,height=700,scrollbars=yes,resizable=yes');
   };
 
+  const handleTrackingClick = (shipment: string | null) => {
+    if (!shipment) {
+      alert("배송 정보가 아직 등록되지 않았습니다.");
+      return;
+    }
+    setSelectedTrackingNumber(shipment);
+    setIsTrackingModalOpen(true);
+  };
+
+  const handleAddToCart = async (orderId: number) => {
+    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (!customerId) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/cart/reorder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ customer_id: customerId, order_id: orderId }),
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        alert("장바구니에 상품이 담겼습니다.");
+        window.dispatchEvent(new Event("cartUpdated"));
+      } else {
+        alert("장바구니 담기에 실패했습니다.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("오류가 발생했습니다.");
+    }
+  };
+
+  const handleBuyNow = async (orderId: number) => {
+    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (!customerId) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "/login";
+      return;
+    }
+    window.location.href = `/order?source=reorder&orderId=${orderId}`;
+  };
+
   const getStatusText = (status: number) => {
     switch(status) {
-      case 0: return "배송전";
+      case 0: return "결제완료";
       case 1: return "배송중";
       case 2: return "배송완료";
       case 3: return "취소";
-      case 4: return "교환";
-      case 5: return "반품";
+      case 4: return "교환시작";
+      case 5: return "교환진행";
+      case 6: return "교환완료";
+      case 7: return "반품진행";
+      case 8: return "반품";
+      default: return "";
+    }
+  };
+
+  const getStatusDescription = (status: number) => {
+    switch(status) {
+      case 0: return "고객님의 주문이 정상적으로 완료되었습니다.";
+      case 1: return "상품이 고객님을 향해 출발했습니다.";
+      case 2: return "상품이 고객님께 도착했습니다.";
+      case 3: return "주문이 정상적으로 취소되었습니다.";
+      case 4: return "교환 요청이 정상적으로 접수되었습니다.";
+      case 5: return "교환 상품을 준비 및 배송 중입니다.";
+      case 6: return "교환 처리가 완료되었습니다.";
+      case 7: return "반품 요청이 접수되어 처리 중입니다.";
+      case 8: return "반품 처리가 완료되었습니다.";
       default: return "";
     }
   };
@@ -92,6 +162,12 @@ export default function OrderDetailPage() {
   return (
     <div className="bg-background text-on-background antialiased min-h-screen flex flex-col">
       <Header />
+      
+      <TrackingModal 
+        isOpen={isTrackingModalOpen}
+        onClose={() => setIsTrackingModalOpen(false)}
+        shipmentString={selectedTrackingNumber || ""}
+      />
       
       <main className="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row pt-6 md:pt-16 px-4 md:px-16 pb-24 gap-6 md:gap-12 lg:gap-24" data-purpose="mypage-layout">
         
@@ -137,6 +213,11 @@ export default function OrderDetailPage() {
               </div>
             </div>
 
+            <div className="bg-[#FAFAFA] rounded-xl p-8 flex flex-col items-center justify-center border border-outline-variant/30 text-center">
+              <h3 className="text-[24px] font-bold text-on-surface mb-2">{getStatusText(order.status)}</h3>
+              <p className="text-on-surface-variant text-[15px]">{getStatusDescription(order.status)}</p>
+            </div>
+
             <div className="space-y-4">
               <h3 className="text-[18px] font-bold text-on-surface">주문 상품</h3>
               {items.map((item, idx) => (
@@ -153,6 +234,57 @@ export default function OrderDetailPage() {
                   </div>
                 </div>
               ))}
+              
+              <div className="flex justify-between items-center mt-4 w-full border border-outline-variant/30 p-4 rounded-lg bg-surface-container-lowest">
+                {(() => {
+                  const hasReshipment = !!order.reshipment;
+                  const hasReturn = !!order.return;
+                  const hasShipment = !!order.shipment;
+
+                  if (hasShipment && hasReturn && hasReshipment) {
+                    return (
+                      <div className="flex items-center gap-2">
+                        <select 
+                          className="border border-outline text-on-surface py-2 px-3 rounded-md text-[12px] md:text-[14px] bg-transparent focus:outline-none focus:ring-1 focus:ring-primary"
+                          value={selectedShipmentType}
+                          onChange={(e) => setSelectedShipmentType(e.target.value)}
+                        >
+                          <option value="shipment">업체배송</option>
+                          <option value="return">고객배송</option>
+                          <option value="reshipment">업체재배송</option>
+                        </select>
+                        <button onClick={() => handleTrackingClick(order[selectedShipmentType])} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                      </div>
+                    );
+                  } else if (hasShipment && hasReturn) {
+                    return (
+                      <div className="flex items-center gap-2">
+                        <select 
+                          className="border border-outline text-on-surface py-2 px-3 rounded-md text-[12px] md:text-[14px] bg-transparent focus:outline-none focus:ring-1 focus:ring-primary"
+                          value={selectedShipmentType}
+                          onChange={(e) => setSelectedShipmentType(e.target.value)}
+                        >
+                          <option value="shipment">업체배송</option>
+                          <option value="return">고객배송</option>
+                        </select>
+                        <button onClick={() => handleTrackingClick(order[selectedShipmentType])} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                    );
+                  }
+                })()}
+                <div className="flex space-x-2">
+                  <button onClick={() => handleAddToCart(order.id)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">
+                    장바구니
+                  </button>
+                  <button onClick={() => handleBuyNow(order.id)} className="bg-primary-container text-on-primary-container py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary outline-none">
+                    구매하기
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">

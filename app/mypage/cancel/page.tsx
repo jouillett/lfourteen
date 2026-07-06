@@ -226,9 +226,16 @@ export default function OrderPage() {
                   <div className="flex justify-between items-center mb-5">
                     <div className="text-[13px] text-on-surface-variant flex items-center gap-2">
                       <span>{formattedDate}</span>
-                      {order.status === 3 && <span className="text-red-500 font-bold">취소</span>}
-                      {order.status === 4 && <span className="text-red-500 font-bold">교환</span>}
-                      {order.status === 5 && <span className="text-red-500 font-bold">반품</span>}
+                      <span className="text-red-500 font-bold">
+                        {{
+                          3: '취소',
+                          4: '교환시작',
+                          5: '교환진행',
+                          6: '교환완료',
+                          7: '반품진행',
+                          8: '반품'
+                        }[order.status as number] || ''}
+                      </span>
                     </div>
                     <div className="absolute top-6 right-6 flex flex-col items-end gap-1">
                       <button onClick={() => handleDeleteOrder(order.id, order.status, order.payment_key)} className="text-[16px] font-bold text-on-surface-variant hover:text-on-surface transition-colors" title="삭제">
@@ -241,13 +248,17 @@ export default function OrderPage() {
                   <div className="flex flex-col sm:flex-row gap-6">
                     {/* Product Image */}
                     <div className="flex-shrink-0">
-                      <img alt={order.order_name || "상품 이미지"} className="w-[120px] h-[120px] rounded-lg object-cover shadow-sm" src={order.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAQGq5OqykcE-elmyBXi8h71OqyJokOSJOHkXZdYKY7KffWgbDkK7mXGP5W8roAHlPDnN12GRyH512wrW5zhIBB0eE-HkNGINNLuZQbpqKrNOO9kO0Yb_Wwac6JDZGtpeEA58zSlwZL0u3mBIsjk8wnoauAPD-aWL2eGv5hcA0VCjVsNd6VwcpNPaZM1QFeS2Gx70B0oyKLXqZppRK9kBrcVrtVfsRd80cnSrFxA1EZH4kVKBOs3DIMsaQSi5d4AR9K0Bfe7ayFTg"}/>
+                      <Link href="/">
+                        <img alt={order.order_name || "상품 이미지"} className="w-[120px] h-[120px] rounded-lg object-cover shadow-sm cursor-pointer" src={order.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAQGq5OqykcE-elmyBXi8h71OqyJokOSJOHkXZdYKY7KffWgbDkK7mXGP5W8roAHlPDnN12GRyH512wrW5zhIBB0eE-HkNGINNLuZQbpqKrNOO9kO0Yb_Wwac6JDZGtpeEA58zSlwZL0u3mBIsjk8wnoauAPD-aWL2eGv5hcA0VCjVsNd6VwcpNPaZM1QFeS2Gx70B0oyKLXqZppRK9kBrcVrtVfsRd80cnSrFxA1EZH4kVKBOs3DIMsaQSi5d4AR9K0Bfe7ayFTg"}/>
+                      </Link>
                     </div>
                     {/* Product Info & Actions */}
                     <div className="flex-1 flex flex-col justify-center">
-                      <h3 className={`text-[17px] font-medium mb-1 ${order.status === 3 ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
-                        {order.order_name || '엘포틴 코디 15ml X 15포'}
-                      </h3>
+                      <Link href="/">
+                        <h3 className={`text-[17px] font-medium mb-1 hover:underline cursor-pointer ${order.status === 3 ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
+                          {order.order_name || '엘포틴 코디 15ml X 15포'}
+                        </h3>
+                      </Link>
                       <p className="text-[22px] font-bold text-on-surface mb-5">
                         {order.original_price && order.original_price !== order.total_price ? (
                           <>
