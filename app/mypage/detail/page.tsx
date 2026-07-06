@@ -3,11 +3,11 @@
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TrackingModal from "../../../components/TrackingModal";
 
-export default function OrderDetailPage() {
+function OrderDetailContent() {
   const [reviewCount, setReviewCount] = useState<number | null>(null);
   const [missingCount, setMissingCount] = useState<number | null>(null);
   const [order, setOrder] = useState<any>(null);
@@ -344,5 +344,13 @@ export default function OrderDetailPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function OrderDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩중...</div>}>
+      <OrderDetailContent />
+    </Suspense>
   );
 }
