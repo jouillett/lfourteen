@@ -444,6 +444,9 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                   <button className="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs" id="drawer-buy-btn" onClick={handleBuyClick}>
                     구매하기
                   </button>
+                  <button className="w-full bg-surface-container text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-high active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-subscribe-btn" onClick={() => alert('정기구매 기능은 준비 중입니다.')}>
+                    정기구매
+                  </button>
                   <button className="w-full bg-transparent border border-primary text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-low active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-cart-btn" onClick={handleAddToCart}>
                     장바구니
                   </button>

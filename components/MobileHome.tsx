@@ -489,6 +489,9 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
             >
               구매하기
             </button>
+            <button className="w-full bg-surface-container text-primary font-bold py-3 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-all duration-200" onClick={() => alert('정기구매 기능은 준비 중입니다.')}>
+              정기구매
+            </button>
             <button className="w-full bg-white border border-[#7E715C] text-[#7E715C] font-bold py-3 rounded-lg flex items-center justify-center" onClick={handleAddToCart}>
               장바구니
             </button>

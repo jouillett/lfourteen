@@ -1,7 +1,7 @@
 import DesktopHome from "../components/DesktopHome";
 import MobileHome from "../components/MobileHome";
 import pool from "../lib/db";
-import { RowDataPacket } from "mysql2";
+import { RowDataPacket } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
