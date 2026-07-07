@@ -26,10 +26,12 @@ const pool = {
       });
 
       let result;
+      const rawText = await response.text();
       try {
-        result = await response.json();
+        result = JSON.parse(rawText);
       } catch (e) {
-        throw new Error(`HTTP error! status: ${response.status}. Failed to parse JSON.`);
+        console.error("RAW PHP RESPONSE:", rawText);
+        throw new Error(`HTTP ${response.status} OK but invalid JSON received. Raw text: ${rawText.substring(0, 100)}`);
       }
 
       if (!response.ok) {
