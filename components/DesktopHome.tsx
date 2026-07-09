@@ -164,6 +164,27 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
     window.location.href = `/order?source=buy&priceId=${pricedId}`;
   };
 
+  const handleSubscribeClick = async () => {
+    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (customerId) {
+      try {
+        const res = await fetch(`/api/mypage/billing?userId=${customerId}`);
+        const data = await res.json();
+        if (data.success && data.subscribed) {
+          if (confirm("이미 '정기구매'를 신청하셨습니다.\n등록된 정기구매 정보를 확인하시겠습니까?")) {
+            window.location.href = "/mypage/billing";
+          }
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const selectEl = document.getElementById("pricing-options") as HTMLSelectElement;
+    const opt = selectEl ? selectEl.value : "1";
+    window.location.href = `/billing?option=${opt}`;
+  };
+
   useEffect(() => {
     const tabLinks = document.querySelectorAll(".tab-link");
     const sections = document.querySelectorAll("section[id]");
@@ -279,29 +300,29 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
             
             <section className="scroll-mt-32" id="description">
               <div className="flex flex-col items-center">
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "716px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/5383834b5b3bfe2017b727548b002180.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "626px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/0bbd8661cf5e44d2940ad140fdd2aaa4.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "986px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/f465b3ff7828529a60443f3e9dde2565.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "856px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/057f4f7458e823c395ad01e745e258f6.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "816px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/534ce2f89d0f15a61fa916e58b868362.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "869px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/2a42c0079b8437f54c6881098b815e21.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "595px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/c69d906afdab44b0606e3311e2f2ab97.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "671px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/e5a5b736d98007bde792d0e89da50247.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "59px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/bef810e0d70e04ffe7d78e6b89293313.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "59px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/bef810e0d70e04ffe7d78e6b89293313.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "1077px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/f201d814f5f8236ac9e54f39a0a9058b.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "852px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/0dd6e8af15cd81998a9ba535ad73699f.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "655px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/a834b74d9ce275f6d9140cdc80b1e164.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "549px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/a95d8e2883844d422f564a8d70d7452d.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "233px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/19cd00cbc42a4ea9ff5011e5cc83b525.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "278px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/038cf370f04ea7be08e40cb8e4a15c4d.jpg" alt=""/>
-                <img style={{display:"block", width:"100%", maxWidth:"initial"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/a230566da601d62335dc84022e021fcb.gif" alt=""/>
-                <img style={{display:"block", width:"100%", maxWidth:"initial"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/a230566da601d62335dc84022e021fcb.gif" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "288px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/4ec7115da2adf4f2188ce57f9648465e.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "288px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/4ec7115da2adf4f2188ce57f9648465e.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "263px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/397b439efd4639d40d0d3a05d8ec0a79.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "855px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/14d6610c3161b57ebb902ad3914d172f.jpg" alt=""/>
-                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "602px"}} src="https://welcomekunde.com/web/upload/NNEditor/20260324/efa6b1b0ca55e6eb4e20794c95c8b0f5.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "716px"}} src="https://capofcom.cafe24.com/l14_coordy/product/5383834b5b3bfe2017b727548b002180.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "626px"}} src="https://capofcom.cafe24.com/l14_coordy/product/0bbd8661cf5e44d2940ad140fdd2aaa4.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "986px"}} src="https://capofcom.cafe24.com/l14_coordy/product/f465b3ff7828529a60443f3e9dde2565.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "856px"}} src="https://capofcom.cafe24.com/l14_coordy/product/057f4f7458e823c395ad01e745e258f6.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "816px"}} src="https://capofcom.cafe24.com/l14_coordy/product/534ce2f89d0f15a61fa916e58b868362.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "869px"}} src="https://capofcom.cafe24.com/l14_coordy/product/2a42c0079b8437f54c6881098b815e21.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "595px"}} src="https://capofcom.cafe24.com/l14_coordy/product/c69d906afdab44b0606e3311e2f2ab97.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "671px"}} src="https://capofcom.cafe24.com/l14_coordy/product/e5a5b736d98007bde792d0e89da50247.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "59px"}} src="https://capofcom.cafe24.com/l14_coordy/product/bef810e0d70e04ffe7d78e6b89293313.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "59px"}} src="https://capofcom.cafe24.com/l14_coordy/product/bef810e0d70e04ffe7d78e6b89293313.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "1077px"}} src="https://capofcom.cafe24.com/l14_coordy/product/f201d814f5f8236ac9e54f39a0a9058b.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "852px"}} src="https://capofcom.cafe24.com/l14_coordy/product/0dd6e8af15cd81998a9ba535ad73699f.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "655px"}} src="https://capofcom.cafe24.com/l14_coordy/product/a834b74d9ce275f6d9140cdc80b1e164.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "549px"}} src="https://capofcom.cafe24.com/l14_coordy/product/a95d8e2883844d422f564a8d70d7452d.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "233px"}} src="https://capofcom.cafe24.com/l14_coordy/product/19cd00cbc42a4ea9ff5011e5cc83b525.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "278px"}} src="https://capofcom.cafe24.com/l14_coordy/product/038cf370f04ea7be08e40cb8e4a15c4d.jpg" alt=""/>
+                <img style={{display:"block", width:"100%", maxWidth:"initial"}} src="https://capofcom.cafe24.com/l14_coordy/product/a230566da601d62335dc84022e021fcb.gif" alt=""/>
+                <img style={{display:"block", width:"100%", maxWidth:"initial"}} src="https://capofcom.cafe24.com/l14_coordy/product/a230566da601d62335dc84022e021fcb.gif" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "288px"}} src="https://capofcom.cafe24.com/l14_coordy/product/4ec7115da2adf4f2188ce57f9648465e.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "288px"}} src="https://capofcom.cafe24.com/l14_coordy/product/4ec7115da2adf4f2188ce57f9648465e.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "263px"}} src="https://capofcom.cafe24.com/l14_coordy/product/397b439efd4639d40d0d3a05d8ec0a79.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "855px"}} src="https://capofcom.cafe24.com/l14_coordy/product/14d6610c3161b57ebb902ad3914d172f.jpg" alt=""/>
+                <img style={{margin:"0 auto", display: "block", maxWidth:"100%", minHeight: "602px"}} src="https://capofcom.cafe24.com/l14_coordy/product/efa6b1b0ca55e6eb4e20794c95c8b0f5.jpg" alt=""/>
               </div>
             </section>
             
@@ -444,7 +465,7 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                   <button className="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs" id="drawer-buy-btn" onClick={handleBuyClick}>
                     구매하기
                   </button>
-                  <button className="w-full bg-surface-container text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-high active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-subscribe-btn" onClick={() => alert('정기구매 기능은 준비 중입니다.')}>
+                  <button className="w-full bg-surface-container text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-high active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-subscribe-btn" onClick={handleSubscribeClick}>
                     정기구매
                   </button>
                   <button className="w-full bg-transparent border border-primary text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-low active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-cart-btn" onClick={handleAddToCart}>
