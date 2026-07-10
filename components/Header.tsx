@@ -27,6 +27,8 @@ export default function Header() {
 
     const handleLogoutTimeout = () => {
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("customerId");
+      localStorage.removeItem("userId");
       localStorage.removeItem("lastActivity");
       localStorage.removeItem("authPhone");
       window.location.href = "/";
@@ -86,6 +88,8 @@ export default function Header() {
 
   const handleLogoutClick = () => {
     localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("customerId");
+    localStorage.removeItem("userId");
     localStorage.removeItem("lastActivity");
     localStorage.removeItem("authPhone");
     window.location.href = "/";

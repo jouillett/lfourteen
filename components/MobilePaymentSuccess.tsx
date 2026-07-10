@@ -61,6 +61,7 @@ export default function MobilePaymentSuccess() {
     }
 
     if (paymentKey && orderIdRaw && amountParam) {
+      // Normal checkout flow
       fetch("/api/order/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,6 +94,20 @@ export default function MobilePaymentSuccess() {
           alert("[DEBUG] 네트워크 오류: " + err.message);
           setPaymentMethod(fallbackMethod);
         });
+    } else if (parsedOrderId && userId) {
+      // Billing flow — fetch order details from DB
+      fetch(`/api/order-detail?id=${parsedOrderId}&customerId=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.order) {
+            const o = data.order;
+            setAmount("₩" + Number(o.total_price).toLocaleString());
+            setPaymentMethod(o.payment_method || fallbackMethod);
+          } else {
+            setPaymentMethod(fallbackMethod);
+          }
+        })
+        .catch(() => setPaymentMethod(fallbackMethod));
     } else {
       setPaymentMethod(fallbackMethod);
     }
@@ -120,6 +135,7 @@ export default function MobilePaymentSuccess() {
       flexDirection: "column",
       fontFamily: "Inter, 'Noto Sans KR', sans-serif",
       overflow: "hidden",
+      writingMode: "horizontal-tb",
     }}>
       {/* Google Fonts */}
       <style>{`

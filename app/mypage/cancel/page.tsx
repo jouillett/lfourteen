@@ -163,6 +163,7 @@ export default function OrderPage() {
           <ul className="flex space-x-6 text-[14px] text-on-surface-variant whitespace-nowrap">
             <li><Link href="/mypage/order" className="hover:text-on-surface transition-colors pb-2">주문/배송 내역</Link></li>
             <li><Link className="font-bold text-primary border-b-2 border-primary pb-2" href="/mypage/cancel">취소/교환/반품</Link></li>
+            <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/billing">정기구매</Link></li>
             <li><Link href="/mypage/inquiry" className="hover:text-on-surface transition-colors pb-2">상품문의</Link></li>
             <li><button onClick={handleWriteReview} className="hover:text-on-surface transition-colors pb-2">구매후기 작성</button></li>
             <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/review">내가 쓴 구매후기</Link></li>
@@ -176,6 +177,7 @@ export default function OrderPage() {
           <ul className="flex flex-col space-y-5 text-[15px] text-on-surface-variant">
             <li><Link href="/mypage/order" className="hover:text-on-surface transition-colors">주문/배송 내역</Link></li>
             <li><Link className="font-bold text-on-surface hover:underline underline-offset-4" href="/mypage/cancel">취소/교환/반품</Link></li>
+            <li><Link className="hover:text-on-surface transition-colors" href="/mypage/billing">정기구매</Link></li>
             <li><Link href="/mypage/inquiry" className="hover:text-on-surface transition-colors">상품문의</Link></li>
             <li><a href="#" onClick={handleWriteReview} className="hover:text-on-surface transition-colors flex items-center justify-between">구매후기 작성 <span className="text-outline text-sm">{reviewCount && reviewCount > 0 ? reviewCount : ''}</span></a></li>
             <li><Link className="hover:text-on-surface transition-colors" href="/mypage/review">내가 쓴 구매후기</Link></li>

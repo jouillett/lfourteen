@@ -1,9 +1,9 @@
-import pool from './lib/db.js';
+import pool from './lib/db';
 
 async function check() {
   try {
     const [rows] = await pool.query("DESCRIBE cart_items");
-    console.log(rows);
+    console.table(rows);
   } catch (e) {
     console.error(e);
   } finally {

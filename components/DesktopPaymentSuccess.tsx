@@ -64,6 +64,7 @@ export default function DesktopPaymentSuccess() {
     }
 
     if (paymentKey && orderIdRaw && amountParam) {
+      // Normal checkout flow — confirm with Toss
       fetch("/api/order/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,6 +101,20 @@ export default function DesktopPaymentSuccess() {
         alert("[DEBUG] 네트워크 오류: " + err.message);
         setPaymentMethod(fallbackMethod);
       });
+    } else if (parsedOrderId && userId) {
+      // Billing flow — fetch order details from DB
+      fetch(`/api/order-detail?id=${parsedOrderId}&customerId=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.order) {
+            const o = data.order;
+            setAmount("₩" + Number(o.total_price).toLocaleString());
+            setPaymentMethod(o.payment_method || fallbackMethod);
+          } else {
+            setPaymentMethod(fallbackMethod);
+          }
+        })
+        .catch(() => setPaymentMethod(fallbackMethod));
     } else {
       setPaymentMethod(fallbackMethod);
     }
@@ -112,7 +127,7 @@ export default function DesktopPaymentSuccess() {
   }, []);
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex flex-col font-['Inter']">
+    <div className="bg-surface text-on-surface min-h-screen flex flex-col font-['Inter']" style={{ writingMode: 'horizontal-tb' }}>
       <Header />
       <main className="flex-grow flex flex-col items-center justify-center p-md">
         <div className="w-full max-w-[600px] mt-8 pb-xl">

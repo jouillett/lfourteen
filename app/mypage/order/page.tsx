@@ -263,6 +263,7 @@ export default function OrderPage() {
           <ul className="flex space-x-6 text-[14px] text-on-surface-variant whitespace-nowrap">
             <li><Link href="/mypage/order" className="font-bold text-primary border-b-2 border-primary pb-2">주문/배송 내역</Link></li>
             <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/cancel">취소/교환/반품</Link></li>
+            <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/billing">정기구매</Link></li>
             <li><Link href="/mypage/inquiry" className="hover:text-on-surface transition-colors pb-2">상품문의</Link></li>
             <li><button onClick={handleWriteReview} className="hover:text-on-surface transition-colors pb-2">구매후기 작성</button></li>
             <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/review">내가 쓴 구매후기</Link></li>
@@ -276,6 +277,7 @@ export default function OrderPage() {
           <ul className="flex flex-col space-y-5 text-[15px] text-on-surface-variant">
             <li><Link href="/mypage/order" className="font-bold text-on-surface hover:underline underline-offset-4">주문/배송 내역</Link></li>
             <li><Link className="hover:text-on-surface transition-colors" href="/mypage/cancel">취소/교환/반품</Link></li>
+            <li><Link className="hover:text-on-surface transition-colors" href="/mypage/billing">정기구매</Link></li>
             <li><Link href="/mypage/inquiry" className="hover:text-on-surface transition-colors">상품문의</Link></li>
             <li><a href="#" onClick={handleWriteReview} className="hover:text-on-surface transition-colors flex items-center justify-between">구매후기 작성 <span className="text-outline text-sm">{reviewCount && reviewCount > 0 ? reviewCount : ''}</span></a></li>
             <li><Link className="hover:text-on-surface transition-colors" href="/mypage/review">내가 쓴 구매후기</Link></li>
@@ -363,15 +365,15 @@ export default function OrderPage() {
                         </h3>
                       </Link>
                       <p className="text-[22px] font-bold text-on-surface mb-5">
-                        {order.original_price && order.original_price !== order.total_price ? (
+                        {order.original_price && Number(order.original_price) !== Number(order.total_price) ? (
                           <>
                             <span className="line-through text-on-surface-variant text-[16px] mr-2 font-normal">
-                              {order.original_price.toLocaleString()}원
+                              {Number(order.original_price).toLocaleString()}원
                             </span>
-                            {order.total_price.toLocaleString()}원
+                            {Number(order.total_price).toLocaleString()}원
                           </>
                         ) : (
-                          <>{order.total_price ? order.total_price.toLocaleString() : '65,000'}원</>
+                          <>{order.total_price ? Number(order.total_price).toLocaleString() : '65,000'}원</>
                         )}
                       </p>
                       {/* Action Buttons */}

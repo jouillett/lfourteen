@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>기쁜하루 정기 결제 완료</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            kurly: {
+              purple: '#941F32',
+              gray: {
+                50: '#f5f5f5',
+                100: '#e5e5e5',
+                500: '#999999',
+                800: '#333333',
+              }
+            }
+          },
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="typography">
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body {
+      font-family: 'Pretendard', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 antialiased min-h-screen flex justify-center">
+<!-- BEGIN: Mobile Container -->
+<div class="w-full max-w-[480px] bg-white mx-auto border border-gray-200">
+<!-- BEGIN: Main Content Area -->
+<main class="px-6 pt-10 pb-12">
+<!-- Logo -->
+<div class="mb-6">
+<h1 class="text-kurly-purple text-4xl font-bold italic" style="font-family: serif;">기쁜하루</h1>
+</div>
+<!-- Header Text -->
+<div class="mb-10">
+<h2 class="text-2xl font-bold text-kurly-purple mb-2 leading-tight tracking-tight">
+          기쁜하루 정기결제가<br/>
+          완료되었습니다.
+        </h2>
+<p class="text-gray-600 text-base tracking-tight">결제 정보를 확인해주세요.</p>
+</div>
+<!-- Payment Info Section -->
+<section class="mb-10">
+<div class="mb-8 text-center">
+<img src="../design/1.png" alt="엘포틴 코디 제품" style="max-width:300px;width:100%;height:auto;border-radius:8px;" />
+</div>
+<h3 class="text-base font-bold mb-4">결제 정보</h3>
+<!-- Data Table -->
+<div class="border-t-2 border-kurly-gray-800 border-b border-kurly-gray-100">
+<div class="flex border-b border-kurly-gray-100 py-3">
+<div class="w-1/3 bg-kurly-gray-50 text-sm font-medium text-gray-700 px-3 flex items-center">결제일</div>
+<div class="w-2/3 text-sm px-3 flex items-center text-gray-900 font-medium">2026-07-08</div>
+</div><div class="flex border-b border-kurly-gray-100 py-3"><div class="w-1/3 bg-kurly-gray-50 text-sm font-medium text-gray-700 px-3 flex items-center">상품 정보</div><div class="w-2/3 text-sm px-3 flex items-center text-gray-900 font-medium"><img alt="상품 이미지" class="max-h-[80px]" src="1.png"/></div></div>
+<div class="flex border-b border-kurly-gray-100 py-3">
+<div class="w-1/3 bg-kurly-gray-50 text-sm font-medium text-gray-700 px-3 flex items-center">결제금액</div>
+<div class="w-2/3 text-sm px-3 flex items-center text-gray-900 font-medium">1,900원</div>
+</div>
+<div class="flex py-3">
+<div class="w-1/3 bg-kurly-gray-50 text-sm font-medium text-gray-700 px-3 flex items-center">다음 결제 예정일</div>
+<div class="w-2/3 text-sm px-3 flex items-center text-gray-900 font-medium">2026-08-08</div>
+</div>
+</div>
+</section>
+<!-- CTA Button -->
+<div class="text-center">
+<button class="bg-kurly-purple text-white font-medium text-base py-4 px-8 rounded w-full max-w-[320px] transition duration-200 hover:bg-opacity-90">
+          기쁜하루 정기결제 정보 확인하기
+        </button>
+</div>
+</main>
+<!-- END: Main Content Area -->
+<!-- BEGIN: Notice Area -->
+<div class="bg-kurly-gray-50 px-6 py-6 border-t border-kurly-gray-100">
+<p class="text-xs text-gray-600 leading-relaxed mb-2">
+        본 메일은 발신 전용으로 회신되지 않습니다. 문의사항은 <span class="font-bold">문의 게시판</span>을 이용해주세요.
+      </p>
+<p class="text-xs text-gray-600 leading-relaxed">
+        주문 관련 정보, 주요 공지사항등은 수신 동의 여부에 관계없이 발송됩니다.
+      </p>
+</div>
+<!-- END: Notice Area -->
+<!-- BEGIN: Footer -->
+<footer class="px-6 py-8 flex items-start gap-4">
+<div class="shrink-0 pt-1">
+<h2 class="text-kurly-purple text-2xl font-bold italic" style="font-family: serif;">L14 Cordy</h2>
+</div>
+<div class="text-[11px] text-gray-500 leading-relaxed">
+<p>대표 조민균 | 사업자등록번호: 691-23-02249 | 통신판매업 신고번호: 2026-성남분당A-0172</p>
+<p>문의전화: 031-755-1568</p>
+<p class="mt-4 text-[10px] text-gray-400">© 2026 L14 Cordy. All rights reserved.</p>
+</div>
+</footer>
+<!-- END: Footer -->
+</div>
+<!-- END: Mobile Container -->
+</body></html>

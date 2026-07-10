@@ -187,22 +187,11 @@ export async function POST(req: Request) {
     const insertedOrderId = orderResult.insertId;
     console.log('[confirm] Order inserted, id:', insertedOrderId);
 
-    // Reward points and update customer stats
+    // Update customer stats (points are handled by cron job)
     if (customerId) {
-      console.log('[confirm] Updating customer stats and rewarding points...');
-      const earnedPoints = Math.round(Number(amount) * 0.001);
-      
-      if (earnedPoints > 0) {
-        await connection.execute(
-          `INSERT INTO points (customer_id, order_id, point_amount, expired_at)
-           VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))`,
-          [customerId, insertedOrderId, earnedPoints]
-        );
-      }
-
       await connection.execute(
-        `UPDATE customers SET total_spent = COALESCE(total_spent, 0) + ?, order_count = COALESCE(order_count, 0) + 1, point = COALESCE(point, 0) + ? WHERE id = ?`,
-        [Number(amount), earnedPoints, customerId]
+        `UPDATE customers SET total_spent = COALESCE(total_spent, 0) + ?, order_count = COALESCE(order_count, 0) + 1 WHERE id = ?`,
+        [Number(amount), customerId]
       );
     }
 

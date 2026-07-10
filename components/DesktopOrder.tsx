@@ -151,30 +151,34 @@ export default function DesktopOrder() {
     if (tossInitializedRef.current) return;
 
     const initToss = async () => {
-      tossInitializedRef.current = true;
-      const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-      const customerKey = "customer_" + Date.now();
-      const tossPayments = (window as any).TossPayments(clientKey);
-      const widgets = tossPayments.widgets({ customerKey });
-      widgetsRef.current = widgets;
+      try {
+        tossInitializedRef.current = true;
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+        const customerKey = "customer_" + Date.now();
+        const tossPayments = (window as any).TossPayments(clientKey);
+        const widgets = tossPayments.widgets({ customerKey });
+        widgetsRef.current = widgets;
 
-      const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
-      await widgets.setAmount({ currency: "KRW", value: total });
+        const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
+        await widgets.setAmount({ currency: "KRW", value: total });
 
-      paymentWidgetRef.current = await widgets.renderPaymentMethods({
-        selector: "#payment-method",
-        variantKey: "DEFAULT",
-      });
+        paymentWidgetRef.current = await widgets.renderPaymentMethods({
+          selector: "#payment-method",
+          variantKey: "DEFAULT",
+        });
 
-      paymentWidgetRef.current.on('paymentMethodSelect', (methodInfo: any) => {
-        let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
-        if (methodInfo.easyPay?.provider) pName = methodInfo.easyPay.provider;
-        if (methodInfo.easypay?.provider) pName = methodInfo.easypay.provider;
-        if (methodInfo.transfer?.provider) pName = methodInfo.transfer.provider;
-        if (pName === 'QUICK_TRANSFER') pName = '퀵계좌이체';
-        if (pName === 'CUSTOM') pName = methodInfo.paymentMethodKey || '퀵계좌이체';
-        sessionStorage.setItem('selectedPaymentMethod', pName);
-      });
+        paymentWidgetRef.current.on('paymentMethodSelect', (methodInfo: any) => {
+          let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
+          if (methodInfo.easyPay?.provider) pName = methodInfo.easyPay.provider;
+          if (methodInfo.easypay?.provider) pName = methodInfo.easypay.provider;
+          if (methodInfo.transfer?.provider) pName = methodInfo.transfer.provider;
+          if (pName === 'QUICK_TRANSFER') pName = '퀵계좌이체';
+          if (pName === 'CUSTOM') pName = methodInfo.paymentMethodKey || '퀵계좌이체';
+          sessionStorage.setItem('selectedPaymentMethod', pName);
+        });
+      } catch (err) {
+        console.error("Toss SDK Init Error:", err);
+      }
     };
 
     // Poll until TossPayments script is available, then init
