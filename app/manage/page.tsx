@@ -9,6 +9,7 @@ export default function ManagePage() {
   const [accuses, setAccuses] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [qnas, setQnas] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function ManagePage() {
           setAccuses(data.accuses || []);
           setOrders(data.orders || []);
           setQnas(data.qnas || []);
+          setCustomers(data.customers || []);
         }
       } catch (error) {
         console.error(error);
@@ -193,6 +195,45 @@ export default function ManagePage() {
                           <td className="px-6 py-4">{qna.customer_id}</td>
                           <td className="px-6 py-4 whitespace-normal min-w-[300px]">{qna.content}</td>
                           <td className="px-6 py-4">{formatDate(qna.written_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+
+            <section>
+              <h2 className="text-[22px] font-bold text-on-surface mb-6">고객 정보 (Customers Table)</h2>
+              {customers.length === 0 ? (
+                <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 text-center text-on-surface-variant">
+                  고객 정보가 없습니다.
+                </div>
+              ) : (
+                <div className="overflow-x-auto border border-outline-variant rounded-xl">
+                  <table className="w-full text-left text-sm whitespace-nowrap">
+                    <thead className="bg-surface-container-low border-b border-outline-variant text-on-surface">
+                      <tr>
+                        <th className="px-6 py-4 font-bold">Name</th>
+                        <th className="px-6 py-4 font-bold">Grade</th>
+                        <th className="px-6 py-4 font-bold">Mobile</th>
+                        <th className="px-6 py-4 font-bold">Created At</th>
+                        <th className="px-6 py-4 font-bold">Total Spent</th>
+                        <th className="px-6 py-4 font-bold">Order Count</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-outline-variant bg-surface-container-lowest">
+                      {customers.map(customer => (
+                        <tr 
+                          key={customer.id} 
+                          className="hover:bg-surface-container-low transition-colors"
+                        >
+                          <td className="px-6 py-4">{customer.name}</td>
+                          <td className="px-6 py-4">{customer.grade}</td>
+                          <td className="px-6 py-4">{customer.mobile}</td>
+                          <td className="px-6 py-4">{formatDate(customer.created_at)}</td>
+                          <td className="px-6 py-4">{customer.total_spent ? Number(customer.total_spent).toLocaleString() : '0'}원</td>
+                          <td className="px-6 py-4">{customer.order_count || '0'}건</td>
                         </tr>
                       ))}
                     </tbody>

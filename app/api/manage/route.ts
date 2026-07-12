@@ -47,7 +47,29 @@ export async function GET(req: Request) {
         return pItem;
       });
 
-      return NextResponse.json({ success: true, accuses: processedAccuse, orders: processedOrders, qnas: processedQna });
+      const [customerRows]: any = await connection.query(`
+        SELECT c.id, c.name, c.grade, c.mobile, c.created_at,
+               COALESCE(SUM(o.total_price), 0) AS total_spent,
+               COUNT(o.id) AS order_count
+        FROM customers c
+        LEFT JOIN orders o ON c.id = o.customer_id AND o.status NOT IN (3, 8)
+        GROUP BY c.id, c.name, c.grade, c.mobile, c.created_at
+        ORDER BY c.created_at DESC
+      `);
+      
+      const processedCustomers = customerRows.map((item: any) => {
+        const pItem = { ...item };
+        for (const key in pItem) {
+          if (Buffer.isBuffer(pItem[key])) {
+            pItem[key] = pItem[key].toString('utf8');
+          } else if (pItem[key] && pItem[key].type === 'Buffer') {
+            pItem[key] = Buffer.from(pItem[key].data).toString('utf8');
+          }
+        }
+        return pItem;
+      });
+
+      return NextResponse.json({ success: true, accuses: processedAccuse, orders: processedOrders, qnas: processedQna, customers: processedCustomers });
     } finally {
       connection.release();
     }

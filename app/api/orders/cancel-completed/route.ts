@@ -50,10 +50,10 @@ export async function POST(req: Request) {
         );
       }
 
-      // 2. Update customer points & total_spent
+      // 2. Update customer points
       const [customerUpdateResult]: any = await connection.execute(
-        `UPDATE customers SET point = GREATEST(0, point - ?), total_spent = GREATEST(0, total_spent - ?) WHERE id = ?`,
-        [amount, actualTotalPrice, customerId]
+        `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+        [amount, customerId]
       );
       console.log('[cancel-completed] customers update affectedRows:', customerUpdateResult?.affectedRows);
 

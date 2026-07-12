@@ -106,8 +106,8 @@ export async function GET(req: Request) {
                 await connection.execute('UPDATE points SET point_amount = point_amount - ? WHERE id = ?', [amount, points[0].id]);
               }
               await connection.execute(
-                'UPDATE customers SET point = GREATEST(0, point - ?), total_spent = GREATEST(0, total_spent - ?) WHERE id = ?',
-                [amount, actualTotalPrice, customerId]
+                'UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?',
+                [amount, customerId]
               );
               await connection.commit();
             } catch (err) {

@@ -187,13 +187,7 @@ export async function POST(req: Request) {
     const insertedOrderId = orderResult.insertId;
     console.log('[confirm] Order inserted, id:', insertedOrderId);
 
-    // Update customer stats (points are handled by cron job)
-    if (customerId) {
-      await connection.execute(
-        `UPDATE customers SET total_spent = COALESCE(total_spent, 0) + ?, order_count = COALESCE(order_count, 0) + 1 WHERE id = ?`,
-        [Number(amount), customerId]
-      );
-    }
+    // Stats are now dynamically calculated
 
     // 6. Insert order_items
     for (const item of itemsToInsert) {

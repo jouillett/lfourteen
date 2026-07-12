@@ -212,10 +212,10 @@ export async function GET(req: Request) {
                 );
               }
 
-              // Update customer point & total_spent
+              // Update customer point
               await connection.execute(
-                'UPDATE customers SET point = GREATEST(0, point - ?), total_spent = GREATEST(0, total_spent - ?) WHERE id = ?',
-                [amount, actualTotalPrice, customerId]
+                'UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?',
+                [amount, customerId]
               );
 
               // Set order status to 8 (반품완료)
