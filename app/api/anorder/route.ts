@@ -61,6 +61,62 @@ export async function GET(req: Request) {
           finalStatus = 1;
         }
 
+        // Check if we are changing to 3 or 8 from a different status
+        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id FROM orders WHERE id = ?', [id]);
+        if (currRows.length === 0) return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
+        
+        const currentOrder = currRows[0];
+        const isCanceling = (finalStatus === 3 || finalStatus === 8) && currentOrder.status !== 3 && currentOrder.status !== 8;
+
+        if (isCanceling) {
+          // Parse buffers
+          const paymentKey = Buffer.isBuffer(currentOrder.payment_key) ? currentOrder.payment_key.toString('utf8') : currentOrder.payment_key;
+          const actualTotalPrice = Number(Buffer.isBuffer(currentOrder.total_price) ? currentOrder.total_price.toString('utf8') : currentOrder.total_price) || 0;
+          const customerId = Buffer.isBuffer(currentOrder.customer_id) ? currentOrder.customer_id.toString('utf8') : currentOrder.customer_id;
+          
+          if (paymentKey) {
+            const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+            const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+            const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
+              method: 'POST',
+              headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ cancelReason: finalStatus === 3 ? '관리자 취소' : '관리자 반품 완료' }),
+            });
+
+            if (!tossRes.ok) {
+              const errData = await tossRes.json();
+              // If already canceled, Toss returns a specific error we could ignore, but let's log it
+              console.error(`Toss cancel failed for order ${id}:`, errData);
+              // Only fail if it's a critical error, otherwise proceed
+              if (errData.code !== 'ALREADY_CANCELED_PAYMENT') {
+                return NextResponse.json({ success: false, message: '토스 결제 취소에 실패했습니다: ' + (errData.message || 'Unknown') }, { status: 400 });
+              }
+            }
+          }
+
+          if (customerId) {
+            const amount = Math.round(actualTotalPrice * 0.001);
+            await connection.beginTransaction();
+            try {
+              const [points]: any = await connection.execute(
+                'SELECT id FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1',
+                [customerId]
+              );
+              if (points.length > 0) {
+                await connection.execute('UPDATE points SET point_amount = point_amount - ? WHERE id = ?', [amount, points[0].id]);
+              }
+              await connection.execute(
+                'UPDATE customers SET point = GREATEST(0, point - ?), total_spent = GREATEST(0, total_spent - ?) WHERE id = ?',
+                [amount, actualTotalPrice, customerId]
+              );
+              await connection.commit();
+            } catch (err) {
+              await connection.rollback();
+              console.error('Failed to update points/spent during cancellation:', err);
+            }
+          }
+        }
+
         await connection.execute(
           'UPDATE orders SET shipment = ?, `return` = ?, reshipment = ?, status = ? WHERE id = ?',
           [shipment || null, returnTracking || null, reshipment || null, finalStatus, id]

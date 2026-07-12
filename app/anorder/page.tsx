@@ -124,7 +124,7 @@ function OrderDetails() {
               <option value={5}>교환진행</option>
               <option value={6}>교환완료</option>
               <option value={7}>반품진행</option>
-              <option value={8}>반품</option>
+              <option value={8}>반품완료</option>
             </select>
           </div>
         </div>
