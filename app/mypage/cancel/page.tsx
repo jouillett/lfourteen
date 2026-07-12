@@ -12,6 +12,9 @@ export default function OrderPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [selectedTrackingNumber, setSelectedTrackingNumber] = useState<string | null>(null);
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
@@ -33,17 +36,27 @@ export default function OrderPage() {
           }
         })
         .catch(console.error);
+    }
+  }, []);
 
-      fetch(`/api/orders?customerId=${customerId}&statusGreaterThan=2`)
+  useEffect(() => {
+    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (customerId) {
+      setIsLoading(true);
+      fetch(`/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=3`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
             setOrders(data.data || []);
+            setTotalPages(Math.ceil((data.total || 0) / 3) || 1);
           }
         })
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
-  }, []);
+  }, [page]);
 
   const handleDeleteOrder = async (orderId: number, status: number, paymentKey: string) => {
     if (status === 0) {
@@ -199,7 +212,7 @@ export default function OrderPage() {
                 전체
               </Link>
               <button className="font-bold text-on-surface border-b-2 border-on-surface pb-1 px-1 transition-colors">
-                취소/교환/반품 {missingCount !== null ? missingCount : ''}
+                취소/교환/반품 {missingCount !== null && missingCount > 0 ? missingCount : ''}
               </button>
             </div>
             {/* Search Input */}
@@ -215,7 +228,11 @@ export default function OrderPage() {
           
           {/* Order List Items */}
           <div className="space-y-4" data-purpose="order-list">
-            {orders.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12 text-on-surface-variant">
+                주문정보를 읽고 있습니다....
+              </div>
+            ) : orders.length === 0 ? (
               <div className="text-center py-12 text-on-surface-variant">
                 주문/배송 내역이 없습니다.
               </div>
@@ -235,7 +252,7 @@ export default function OrderPage() {
                           5: '교환진행',
                           6: '교환완료',
                           7: '반품진행',
-                          8: '반품'
+                          8: '반품완료'
                         }[order.status as number] || ''}
                       </span>
                     </div>
@@ -291,6 +308,29 @@ export default function OrderPage() {
               );
             })}
           </div>
+
+          {/* Pagination */}
+          {!isLoading && totalPages > 1 && (
+            <div className="flex justify-center items-center space-x-4 mt-8">
+              <button 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-4 py-2 border border-outline-variant rounded-md disabled:opacity-50 text-[14px] text-on-surface hover:bg-surface-container-low transition-colors"
+              >
+                이전
+              </button>
+              <span className="text-[15px] font-medium text-on-surface">
+                {page} / {totalPages}
+              </span>
+              <button 
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-4 py-2 border border-outline-variant rounded-md disabled:opacity-50 text-[14px] text-on-surface hover:bg-surface-container-low transition-colors"
+              >
+                다음
+              </button>
+            </div>
+          )}
         </section>
       </main>
 

@@ -48,8 +48,8 @@ export default function ManagePage() {
     checkAuthAndFetch();
   }, []);
 
-  const getStatusText = (status: number) => {
-    switch(status) {
+  const getStatusText = (status: any) => {
+    switch(Number(status)) {
       case 0: return "결제완료";
       case 1: return "배송중";
       case 2: return "배송완료";
@@ -58,7 +58,7 @@ export default function ManagePage() {
       case 5: return "교환진행";
       case 6: return "교환완료";
       case 7: return "반품진행";
-      case 8: return "반품";
+      case 8: return "반품완료";
       default: return "";
     }
   };

@@ -13,9 +13,19 @@ export default function OrderPage() {
   const [currentTab, setCurrentTab] = useState<'all' | 'cancel'>('all');
   const [selectedTrackingNumber, setSelectedTrackingNumber] = useState<string | null>(null);
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (!customerId) {
+      window.location.href = "/login";
+      return;
+    }
+    setIsAuthorized(true);
+
     if (customerId) {
       fetch(`/api/check-order?customerId=${customerId}&status=1,2,4&unreviewed=true`)
         .then(res => res.json())
@@ -40,19 +50,24 @@ export default function OrderPage() {
   useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (customerId) {
+      setIsLoading(true);
       const url = currentTab === 'cancel'
-        ? `/api/orders?customerId=${customerId}&statusGreaterThan=2`
-        : `/api/orders?customerId=${customerId}`;
+        ? `/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=3`
+        : `/api/orders?customerId=${customerId}&page=${page}&limit=3`;
       fetch(url)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
             setOrders(data.data || []);
+            setTotalPages(Math.ceil((data.total || 0) / 3) || 1);
           }
         })
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
-  }, [currentTab]);
+  }, [currentTab, page]);
 
   const handleCancelDeliveredOrder = async (orderId: number, paymentKey: string) => {
     if (confirm("정말 취소하시겠습니까?")) {
@@ -157,20 +172,21 @@ export default function OrderPage() {
     }
   };
 
-  const handleDeleteOrder = async (orderId: number, status: number) => {
-    if (status === 0) {
+  const handleDeleteOrder = async (orderId: number, status: number | string) => {
+    const numStatus = Number(status);
+    if (numStatus === 0) {
       alert("배송 준비중이어서 삭제할 수 없습니다.");
       return;
     }
-    if (status === 1) {
+    if (numStatus === 1) {
       alert("배송중이어서 삭제할 수 없습니다.");
       return;
     }
-    if (status === 4 || status === 5) {
+    if (numStatus === 4 || numStatus === 5) {
       alert("교환중이어서 삭제할 수 없습니다.");
       return;
     }
-    if (status === 7) {
+    if (numStatus === 7) {
       alert("반품 진행중이어서 삭제할 수 없습니다.");
       return;
     }
@@ -246,6 +262,10 @@ export default function OrderPage() {
     window.location.href = `/order?source=reorder&orderId=${orderId}`;
   };
 
+  if (!isAuthorized) {
+    return <div className="min-h-screen bg-background flex justify-center items-center">로딩중...</div>;
+  }
+
   return (
     <div className="bg-background text-on-background antialiased min-h-screen flex flex-col">
       <Header />
@@ -299,7 +319,7 @@ export default function OrderPage() {
                 전체
               </button>
               <Link href="/mypage/cancel" className="text-on-surface-variant hover:text-on-surface pb-1 px-1 transition-colors">
-                취소/교환/반품 {missingCount !== null ? missingCount : ''}
+                취소/교환/반품 {missingCount !== null && missingCount > 0 ? missingCount : ''}
               </Link>
             </div>
             {/* Search Input */}
@@ -315,7 +335,11 @@ export default function OrderPage() {
           
           {/* Order List Items */}
           <div className="space-y-4" data-purpose="order-list">
-            {orders.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12 text-on-surface-variant">
+                주문정보를 읽고 있습니다....
+              </div>
+            ) : orders.length === 0 ? (
               <div className="text-center py-12 text-on-surface-variant">
                 주문/배송 내역이 없습니다.
               </div>
@@ -338,7 +362,7 @@ export default function OrderPage() {
                           5: '교환진행',
                           6: '교환완료',
                           7: '반품진행',
-                          8: '반품'
+                          8: '반품완료'
                         }[order.status as number] || ''}
                       </span>
                     </div>
@@ -408,6 +432,29 @@ export default function OrderPage() {
               );
             })}
           </div>
+
+          {/* Pagination */}
+          {!isLoading && totalPages > 1 && (
+            <div className="flex justify-center items-center space-x-4 mt-8">
+              <button 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-4 py-2 border border-outline-variant rounded-md disabled:opacity-50 text-[14px] text-on-surface hover:bg-surface-container-low transition-colors"
+              >
+                이전
+              </button>
+              <span className="text-[15px] font-medium text-on-surface">
+                {page} / {totalPages}
+              </span>
+              <button 
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-4 py-2 border border-outline-variant rounded-md disabled:opacity-50 text-[14px] text-on-surface hover:bg-surface-container-low transition-colors"
+              >
+                다음
+              </button>
+            </div>
+          )}
         </section>
       </main>
 

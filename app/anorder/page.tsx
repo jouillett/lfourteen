@@ -15,6 +15,7 @@ function OrderDetails() {
   const [shipment, setShipment] = useState("");
   const [returnTracking, setReturnTracking] = useState("");
   const [reshipment, setReshipment] = useState("");
+  const [status, setStatus] = useState<number>(0);
 
   useEffect(() => {
     if (id) {
@@ -26,6 +27,7 @@ function OrderDetails() {
             setShipment(data.order.shipment || "");
             setReturnTracking(data.order.return || "");
             setReshipment(data.order.reshipment || "");
+            setStatus(data.order.status || 0);
           }
         })
         .catch(console.error)
@@ -35,8 +37,8 @@ function OrderDetails() {
     }
   }, [id]);
 
-  const getStatusText = (status: number) => {
-    switch(status) {
+  const getStatusText = (status: any) => {
+    switch(Number(status)) {
       case 0: return "결제완료";
       case 1: return "배송중";
       case 2: return "배송완료";
@@ -45,7 +47,7 @@ function OrderDetails() {
       case 5: return "교환진행";
       case 6: return "교환완료";
       case 7: return "반품진행";
-      case 8: return "반품";
+      case 8: return "반품완료";
       default: return "";
     }
   };
@@ -55,11 +57,12 @@ function OrderDetails() {
       const res = await fetch('/api/anorder', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, shipment, return: returnTracking, reshipment })
+        body: JSON.stringify({ id, shipment, return: returnTracking, reshipment, status })
       });
       const data = await res.json();
       if (data.success) {
         alert("저장되었습니다.");
+        window.location.href = '/manage';
       } else {
         alert("저장에 실패했습니다: " + data.message);
       }
@@ -108,7 +111,21 @@ function OrderDetails() {
           </div>
           <div>
             <label className="block text-sm font-bold text-on-surface-variant mb-1">Status</label>
-            <input type="text" readOnly value={getStatusText(order.status)} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed font-bold text-primary" />
+            <select 
+              value={status} 
+              onChange={(e) => setStatus(Number(e.target.value))}
+              className="w-full bg-surface-container-lowest border border-outline rounded-md px-4 py-2 text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-bold text-primary"
+            >
+              <option value={0}>결제완료</option>
+              <option value={1}>배송중</option>
+              <option value={2}>배송완료</option>
+              <option value={3}>취소</option>
+              <option value={4}>교환시작</option>
+              <option value={5}>교환진행</option>
+              <option value={6}>교환완료</option>
+              <option value={7}>반품진행</option>
+              <option value={8}>반품</option>
+            </select>
           </div>
         </div>
 

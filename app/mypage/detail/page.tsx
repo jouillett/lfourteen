@@ -114,6 +114,77 @@ function OrderDetailContent() {
     window.location.href = `/order?source=reorder&orderId=${orderId}`;
   };
 
+  const handleCancelOrder = async (orderId: number, paymentKey: string) => {
+    if (confirm("정말 취소하시겠습니까?")) {
+      try {
+        const res = await fetch(`/api/payment/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
+        });
+        const data = await res.json();
+        if (data.success) {
+          await fetch(`/api/orders/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: orderId, status: 3 })
+          });
+          alert("결제가 취소되었습니다.");
+          window.location.href = "/mypage/cancel";
+        } else {
+          alert("결제 취소에 실패했습니다: " + (data.message || ''));
+        }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
+      }
+    }
+  };
+
+  const handleExchange = async (orderId: number) => {
+    if (confirm("교환을 정말 원하십니까?")) {
+      try {
+        const res = await fetch(`/api/orders/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: 4 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("교환 요청이 접수되었습니다.");
+          window.location.href = "/mypage/cancel";
+        } else {
+          alert("교환 처리에 실패했습니다.");
+        }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
+      }
+    }
+  };
+
+  const handleReturn = async (orderId: number) => {
+    if (confirm("반품을 정말 원하십니까?")) {
+      try {
+        const res = await fetch(`/api/orders/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: 7 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("반품 요청이 접수되었습니다.");
+          window.location.href = "/mypage/cancel";
+        } else {
+          alert("반품 처리에 실패했습니다.");
+        }
+      } catch (e) {
+        console.error(e);
+        alert("오류가 발생했습니다.");
+      }
+    }
+  };
+
   const getStatusText = (status: number) => {
     switch(status) {
       case 0: return "결제완료";
@@ -243,9 +314,23 @@ function OrderDetailContent() {
                   const hasReturn = !!order.return;
                   const hasShipment = !!order.shipment;
 
+                  const extraButtons = (
+                    <>
+                      {Number(order.status) === 0 && (
+                        <button onClick={() => handleCancelOrder(order.id, order.payment_key)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">결제취소</button>
+                      )}
+                      {Number(order.status) === 2 && (
+                        <>
+                          <button onClick={() => handleReturn(order.id)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">반품신청</button>
+                          <button onClick={() => handleExchange(order.id)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">교환신청</button>
+                        </>
+                      )}
+                    </>
+                  );
+
                   if (hasShipment && hasReturn && hasReshipment) {
                     return (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <select 
                           className="border border-outline text-on-surface py-2 px-3 rounded-md text-[12px] md:text-[14px] bg-transparent focus:outline-none focus:ring-1 focus:ring-primary"
                           value={selectedShipmentType}
@@ -256,11 +341,12 @@ function OrderDetailContent() {
                           <option value="reshipment">업체재배송</option>
                         </select>
                         <button onClick={() => handleTrackingClick(order[selectedShipmentType])} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        {extraButtons}
                       </div>
                     );
                   } else if (hasShipment && hasReturn) {
                     return (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <select 
                           className="border border-outline text-on-surface py-2 px-3 rounded-md text-[12px] md:text-[14px] bg-transparent focus:outline-none focus:ring-1 focus:ring-primary"
                           value={selectedShipmentType}
@@ -270,11 +356,15 @@ function OrderDetailContent() {
                           <option value="return">고객배송</option>
                         </select>
                         <button onClick={() => handleTrackingClick(order[selectedShipmentType])} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        {extraButtons}
                       </div>
                     );
                   } else {
                     return (
-                      <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        {extraButtons}
+                      </div>
                     );
                   }
                 })()}

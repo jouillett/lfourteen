@@ -21,7 +21,7 @@ export default function BillingPage() {
 
     async function fetchPayment() {
       try {
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_API_CLIENT_KEY || "test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq";
         const tossPayments = await loadTossPayments(clientKey);
         
         // Ensure customerKey is at least 2 characters to satisfy API constraints

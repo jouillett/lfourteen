@@ -11,9 +11,17 @@ export default function InquiryPage() {
   const [hasDeliveredOrders, setHasDeliveredOrders] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [editId, setEditId] = useState<number | null>(null);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (!customerId) {
+      window.location.href = "/login";
+      return;
+    }
+    setIsAuthorized(true);
+
     const params = new URLSearchParams(window.location.search);
     const id = params.get("edit_id");
     if (id) {
@@ -42,7 +50,8 @@ export default function InquiryPage() {
 
   useEffect(() => {
     const checkOrders = async () => {
-      const customerId = localStorage.getItem("customerId") || "3";
+      const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+      if (!customerId) return;
       try {
         const res = await fetch(`/api/inquiry/check-orders?customerId=${customerId}`);
         const data = await res.json();
@@ -109,6 +118,10 @@ export default function InquiryPage() {
       alert("오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
+
+  if (!isAuthorized) {
+    return <div className="min-h-screen bg-surface flex justify-center items-center">로딩중...</div>;
+  }
 
   return (
     <div className="bg-surface text-on-surface flex flex-col min-h-screen antialiased selection:bg-primary-container selection:text-on-primary-container">

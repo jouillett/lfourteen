@@ -6,6 +6,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const customerId = searchParams.get('customerId');
     const statusGreaterThan = searchParams.get('statusGreaterThan');
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '0', 10);
 
     if (!customerId) {
       return NextResponse.json({ success: false, message: 'Missing customerId' }, { status: 400 });
@@ -13,6 +15,16 @@ export async function GET(req: Request) {
 
     const connection = await pool.getConnection();
     try {
+      let countQuery = `SELECT COUNT(*) as total FROM orders WHERE customer_id = ?`;
+      let countParams: any[] = [customerId];
+
+      if (statusGreaterThan) {
+        countQuery += ` AND status > ?`;
+        countParams.push(Number(statusGreaterThan));
+      }
+      const [countResult]: any = await connection.execute(countQuery, countParams);
+      const total = countResult[0].total;
+
       let query = `SELECT * FROM orders WHERE customer_id = ?`;
       let queryParams: any[] = [customerId];
 
@@ -21,6 +33,12 @@ export async function GET(req: Request) {
         queryParams.push(Number(statusGreaterThan));
       }
       query += ` ORDER BY created_at DESC`;
+
+      if (limit > 0) {
+        const offset = (page - 1) * limit;
+        query += ` LIMIT ? OFFSET ?`;
+        queryParams.push(limit, offset);
+      }
 
       const [orders]: any = await connection.execute(query, queryParams);
       
@@ -96,7 +114,7 @@ export async function GET(req: Request) {
         processedOrders.push(order);
       }
       
-      return NextResponse.json({ success: true, data: processedOrders });
+      return NextResponse.json({ success: true, data: processedOrders, total });
     } finally {
       connection.release();
     }
