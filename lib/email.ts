@@ -53,7 +53,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
       <!-- Product Image -->
       <div style="margin-bottom:32px;text-align:center;">
         <a href="https://lfourteen.vercel.app/mypage/order" style="text-decoration:none;">
-          <img src="cid:product_image" alt="엘포틴 코디 제품" width="300" style="max-width:100%;height:auto;display:inline-block;border-radius:8px;" />
+          <img src="https://capofcom.cafe24.com/l14_coordy/images/l14cordy.jpg" alt="엘포틴 코디 제품" width="300" style="max-width:100%;height:auto;display:inline-block;border-radius:8px;" />
         </a>
       </div>
 
@@ -115,21 +115,12 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 </html>
   `;
 
-  const productImagePath = path.join(process.cwd(), 'public', 'images', 'product', 'product.png');
-
   try {
     const info = await transporter.sendMail({
       from: fromEmail,
       to: toEmail,
       subject: '[기쁜하루] 엘포틴 코디 정기구매가 정상적으로 완료되었습니다.',
       html: htmlContent,
-      attachments: [
-        {
-          filename: 'product.png',
-          path: productImagePath,
-          cid: 'product_image',
-        },
-      ],
     });
     console.log('Subscription success email sent:', info.messageId);
     return info;

@@ -10,7 +10,7 @@ export async function issueBillingKeyAndSave(
   duration: number,
   period: "weeks" | "months"
 ) {
-  const secretKey = process.env.TOSS_API_SECRET_KEY || "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
+  const secretKey = process.env.TOSS_API_SECRET_KEY;
   if (!secretKey) throw new Error("TOSS_API_SECRET_KEY is not defined");
 
   const encodedSecretKey = Buffer.from(secretKey + ":").toString("base64");
@@ -149,7 +149,7 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     // 3. Execute Toss Billing
     const orderId = "auto_order_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
-    const secretKey = process.env.TOSS_API_SECRET_KEY || "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
+    const secretKey = process.env.TOSS_API_SECRET_KEY;
     if (!secretKey) throw new Error("TOSS_API_SECRET_KEY is not defined in environment variables");
     const encodedSecretKey = Buffer.from(secretKey + ":").toString("base64");
 
