@@ -22,7 +22,7 @@ export default function BillingPage() {
     async function fetchPayment() {
       try {
         const clientKey = process.env.NEXT_PUBLIC_TOSS_API_CLIENT_KEY;
-        const tossPayments = await loadTossPayments(clientKey);
+        const tossPayments = await loadTossPayments(clientKey || "");
         
         // Toss requires customerKey to be alphanumeric (not purely numeric)
         const baseUserId = userId || "loginid";

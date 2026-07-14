@@ -12,8 +12,20 @@ export interface ResultSetHeader {
 
 const isVercel = process.env.VERCEL === "1";
 
-let pool: any;
+interface DBPool {
+  query: <T = any>(sqlQuery: string, params?: any) => Promise<[T, any]>;
+  execute: <T = any>(sqlQuery: string, params?: any) => Promise<[T, any]>;
+  getConnection: () => Promise<{
+    query: <T = any>(sqlQuery: string, params?: any) => Promise<[T, any]>;
+    execute: <T = any>(sqlQuery: string, params?: any) => Promise<[T, any]>;
+    release: () => void;
+    beginTransaction: () => Promise<void>;
+    commit: () => Promise<void>;
+    rollback: () => Promise<void>;
+  }>;
+}
 
+let pool: DBPool;
 if (isVercel) {
   const PHP_API_URL = "http://capofcom.cafe24.com/l14_coordy/db_api.php";
   const SECRET_KEY = process.env.PHP_API_SECRET_KEY || "v9kP2xM5nL8jQ4wR7tY1bC6fH3zD0gS8mN5vX2kP9jL4cR7wT1bY6fH3zM0gS8";
@@ -114,7 +126,7 @@ if (isVercel) {
     });
   }
 
-  pool = globalForMysql.mysqlPool;
+  pool = globalForMysql.mysqlPool as unknown as DBPool;
 }
 
 export default pool;

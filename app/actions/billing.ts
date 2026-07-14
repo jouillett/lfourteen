@@ -116,7 +116,7 @@ export async function issueBillingKeyAndSave(
 export async function executeBillingPayment(customerId: number, billingKey: string, customerKey: string, priceId: number) {
   try {
     // 1. Get product price from DB
-    const [priceRows] = await pool.query<any[]>("SELECT price FROM prices WHERE id = ?", [priceId]);
+    const [priceRows]: any = await pool.query("SELECT price FROM prices WHERE id = ?", [priceId]);
     if (!priceRows || priceRows.length === 0) throw new Error("Price not found");
     const amount = Number(priceRows[0].price);
 
