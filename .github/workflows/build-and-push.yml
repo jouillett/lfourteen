@@ -28,13 +28,25 @@ jobs:
         
       - name: Prepare Standalone Directory
         run: |
-          cp -r .next/static .next/standalone/.next/
-          cp -r public .next/standalone/
+          mkdir -p .next/standalone-wrap/app
+          mv .next/standalone/* .next/standalone-wrap/app/
+          cp -r .next/static .next/standalone-wrap/app/.next/
+          cp -r public .next/standalone-wrap/app/
+          
+          cat << 'EOF' > .next/standalone-wrap/package.json
+          {
+            "name": "airspace-runner",
+            "version": "1.0.0",
+            "scripts": {
+              "start": "cd app && node server.js"
+            }
+          }
+          EOF
           
       - name: Deploy to Airspace Branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .next/standalone
+          publish_dir: .next/standalone-wrap
           publish_branch: airspace-deploy
           force_orphan: true
