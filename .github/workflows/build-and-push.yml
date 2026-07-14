@@ -30,7 +30,8 @@ jobs:
         run: |
           mkdir -p .next/standalone-wrap/app
           mv .next/standalone/* .next/standalone-wrap/app/
-          cp -r .next/static .next/standalone-wrap/app/.next/
+          mkdir -p .next/standalone-wrap/app/.next/static
+          cp -r .next/static/* .next/standalone-wrap/app/.next/static/
           cp -r public .next/standalone-wrap/app/
           
           cat << 'EOF' > .next/standalone-wrap/package.json
