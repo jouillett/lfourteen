@@ -29,10 +29,11 @@ jobs:
       - name: Prepare Standalone Directory
         run: |
           mkdir -p .next/standalone-wrap/app
-          mv .next/standalone/* .next/standalone-wrap/app/
+          cp -a .next/standalone/. .next/standalone-wrap/app/
           mkdir -p .next/standalone-wrap/app/.next/static
-          cp -r .next/static/* .next/standalone-wrap/app/.next/static/
-          cp -r public .next/standalone-wrap/app/
+          cp -a .next/static/. .next/standalone-wrap/app/.next/static/
+          mkdir -p .next/standalone-wrap/app/public
+          cp -a public/. .next/standalone-wrap/app/public/
           
           cat << 'EOF' > .next/standalone-wrap/package.json
           {
