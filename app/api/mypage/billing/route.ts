@@ -80,9 +80,9 @@ export async function PUT(req: Request) {
     try {
       await connection.beginTransaction();
 
-      // Update interval and period
+      // Update interval, period and updated_at
       await connection.execute(
-        "UPDATE billing SET `interval` = ?, period = ? WHERE id = ? AND customer_id = ?",
+        "UPDATE billing SET `interval` = ?, period = ?, updated_at = NOW() WHERE id = ? AND customer_id = ?",
         [interval, period, billingId, userId]
       );
 
