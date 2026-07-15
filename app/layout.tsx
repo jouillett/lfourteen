@@ -10,6 +10,16 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "엘포틴 코디",
   description: "엘포틴 유산균과 발효동충하초의 밸런스 - 엘포틴 코디",
+  icons: {
+    icon: [
+      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png", sizes: "76x76", type: "image/png" },
+    ],
+    apple: [
+      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png", sizes: "76x76", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
