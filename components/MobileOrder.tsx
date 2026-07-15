@@ -670,9 +670,9 @@ export default function MobileOrder() {
                 <span className="material-symbols-outlined text-[24px]">close</span>
               </button>
             </div>
-            <div className="p-md max-h-[60vh] overflow-y-auto">
+            <div className="p-md">
               <div className="bg-white border border-outline-variant/30 rounded-xl p-md shadow-sm">
-                <iframe src="https://m-img.cafe24.com/images/terms/ec/optional/pg_dacom_financial.html" frameBorder="0" style={{ width: '100%', height: '400px', display: 'block', backgroundColor: 'white' }}></iframe>
+                <iframe src="https://m-img.cafe24.com/images/terms/ec/optional/pg_dacom_financial.html" frameBorder="0" style={{ width: '100%', height: '50vh', display: 'block', backgroundColor: 'white' }}></iframe>
               </div>
             </div>
             <div className="p-md pb-lg flex justify-center">
