@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   },
 };
 
+import DisableCopy from "@/components/DisableCopy";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +35,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen flex flex-col bg-surface text-on-surface font-body-md overflow-x-hidden">
+        <DisableCopy />
         {children}
       </body>
     </html>
