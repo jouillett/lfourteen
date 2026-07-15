@@ -650,7 +650,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
               <div className="bg-white border border-outline-variant/30 rounded-xl p-md shadow-sm text-[13px] leading-relaxed text-on-surface">
                 <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송비용</span><span>무료배송</span></div>
                 <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송기간</span><span>주말ㆍ공휴일 제외 평균 2일</span></div>
-                <div className="flex"><span className="font-bold w-[70px] shrink-0">택 배 사</span><span>롯데택배(<a href="https://www.lotteglogis.com/" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">https://www.lotteglogis.com/</a>)</span></div>
+                <div className="flex"><span className="font-bold w-[70px] shrink-0">택 배 사</span><a href="https://www.lotteglogis.com/" target="_blank" rel="noreferrer" className="hover:underline hover:text-primary">롯데택배</a></div>
               </div>
             </div>
             <div className="p-md pb-lg flex justify-center">
