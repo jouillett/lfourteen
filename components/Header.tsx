@@ -100,7 +100,7 @@ export default function Header() {
       <div className="flex justify-between items-center w-[90%] mx-auto py-md h-20">
         <Link href="/" className="flex items-center gap-md hover:opacity-90 transition-opacity">
           <img
-            src="/favicon.ico"
+            src="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png"
             style={{
               width: "24px",
               height: "24px",
