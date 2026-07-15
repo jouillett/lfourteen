@@ -90,10 +90,22 @@ export async function GET(req: Request) {
                   title = title + ' ' + quantity + '개';
                 }
               }
+              const originalName = parseBuffer(order.order_name) || '';
+              if (originalName.includes('(정기구독 첫 결제)')) {
+                title += ' (정기구독 첫 결제)';
+              } else if (originalName.includes('(정기구독)')) {
+                title += ' (정기구독)';
+              }
               order.order_name = title;
             } else {
               let title = parseBuffer(product.name);
               title = title + '외 ' + (orderItems.length - 1) + '개';
+              const originalName = parseBuffer(order.order_name) || '';
+              if (originalName.includes('(정기구독 첫 결제)')) {
+                title += ' (정기구독 첫 결제)';
+              } else if (originalName.includes('(정기구독)')) {
+                title += ' (정기구독)';
+              }
               order.order_name = title;
             }
           }
