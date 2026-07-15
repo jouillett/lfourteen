@@ -598,6 +598,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
             </div>
           </div>
         </div>
+      )}
       {/* Policy Popup */}
       {showPolicyPopup && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-md" onClick={() => setShowPolicyPopup(false)}>
