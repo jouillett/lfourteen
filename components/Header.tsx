@@ -100,7 +100,7 @@ export default function Header() {
       <div className="flex justify-between items-center w-[90%] mx-auto py-md h-20">
         <Link href="/" className="flex items-center gap-md hover:opacity-90 transition-opacity">
           <img
-            src="/images/logo-w.png"
+            src="/images/logo.png"
             className="h-8 w-auto"
             alt="L14 Cordy Logo"
           />
