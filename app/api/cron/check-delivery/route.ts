@@ -91,7 +91,9 @@ export async function GET(req: Request) {
           const { isDone, deliveredAt } = await checkDeliveryDone(shipmentField);
           if (isDone) {
             if (deliveredAt) {
-              const formattedDate = new Date(deliveredAt).toISOString().slice(0, 19).replace('T', ' ');
+              const d = new Date(deliveredAt);
+              const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+              const formattedDate = kst.toISOString().slice(0, 19).replace('T', ' ');
               await connection.execute('UPDATE orders SET status = 2, received_at = ? WHERE id = ?', [formattedDate, order.id]);
             } else {
               await connection.execute('UPDATE orders SET status = 2, received_at = NOW() WHERE id = ?', [order.id]);
@@ -154,7 +156,9 @@ export async function GET(req: Request) {
           const { isDone, deliveredAt } = await checkDeliveryDone(reshipmentField);
           if (isDone) {
             if (deliveredAt) {
-              const formattedDate = new Date(deliveredAt).toISOString().slice(0, 19).replace('T', ' ');
+              const d = new Date(deliveredAt);
+              const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+              const formattedDate = kst.toISOString().slice(0, 19).replace('T', ' ');
               await connection.execute('UPDATE orders SET status = 6, received_at = ? WHERE id = ?', [formattedDate, order.id]);
             } else {
               await connection.execute('UPDATE orders SET status = 6, received_at = NOW() WHERE id = ?', [order.id]);
@@ -220,7 +224,9 @@ export async function GET(req: Request) {
 
               // Set order status to 8 (반품완료)
               if (deliveredAt) {
-                const formattedDate = new Date(deliveredAt).toISOString().slice(0, 19).replace('T', ' ');
+                const d = new Date(deliveredAt);
+                const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+                const formattedDate = kst.toISOString().slice(0, 19).replace('T', ' ');
                 await connection.execute('UPDATE orders SET status = 8, received_at = ? WHERE id = ?', [formattedDate, order.id]);
               } else {
                 await connection.execute('UPDATE orders SET status = 8, received_at = NOW() WHERE id = ?', [order.id]);
