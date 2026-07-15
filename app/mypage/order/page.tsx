@@ -139,6 +139,18 @@ export default function OrderPage() {
   };
 
   const handleExchange = async (orderId: number) => {
+    const order = orders.find((o: any) => o.id === orderId);
+    if (order && order.received_at) {
+      const receivedDate = new Date(order.received_at);
+      const now = new Date();
+      const diffTime = now.getTime() - receivedDate.getTime();
+      const diffDays = diffTime / (1000 * 60 * 60 * 24); 
+      if (diffDays > 7) {
+        alert("수령하신 날로부터 7일 이내일 때 교환이 가능합니다.");
+        return;
+      }
+    }
+
     if (confirm("교환을 정말 원하십니까?")) {
       try {
         const res = await fetch(`/api/orders/status`, {
@@ -161,6 +173,18 @@ export default function OrderPage() {
   };
 
   const handleReturn = async (orderId: number) => {
+    const order = orders.find((o: any) => o.id === orderId);
+    if (order && order.received_at) {
+      const receivedDate = new Date(order.received_at);
+      const now = new Date();
+      const diffTime = now.getTime() - receivedDate.getTime();
+      const diffDays = diffTime / (1000 * 60 * 60 * 24); 
+      if (diffDays > 7) {
+        alert("수령하신 날로부터 7일 이내일 때 반품이 가능합니다.");
+        return;
+      }
+    }
+
     if (confirm("반품을 정말 원하십니까?")) {
       try {
         const res = await fetch(`/api/orders/status`, {
