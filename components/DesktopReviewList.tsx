@@ -392,7 +392,7 @@ export default function DesktopReviewList() {
                 </button>
               </div>
             </div>
-            <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">
               {highlightText(review.content || "")}
             </p>
           </article>

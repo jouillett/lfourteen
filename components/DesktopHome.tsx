@@ -378,7 +378,7 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                           ))}
                         </div>
                       </div>
-                      <p className="font-body-md text-body-md text-on-surface-variant">{review.content}</p>
+                      <p className="font-body-md text-body-md text-on-surface-variant whitespace-pre-wrap">{review.content}</p>
                     </div>
                   );
                 })}

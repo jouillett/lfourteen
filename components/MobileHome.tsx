@@ -376,7 +376,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
                         <span className="font-label-md text-label-md font-normal text-on-surface-variant ml-xs">{review.created_at}</span>
                       </div>
                     </div>
-                    <p className="font-body-md text-body-md text-on-surface-variant">{review.content}</p>
+                    <p className="font-body-md text-body-md text-on-surface-variant whitespace-pre-wrap">{review.content}</p>
                   </div>
                 ))}
               </div>

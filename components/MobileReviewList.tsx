@@ -415,7 +415,7 @@ export default function MobileReviewList() {
               <span className="font-label-md text-label-md text-on-surface font-semibold">{highlightText(review.customer_name || "")}</span>
               <span className="font-caption text-caption text-on-surface-variant">{formatDate(review.created_at)}</span>
             </div>
-            <p className="font-body-md text-body-md text-on-surface leading-relaxed">
+            <p className="font-body-md text-body-md text-on-surface leading-relaxed whitespace-pre-wrap">
               {highlightText(review.content || "")}
             </p>
           </article>
