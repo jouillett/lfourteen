@@ -3,11 +3,12 @@ import pool from '../../../lib/db';
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
+    const searchParams = new URL(req.url).searchParams;
     const customerId = searchParams.get('customerId');
     const statusGreaterThan = searchParams.get('statusGreaterThan');
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '0', 10);
+    const search = searchParams.get('search') || '';
 
     if (!customerId) {
       return NextResponse.json({ success: false, message: 'Missing customerId' }, { status: 400 });
@@ -22,6 +23,10 @@ export async function GET(req: Request) {
         countQuery += ` AND status > ?`;
         countParams.push(Number(statusGreaterThan));
       }
+      if (search) {
+        countQuery += ` AND order_name LIKE ?`;
+        countParams.push(`%${search}%`);
+      }
       const [countResult]: any = await connection.execute(countQuery, countParams);
       const total = countResult[0].total;
 
@@ -31,6 +36,10 @@ export async function GET(req: Request) {
       if (statusGreaterThan) {
         query += ` AND status > ?`;
         queryParams.push(Number(statusGreaterThan));
+      }
+      if (search) {
+        query += ` AND order_name LIKE ?`;
+        queryParams.push(`%${search}%`);
       }
       query += ` ORDER BY created_at DESC`;
 

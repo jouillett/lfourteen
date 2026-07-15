@@ -17,6 +17,8 @@ export default function OrderPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     let customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
@@ -61,9 +63,10 @@ export default function OrderPage() {
 
     if (customerId) {
       setIsLoading(true);
+      const searchParam = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
       const url = currentTab === 'cancel'
-        ? `/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=3`
-        : `/api/orders?customerId=${customerId}&page=${page}&limit=3`;
+        ? `/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=3${searchParam}`
+        : `/api/orders?customerId=${customerId}&page=${page}&limit=3${searchParam}`;
       fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -77,7 +80,7 @@ export default function OrderPage() {
     } else {
       setIsLoading(false);
     }
-  }, [currentTab, page]);
+  }, [currentTab, page, searchQuery]);
 
   const handleCancelDeliveredOrder = async (orderId: number, paymentKey: string) => {
     if (confirm("정말 취소하시겠습니까?")) {
@@ -358,12 +361,28 @@ export default function OrderPage() {
             </div>
             {/* Search Input */}
             <div className="relative w-full md:w-72">
-              <input aria-label="Search orders" className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface text-sm rounded-full py-2.5 pl-5 pr-10 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder-on-surface-variant" placeholder="검색어를 입력하세요" type="text" />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-on-surface-variant">
+              <input 
+                aria-label="Search orders" 
+                className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface text-sm rounded-full py-2.5 pl-5 pr-10 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all placeholder-on-surface-variant" 
+                placeholder="검색어를 입력하세요" 
+                type="text" 
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setSearchQuery(searchInput);
+                    setPage(1);
+                  }
+                }}
+              />
+              <button 
+                onClick={() => { setSearchQuery(searchInput); setPage(1); }}
+                className="absolute inset-y-0 right-0 flex items-center pr-4 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+              >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" strokeLinecap="round" strokeLinejoin="round"></path>
                 </svg>
-              </div>
+              </button>
             </div>
           </div>
           
