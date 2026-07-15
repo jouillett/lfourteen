@@ -13,6 +13,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
   const [showNameModal, setShowNameModal] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [nameSubmitting, setNameSubmitting] = useState(false);
+  const [showDeliveryPopup, setShowDeliveryPopup] = useState(false);
   const [showPolicyPopup, setShowPolicyPopup] = useState(false);
   const nameResolverRef = React.useRef<((name: string | null) => void) | null>(null);
 
@@ -322,6 +323,12 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
                 <a className="text-on-surface-variant hover:text-primary transition-colors pb-sm font-label-md text-label-md px-xs m-tab-link" href="#m-reviews">리뷰 ({reviewCount})</a>
                 <a className="text-on-surface-variant hover:text-primary transition-colors pb-sm font-label-md text-label-md px-xs m-tab-link" href="#m-qa">Q&amp;A ({qnaCount})</a>
                 <button 
+                  onClick={() => setShowDeliveryPopup(true)}
+                  className="text-on-surface-variant hover:text-primary transition-colors pb-sm font-label-md text-label-md px-xs m-tab-link flex-shrink-0"
+                >
+                  배송안내
+                </button>
+                <button 
                   onClick={() => setShowPolicyPopup(true)}
                   className="text-on-surface-variant hover:text-primary transition-colors pb-sm font-label-md text-label-md px-xs m-tab-link flex-shrink-0"
                 >
@@ -623,6 +630,31 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
             </div>
             <div className="p-md pb-lg flex justify-center">
               <button type="button" onClick={() => setShowPolicyPopup(false)} className="bg-[#5a4d41] text-white font-label-md text-label-md px-[60px] py-3 rounded-lg hover:bg-[#4a3f35] transition-colors shadow-sm active:scale-95">
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Delivery Popup */}
+      {showDeliveryPopup && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-md" onClick={() => setShowDeliveryPopup(false)}>
+          <div className="bg-surface rounded-xl w-full max-w-[400px] flex flex-col shadow-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-md border-b border-outline-variant/30">
+              <h3 className="font-headline-md text-headline-md text-on-surface font-bold">배송안내</h3>
+              <button type="button" onClick={() => setShowDeliveryPopup(false)} className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center">
+                <span className="material-symbols-outlined text-[24px]">close</span>
+              </button>
+            </div>
+            <div className="p-md">
+              <div className="bg-white border border-outline-variant/30 rounded-xl p-md shadow-sm text-[13px] leading-relaxed text-on-surface">
+                <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송비용</span><span>무료배송</span></div>
+                <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송기간</span><span>주말ㆍ공휴일 제외 평균 2일</span></div>
+                <div className="flex"><span className="font-bold w-[70px] shrink-0">택 배 사</span><span>롯데택배(<a href="https://www.lotteglogis.com/" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">https://www.lotteglogis.com/</a>)</span></div>
+              </div>
+            </div>
+            <div className="p-md pb-lg flex justify-center">
+              <button type="button" onClick={() => setShowDeliveryPopup(false)} className="bg-[#5a4d41] text-white font-label-md text-label-md px-[60px] py-3 rounded-lg hover:bg-[#4a3f35] transition-colors shadow-sm active:scale-95">
                 확인
               </button>
             </div>
