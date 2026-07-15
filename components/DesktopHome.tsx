@@ -14,6 +14,7 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
   const [showNameModal, setShowNameModal] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [nameSubmitting, setNameSubmitting] = useState(false);
+  const [showPolicyPopup, setShowPolicyPopup] = useState(false);
   const nameResolverRef = React.useRef<((name: string | null) => void) | null>(null);
 
   const prices: Record<string, string> = {
@@ -295,6 +296,12 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                 <a className="text-primary border-b-2 border-primary font-label-md text-label-md tab-link active px-xs pb-1" href="#description">상세정보</a>
                 <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md tab-link px-xs pb-1" href="#reviews">리뷰 ({reviewCount})</a>
                 <a className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md tab-link px-xs pb-1" href="#qa">Q&amp;A ({qnaCount})</a>
+                <button 
+                  onClick={() => setShowPolicyPopup(true)}
+                  className="text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md px-xs pb-1 flex-shrink-0"
+                >
+                  교환 및 반품 안내
+                </button>
               </nav>
             </div>
             
@@ -555,6 +562,36 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                 onClick={handleNameModalSubmit}
                 disabled={!nameInput.trim() || nameSubmitting}
               >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Policy Popup */}
+      {showPolicyPopup && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-md" onClick={() => setShowPolicyPopup(false)}>
+          <div className="bg-surface rounded-xl w-full max-w-[400px] flex flex-col shadow-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-md border-b border-outline-variant/30">
+              <h3 className="font-headline-md text-headline-md text-on-surface font-bold">교환 및 반품 안내</h3>
+              <button type="button" onClick={() => setShowPolicyPopup(false)} className="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center">
+                <span className="material-symbols-outlined text-[24px]">close</span>
+              </button>
+            </div>
+            <div className="p-md">
+              <div className="bg-white border border-outline-variant/30 rounded-xl p-md shadow-sm text-[13px] leading-relaxed text-on-surface">
+                <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">신청 방법</span><span>상품을 수령하신 날로부터 7일 이내로 홈페이지 접수</span></div>
+                <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송 비용</span><span>단순 변심은 왕복 택배비 6,000원</span></div>
+                <div className="flex mb-4"><span className="font-bold w-[70px] shrink-0">반품 주소</span><span>경기도 성남시 중원구 갈마치로 176, 6층</span></div>
+                
+                <div className="font-bold mb-2">유의사항</div>
+                <div className="pl-2 -indent-2">ㆍ단순 변심인 경우 수령일로부터 7일 이내까지 교환ㆍ반품이 가능합니다. (교환/반품 택배비 고객 부담)</div>
+                <div className="pl-2 -indent-2 mt-1">ㆍ상품 하자, 오배송인 경우 수령일로부터 7일 이내 교환ㆍ반품이 가능합니다. (교환/반품 택배비 없음)</div>
+                <div className="pl-2 -indent-2 mt-1">ㆍ제품 특성상 부주의에 의한 제품 손상 및 파손 혹은 사용 및 개봉한 경우 교환ㆍ반품이 안됩니다.</div>
+              </div>
+            </div>
+            <div className="p-md pb-lg flex justify-center">
+              <button type="button" onClick={() => setShowPolicyPopup(false)} className="bg-[#5a4d41] text-white font-label-md text-label-md px-[60px] py-3 rounded-lg hover:bg-[#4a3f35] transition-colors shadow-sm active:scale-95">
                 확인
               </button>
             </div>
