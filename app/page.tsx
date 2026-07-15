@@ -26,7 +26,7 @@ export default async function Home() {
         const dd = String(d.getDate()).padStart(2, '0');
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const yy = String(d.getFullYear()).slice(2);
-        dateStr = `${dd}.${mm}.${yy}`;
+        dateStr = `${yy}.${mm}.${dd}`;
       }
       
       const custName = Buffer.isBuffer(r.customer_name) ? r.customer_name.toString('utf8') : (r.customer_name || 'User');
