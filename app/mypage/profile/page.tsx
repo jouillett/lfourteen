@@ -11,6 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const profileSchema = z.object({
+  currentPassword: z.string().min(1, "정보 수정을 위해 현재 비밀번호를 입력해주세요."),
   name: z.string().min(1, "이름을 입력해주세요."),
   zipcode: z.string().optional(),
   address1: z.string().optional(),
@@ -107,6 +108,7 @@ export default function ProfilePage() {
     try {
       const payload = {
         customerId,
+        currentPassword: data.currentPassword,
         name: data.name,
         zip_code: data.zipcode,
         address: data.address1,
@@ -125,9 +127,13 @@ export default function ProfilePage() {
       
       if (result.success) {
           alert("회원정보가 수정되었습니다.");
-        reset({ ...data }); 
+        reset({ ...data, currentPassword: '' }); 
       } else {
-          alert("수정 실패: " + result.message);
+          if (result.message === 'wrong_password') {
+            alert("입력된 비밀번호가 틀립니다.\n회원정보를 수정할 수 없습니다.");
+          } else {
+            alert("수정 실패: " + result.message);
+          }
       }
     } catch (err) {
       console.error(err);
@@ -222,16 +228,19 @@ export default function ProfilePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <div className="border-t-2 border-black w-full flex flex-col text-[14px]">
               
-              {/* 비밀번호 */}
+              {/* 비밀번호 (본인 확인용) */}
               <div className="flex border-b border-[#EAEAEA]">
-                <LabelCol>비밀번호</LabelCol>
+                <LabelCol required>비밀번호 확인</LabelCol>
                 <div className="flex-1 py-3 px-4 flex flex-col md:flex-row md:items-center gap-2">
-                  <input 
-                    type="password" 
-                    value="********"
-                    disabled
-                    className="bg-[#F5F5F5] border border-[#CCCCCC] px-3 py-1.5 w-full md:w-[200px] outline-none text-[#888888]" 
-                  />
+                  <div className="flex-1">
+                    <input 
+                      type="password" 
+                      placeholder="정보 수정을 위해 비밀번호 입력"
+                      {...register("currentPassword")} 
+                      className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full md:w-[250px] outline-none focus:border-black" 
+                    />
+                    {errors.currentPassword && <p className="text-error text-xs mt-1">{errors.currentPassword.message}</p>}
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
@@ -239,7 +248,7 @@ export default function ProfilePage() {
                       const phone = `${mobile1 || ''}${mobile2 || ''}${mobile3 || ''}`;
                       router.push(`/password_auth?phone=${phone}`);
                     }}
-                    className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap md:w-auto"
+                    className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap md:w-auto self-start mt-2 md:mt-0"
                   >
                     비밀번호 수정
                   </button>
