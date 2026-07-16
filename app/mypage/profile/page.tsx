@@ -11,9 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const profileSchema = z.object({
-        password: z.string().min(10, "비밀번호는 최소 10자 이상이어야 합니다"),
-        passwordConfirm: z.string().min(1, "비밀번호 확인을 입력해주세요."),
-        name: z.string().min(1, "이름을 입력해주세요."),
+  name: z.string().min(1, "이름을 입력해주세요."),
   zipcode: z.string().optional(),
   address1: z.string().optional(),
   address2: z.string().optional(),
@@ -23,10 +21,7 @@ const profileSchema = z.object({
   phone1: z.string().optional(),
   phone2: z.string().optional(),
   phone3: z.string().optional(),
-        email: z.string().email("올바른 이메일 형식이 아닙니다.").optional().or(z.literal('')),
-}).refine((data) => data.password === data.passwordConfirm, {
-        message: "비밀번호가 일치하지 않습니다.",
-  path: ["passwordConfirm"],
+  email: z.string().email("올바른 이메일 형식이 아닙니다.").optional().or(z.literal('')),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -40,6 +35,7 @@ export default function ProfilePage() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    getValues,
     reset
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -111,7 +107,6 @@ export default function ProfilePage() {
     try {
       const payload = {
         customerId,
-        password: data.password || undefined,
         name: data.name,
         zip_code: data.zipcode,
         address: data.address1,
@@ -130,7 +125,7 @@ export default function ProfilePage() {
       
       if (result.success) {
           alert("회원정보가 수정되었습니다.");
-        reset({ ...data, password: '', passwordConfirm: '' }); // Clear passwords after update
+        reset({ ...data }); 
       } else {
           alert("수정 실패: " + result.message);
       }
@@ -229,28 +224,25 @@ export default function ProfilePage() {
               
               {/* 비밀번호 */}
               <div className="flex border-b border-[#EAEAEA]">
-                <LabelCol required>비밀번호</LabelCol>
+                <LabelCol>비밀번호</LabelCol>
                 <div className="flex-1 py-3 px-4 flex flex-col md:flex-row md:items-center gap-2">
                   <input 
                     type="password" 
-                    {...register("password")} 
-                    className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full md:w-[200px] outline-none focus:border-black" 
+                    value="********"
+                    disabled
+                    className="bg-[#F5F5F5] border border-[#CCCCCC] px-3 py-1.5 w-full md:w-[200px] outline-none text-[#888888]" 
                   />
-                  <span className="text-[#888888] text-[13px]">(영문 대/소문자/숫자/특수문자 중 2가지 이상 조합, 10자~16자)</span>
-                  {errors.password && <p className="text-error text-xs md:ml-2">{errors.password.message}</p>}
-                </div>
-              </div>
-
-              {/* 비밀번호 확인 */}
-              <div className="flex border-b border-[#EAEAEA]">
-                <LabelCol required>비밀번호 확인</LabelCol>
-                <div className="flex-1 py-3 px-4 flex items-center">
-                  <input 
-                    type="password" 
-                    {...register("passwordConfirm")} 
-                    className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full md:w-[200px] outline-none focus:border-black" 
-                  />
-                  {errors.passwordConfirm && <p className="text-error text-xs ml-3">{errors.passwordConfirm.message}</p>}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const { mobile1, mobile2, mobile3 } = getValues();
+                      const phone = `${mobile1 || ''}${mobile2 || ''}${mobile3 || ''}`;
+                      router.push(`/password_auth?phone=${phone}`);
+                    }}
+                    className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap md:w-auto"
+                  >
+                    비밀번호 수정
+                  </button>
                 </div>
               </div>
 
