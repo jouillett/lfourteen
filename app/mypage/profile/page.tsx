@@ -31,6 +31,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [customerId, setCustomerId] = useState<string | null>(null);
   const [reviewCount, setReviewCount] = useState<number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -127,7 +128,7 @@ export default function ProfilePage() {
       
       if (result.success) {
           alert("회원정보가 수정되었습니다.");
-        reset({ ...data, currentPassword: '' }); 
+          window.location.href = "/";
       } else {
           if (result.message === 'wrong_password') {
             alert("입력된 비밀번호가 틀립니다.\n회원정보를 수정할 수 없습니다.");
@@ -233,12 +234,24 @@ export default function ProfilePage() {
                 <LabelCol required>비밀번호 확인</LabelCol>
                 <div className="flex-1 py-3 px-4 flex flex-col md:flex-row md:items-center gap-2">
                   <div className="flex-1">
-                    <input 
-                      type="password" 
-                      placeholder="정보 수정을 위해 비밀번호 입력"
-                      {...register("currentPassword")} 
-                      className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full md:w-[250px] outline-none focus:border-black" 
-                    />
+                    <div className="relative flex items-center md:w-[250px]">
+                      <input 
+                        type={showPassword ? "text" : "password"}
+                        placeholder="정보 수정을 위해 비밀번호 입력"
+                        {...register("currentPassword")} 
+                        className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full pr-10 outline-none focus:border-black" 
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 text-gray-500 hover:text-black transition-colors focus:outline-none flex items-center justify-center"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">
+                          {showPassword ? "visibility" : "visibility_off"}
+                        </span>
+                      </button>
+                    </div>
                     {errors.currentPassword && <p className="text-error text-xs mt-1">{errors.currentPassword.message}</p>}
                   </div>
                   <button

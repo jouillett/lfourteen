@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       await connection.execute(pointsQuery, [customerId]);
 
       await connection.commit();
-      return NextResponse.json({ success: true, message: 'Customer registered successfully' });
+      return NextResponse.json({ success: true, message: 'Customer registered successfully', userId: customerId });
     } catch (err) {
       await connection.rollback();
       throw err;

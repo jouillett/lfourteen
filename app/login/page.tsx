@@ -9,6 +9,7 @@ import PhoneInput from "@/components/PhoneInput";
 export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -42,7 +43,7 @@ export default function LoginPage() {
         localStorage.setItem("customerId", data.userId);
         localStorage.setItem("lastActivity", Date.now().toString());
         const params = new URLSearchParams(window.location.search);
-        const redirect = params.get("redirect") || "/";
+        let redirect = params.get("redirect") || "/";
 
         const pendingAction = sessionStorage.getItem("pendingAction");
         if (pendingAction === "writeReview") {
@@ -54,18 +55,27 @@ export default function LoginPage() {
           } else {
             alert("배송 완료된 주문이 있어야 후기를 작성할 수 있습니다.");
           }
+        } else if (!data.name) {
+          const wantsProfile = window.confirm("지금 개인정보를 입력하시겠습니까?");
+          if (wantsProfile) {
+            redirect = "/mypage/profile";
+          }
         }
         
         // Slight delay before redirecting to allow popup to open securely
         setTimeout(() => {
           window.location.href = redirect;
         }, 100);
-
       } else {
         if (data.reason === "incorrect_password") {
           const wantsReset = window.confirm("잘못된 비밀번호를 입력하셨습니다. 새비밀번호를 설정할까요?");
           if (wantsReset) {
             window.location.href = `/password_auth?phone=${encodeURIComponent(phone.replace(/\D/g, ""))}`;
+          }
+        } else if (data.reason === "not_found") {
+          const wantsJoin = window.confirm("가입되지 않은 전화번호입니다.\n지금 가입하시겠습니까?");
+          if (wantsJoin) {
+            window.location.href = "/join";
           }
         } else {
           alert(data.message || "로그인에 실패했습니다.");
@@ -108,14 +118,26 @@ export default function LoginPage() {
             {/* Password Input */}
             <div className="flex flex-col gap-xs">
               <label className="font-label-md text-label-md text-on-surface" htmlFor="password">비밀번호</label>
-              <input
-                className="w-full px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50"
-                id="password"
-                placeholder="비밀번호를 입력해주세요."
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative flex items-center">
+                <input
+                  className="w-full px-sm py-sm pr-12 rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50"
+                  id="password"
+                  placeholder="비밀번호를 입력해주세요."
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-outline-variant hover:text-primary transition-colors focus:outline-none flex items-center justify-center"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? "visibility" : "visibility_off"}
+                  </span>
+                </button>
+              </div>
             </div>
 
             {/* Action Area */}

@@ -88,7 +88,7 @@ export default function JoinPage() {
           <form className="flex flex-col gap-md" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-sm">
               <label className="font-label-md text-label-md text-on-surface-variant ml-xs">휴대폰 번호</label>
-              <div className="flex gap-base">
+              <div className="flex flex-col sm:flex-row gap-base">
                 <div className="relative flex-grow">
                   <PhoneInput
                     className="w-full bg-[#FDF8F4] border-[#655D49] border rounded-lg py-md px-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary transition-all placeholder:text-outline"
@@ -101,7 +101,7 @@ export default function JoinPage() {
                   type="button"
                   disabled={!isPhoneValid}
                   onClick={handleSendAuth}
-                  className="whitespace-nowrap bg-secondary-container text-on-secondary-container font-label-md text-label-md px-md rounded-lg hover:bg-outline-variant transition-colors active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="whitespace-nowrap w-full sm:w-auto bg-secondary-container text-on-secondary-container font-label-md text-label-md py-md px-md rounded-lg hover:bg-outline-variant transition-colors active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   인증하기
                 </button>
