@@ -27,27 +27,23 @@ export async function GET(req: Request) {
       for (let i = 0; i < N; i++) {
         const P = expiredPointsRows[i];
 
-        // 2. Find customer where id = P.customer_id
-        const [customerRows]: any = await connection.execute(
-          'SELECT id, point FROM customers WHERE id = ? FOR UPDATE',
-          [P.customer_id]
-        );
-
-        if (customerRows.length > 0) {
-          const C = customerRows[0];
-          
-          // 3. Update C's point field
-          const newPointValue = Math.max(0, C.point - P.point_amount); // Prevent negative points just in case
-          await connection.execute(
-            'UPDATE customers SET point = ? WHERE id = ?',
-            [newPointValue, C.id]
-          );
-        }
-
-        // 4. Delete P record
+        // 1. Delete P record from points table
         await connection.execute(
           'DELETE FROM points WHERE id = ?',
           [P.id]
+        );
+
+        // 2. select SUM(point_amount) total from points where customer_id=P's customer_id
+        const [sumRows]: any = await connection.execute(
+          'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+          [P.customer_id]
+        );
+        const total = sumRows[0].total;
+
+        // 3. update customers set point= total where id=P's customer_id
+        await connection.execute(
+          'UPDATE customers SET point = ? WHERE id = ?',
+          [total, P.customer_id]
         );
       }
     }
