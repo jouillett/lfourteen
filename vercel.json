@@ -1,16 +1,1 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/expire-points",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/cron/check-delivery",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/billing",
-      "schedule": "0 0 * * *"
-    }
-  ]
-}
+{}
