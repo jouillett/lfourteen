@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 import { RowDataPacket } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const { customer_id, product_id, rating, content } = await req.json();
@@ -193,6 +195,12 @@ export async function DELETE(req: Request) {
            [reviewRows[0].order_id]
          );
       }
+
+      // Delete associated accuse records first
+      await connection.execute(
+        `DELETE FROM accuse WHERE review_id = ?`,
+        [review_id]
+      );
 
       await connection.execute(
         `DELETE FROM review WHERE id = ?`,

@@ -39,7 +39,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 
       <!-- Logo -->
       <div style="margin-bottom:24px;">
-        <a href="https://lfourteen.vercel.app" style="text-decoration:none;">
+        <a href="https://lfourteen.life" style="text-decoration:none;">
           <h1 style="margin:0;font-size:36px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:#941F32;">기쁜하루</h1>
         </a>
       </div>
@@ -52,7 +52,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 
       <!-- Product Image -->
       <div style="margin-bottom:32px;text-align:center;">
-        <a href="https://lfourteen.vercel.app/mypage/order" style="text-decoration:none;">
+        <a href="https://lfourteen.life/mypage/order" style="text-decoration:none;">
           <img src="https://capofcom.cafe24.com/l14_coordy/images/l14cordy.jpg" alt="엘포틴 코디 제품" width="300" style="max-width:100%;height:auto;display:inline-block;border-radius:8px;" />
         </a>
       </div>
@@ -79,7 +79,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 
       <!-- CTA Button -->
       <div style="text-align:center;">
-        <a href="https://lfourteen.vercel.app/mypage/billing" style="display:inline-block;background-color:#941F32;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:16px 32px;border-radius:6px;min-width:260px;text-align:center;">기쁜하루 정기결제 정보 확인하기</a>
+        <a href="https://lfourteen.life/mypage/billing" style="display:inline-block;background-color:#941F32;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:16px 32px;border-radius:6px;min-width:260px;text-align:center;">기쁜하루 정기결제 정보 확인하기</a>
       </div>
 
     </div>
@@ -87,7 +87,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 
     <!-- Notice Area -->
     <div style="background-color:#f5f5f5;padding:24px;border-top:1px solid #e5e5e5;">
-      <p style="margin:0 0 8px 0;font-size:12px;color:#666666;line-height:1.6;">본 메일은 발신 전용으로 회신되지 않습니다. 문의사항은 <a href="https://lfourteen.vercel.app/inquiry"><strong>문의 게시판</strong></a>을 이용해주세요.</p>
+      <p style="margin:0 0 8px 0;font-size:12px;color:#666666;line-height:1.6;">본 메일은 발신 전용으로 회신되지 않습니다. 문의사항은 <a href="https://lfourteen.life/inquiry"><strong>문의 게시판</strong></a>을 이용해주세요.</p>
       <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">주문 관련 정보, 주요 공지사항등은 수신 동의 여부에 관계없이 발송됩니다.</p>
     </div>
 
@@ -96,7 +96,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
       <table width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td width="140" style="vertical-align:middle;padding-right:16px;white-space:nowrap;">
-            <a href="https://lfourteen.vercel.app" style="text-decoration:none;">
+            <a href="https://lfourteen.life" style="text-decoration:none;">
               <span style="font-size:22px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:#941F32;">L14 Cordy</span>
             </a>
           </td>
@@ -154,7 +154,7 @@ export async function sendShippingEmail(toEmail: string, data: any) {
 
   // Link to dedicated non-auth tracking page to open modal automatically
   const shipmentString = `${data.shipmentCompany}|${data.shipmentNumber}`;
-  const trackingUrl = `https://lfourteen.vercel.app/tracking?shipment=${encodeURIComponent(shipmentString)}`;
+  const trackingUrl = `https://lfourteen.life/tracking?shipment=${encodeURIComponent(shipmentString)}`;
   htmlContent = htmlContent.replace(/\$trackingUrl/g, trackingUrl);
 
   try {

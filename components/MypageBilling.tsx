@@ -295,11 +295,11 @@ export default function MypageBilling() {
                 
                 {/* Add Product */}
                 {availableOptions.length > 0 && (
-                  <div className="mt-4 flex items-center space-x-2 bg-surface p-3 rounded border border-outline-variant/50">
+                  <div className="mt-4 flex items-center space-x-2 bg-surface p-3 rounded border border-outline-variant/50 overflow-hidden">
                     <select 
                       value={selectedOptionId}
                       onChange={(e) => setSelectedOptionId(e.target.value ? Number(e.target.value) : "")}
-                      className="flex-1 bg-surface-container border border-outline-variant rounded px-2 py-2 text-sm"
+                      className="min-w-0 flex-1 bg-surface-container border border-outline-variant rounded px-2 py-2 text-sm"
                     >
                       <option value="">+ 추가할 상품(옵션) 선택</option>
                       {availableOptions.map(opt => (
@@ -310,7 +310,7 @@ export default function MypageBilling() {
                     </select>
                     <button 
                       onClick={handleAddProduct}
-                      className="bg-secondary text-on-secondary px-4 py-2 rounded text-sm font-bold hover:opacity-90 transition-opacity whitespace-nowrap"
+                      className="shrink-0 bg-secondary text-on-secondary px-4 py-2 rounded text-sm font-bold hover:opacity-90 transition-opacity whitespace-nowrap"
                     >
                       추가
                     </button>
@@ -325,13 +325,13 @@ export default function MypageBilling() {
               </div>
 
               {/* Cancel Subscription */}
-              <div className="bg-error/10 rounded-xl p-6 border border-error/20 flex flex-col md:flex-row justify-between items-center">
-                <div className="mb-4 md:mb-0">
+              <div className="bg-error/10 rounded-xl p-6 border border-error/20 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div className="mb-4 md:mb-0 w-full">
                   <h3 className="font-bold text-error mb-1">정기구매 서비스 취소</h3>
-                  <p className="text-sm text-error/80">정기구매를 취소하면 다음 결제 예정일부터 결제 및 배송이 중단됩니다.</p>
+                  <p className="text-sm text-error/80 break-keep">정기구매를 취소하면 다음 결제 예정일부터 결제 및 배송이 중단됩니다.</p>
                 </div>
-                <button onClick={handleCancel} className="bg-error text-onError px-6 py-2 rounded font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
-                  구독 취소하기
+                <button onClick={handleCancel} className="bg-error text-white w-full md:w-auto px-6 py-2 rounded font-bold hover:opacity-90 transition-opacity whitespace-nowrap">
+                  구독 취소
                 </button>
               </div>
 

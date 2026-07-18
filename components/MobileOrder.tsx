@@ -106,6 +106,11 @@ export default function MobileOrder() {
         if (!usePoints) {
           setPointAmount(Number(d.point) || 0);
         }
+        setFirstName(prev => prev || d.name || "");
+        setPhone(prev => prev || d.mobile || "");
+        setZipcode(prev => prev || d.zip_code || "");
+        setAddress(prev => prev || d.address || "");
+        setAddressDetail(prev => prev || d.detail_address || "");
       }
     });
 

@@ -47,7 +47,9 @@ export default function MobileQnaList() {
     if (filterType === "waiting") filtered = filtered.filter(q => q.is_answer === 0);
     if (filterType === "completed") filtered = filtered.filter(q => q.is_answer === 1);
     if (excludeSecret) filtered = filtered.filter(q => q.is_secret === 0);
-    if (myQnaOnly && loggedInUserId) filtered = filtered.filter(q => q.customer_id === loggedInUserId);
+    if (myQnaOnly) {
+      filtered = loggedInUserId ? filtered.filter(q => q.customer_id === loggedInUserId) : [];
+    }
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
