@@ -81,7 +81,7 @@ export async function POST(req: Request) {
       );
 
       await connection.commit();
-      return NextResponse.json({ success: true, debug: { customerId, amount, actualTotalPrice } });
+      return NextResponse.json({ success: true, debug: { customerId, actualTotalPrice } });
     } catch (dbError) {
       await connection.rollback();
       throw dbError;
