@@ -32,13 +32,7 @@ export default function DesktopPaymentSuccess() {
     if (pendingOrderStr && userId) {
       try {
         const pendingOrder = JSON.parse(pendingOrderStr);
-        if (pendingOrder.pointUsed > 0) {
-          fetch('/api/order/deduct-points', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: userId, usedPoints: Number(pendingOrder.pointUsed) })
-          }).catch(err => console.error(err));
-        }
+        // Points are now safely deducted on the backend during /api/order/confirm transaction
       } catch(e) {}
     }
 

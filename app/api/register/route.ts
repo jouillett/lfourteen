@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
       const pointsQuery = `
         INSERT INTO points (customer_id, order_id, point_amount, expired_at)
-        VALUES (?, 0, 1000, DATE_ADD(NOW(), INTERVAL 30 DAY))
+        VALUES (?, 0, 1000, DATE_ADD(NOW(), INTERVAL 1 MONTH))
       `;
       await connection.execute(pointsQuery, [customerId]);
 

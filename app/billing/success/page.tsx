@@ -65,7 +65,8 @@ function SuccessContent() {
         billingResult.customerId,
         billingResult.billingKey,
         billingResult.customerKey,
-        billingResult.option
+        billingResult.option,
+        true
       );
       if (buyRes.success === false && buyRes.requireAddress) {
         alert(buyRes.message);

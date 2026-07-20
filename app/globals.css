@@ -109,9 +109,7 @@ body {
   font-family: var(--font-body-md);
 }
 
-html {
-  scroll-behavior: smooth;
-}
+
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -150,23 +148,7 @@ html {
   .mobile-only-view { display: block !important; }
 }
 
-/* Anti-copying styles */
-body {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
 
-input, textarea {
-  -webkit-user-select: auto !important;
-  -khtml-user-select: auto !important;
-  -moz-user-select: auto !important;
-  -ms-user-select: auto !important;
-  user-select: auto !important;
-}
 
 img {
   -webkit-user-drag: none;

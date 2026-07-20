@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     try {
       const [orderRecs]: any = await connection.execute(
-        `SELECT total_price, customer_id FROM orders WHERE id = ?`,
+        `SELECT total_price, customer_id, status, used_point FROM orders WHERE id = ?`,
         [orderId]
       );
       
@@ -32,30 +32,47 @@ export async function POST(req: Request) {
 
       const actualTotalPrice = Number(parseBuffer(orderRecord.total_price)) || 0;
       const customerId = parseBuffer(orderRecord.customer_id);
-      const amount = Math.round(actualTotalPrice * 0.001);
+      const usedPoint = Number(parseBuffer(orderRecord.used_point)) || 0;
+      const orderStatus = Number(orderRecord.status) || 0;
+      const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
 
-      console.log('[cancel-completed] orderId:', orderId, 'customerId:', customerId, 'totalPrice:', actualTotalPrice, 'amount:', amount);
+      console.log('[cancel-completed] orderId:', orderId, 'customerId:', customerId, 'status:', orderStatus, 'earnedPointAmount:', earnedPointAmount, 'usedPoint:', usedPoint);
 
-      // 1. Update points for this order (find by customer_id, oldest first)
-      const [points]: any = await connection.execute(
-        `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
-        [customerId]
-      );
-      
-      if (points.length > 0) {
-        const firstPoint = points[0];
-        await connection.execute(
-          `UPDATE points SET point_amount = point_amount - ? WHERE id = ?`,
-          [amount, firstPoint.id]
+      // 1. Deduct earned points ONLY if they were actually awarded (status >= 2)
+      if (orderStatus >= 2 && earnedPointAmount > 0) {
+        const [points]: any = await connection.execute(
+          `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
+          [customerId]
         );
+        
+        if (points.length > 0) {
+          const firstPoint = points[0];
+          await connection.execute(
+            `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
+            [earnedPointAmount, firstPoint.id]
+          );
+        }
+
+        await connection.execute(
+          `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+          [earnedPointAmount, customerId]
+        );
+        console.log('[cancel-completed] Deducted earned points:', earnedPointAmount);
       }
 
-      // 2. Update customer points
-      const [customerUpdateResult]: any = await connection.execute(
-        `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
-        [amount, customerId]
-      );
-      console.log('[cancel-completed] customers update affectedRows:', customerUpdateResult?.affectedRows);
+      // 2. Refund used points
+      if (usedPoint > 0) {
+        await connection.execute(
+          `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
+          [customerId, usedPoint]
+        );
+        
+        await connection.execute(
+          `UPDATE customers SET point = point + ? WHERE id = ?`,
+          [usedPoint, customerId]
+        );
+        console.log('[cancel-completed] Refunded used points:', usedPoint);
+      }
 
       // 3. Update order status
       await connection.execute(

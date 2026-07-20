@@ -101,12 +101,10 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-md hover:opacity-90 transition-opacity">
           <img
             src="/images/logo.png"
-            className="h-8 w-auto"
+            className="h-6 w-auto"
             alt="L14 Cordy Logo"
           />
-          <span className="text-headline-md font-headline-md font-bold text-primary">
-            L14 Cordy
-          </span>
+
         </Link>
         <div className="flex items-center gap-0.5">
           <button

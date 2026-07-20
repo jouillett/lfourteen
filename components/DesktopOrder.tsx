@@ -24,7 +24,6 @@ export default function DesktopOrder() {
   const [userMaxPoint, setUserMaxPoint] = useState(0);
   const [usePoints, setUsePoints] = useState(false);
   const [pointAmount, setPointAmount] = useState<number>(0);
-  const [agreeToss, setAgreeToss] = useState(false);
   const [showTermsPopup, setShowTermsPopup] = useState(false);
   const [showAddressList, setShowAddressList] = useState(false);
 
@@ -49,6 +48,7 @@ export default function DesktopOrder() {
   
   const paymentWidgetRef = useRef<any>(null);
   const widgetsRef = useRef<any>(null);
+  const agreementWidgetRef = useRef<any>(null);
   const tossInitializedRef = useRef(false);
 
   useEffect(() => {
@@ -172,6 +172,11 @@ export default function DesktopOrder() {
           variantKey: "DEFAULT",
         });
 
+        agreementWidgetRef.current = await widgets.renderAgreement({
+          selector: "#payment-agreement",
+          variantKey: "DEFAULT",
+        });
+
         paymentWidgetRef.current.on('paymentMethodSelect', (methodInfo: any) => {
           let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
           if (methodInfo.easyPay?.provider) pName = methodInfo.easyPay.provider;
@@ -280,11 +285,6 @@ export default function DesktopOrder() {
       }
     }
 
-    if (!agreeToss) {
-      alert('결제대행서비스 약관에 동의하셔야 합니다.');
-      document.getElementById('agree-toss')?.focus();
-      return;
-    }
 
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     
@@ -366,7 +366,11 @@ export default function DesktopOrder() {
           customerName: firstName || recentAddress?.recipient_name || "고객"
         });
       } catch (err: any) {
-        console.error("Payment failed", err);
+        if (err.message) {
+          alert(err.message);
+        } else {
+          alert("결제 진행 중 오류가 발생했습니다.");
+        }
       }
     }
   };
@@ -571,23 +575,7 @@ export default function DesktopOrder() {
             {/* Payment Method */}
             <section className="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
               <div id="payment-method" className="w-full"></div>
-              <div className="mt-md flex flex-col items-center justify-center">
-                <div className="flex items-center gap-1">
-                  <label className="flex items-center gap-2 cursor-pointer p-sm pr-1">
-                    <input 
-                      id="agree-toss" 
-                      checked={agreeToss}
-                      onChange={e => setAgreeToss(e.target.checked)}
-                      className="w-5 h-5 text-primary bg-surface-container border-outline-variant rounded cursor-pointer" 
-                      type="checkbox" 
-                    />
-                    <span className="font-label-md text-label-md text-on-surface select-none">[필수] 결제대행서비스 약관 동의</span>
-                  </label>
-                  <button type="button" onClick={() => setShowTermsPopup(true)} className="p-1 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center rounded-full hover:bg-surface-container">
-                    <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-                  </button>
-                </div>
-              </div>
+              <div id="payment-agreement" className="w-full"></div>
             </section>
 
           </div>

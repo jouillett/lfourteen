@@ -16,7 +16,8 @@ export async function POST(req: Request) {
     }
 
     // 1. Confirm with Toss Payments
-    const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+    // 프론트엔드에서 API 개별 연동 키(test_ck_)를 사용했으므로 백엔드도 API 개별 연동 시크릿 키(test_sk_)를 사용해야 합니다.
+    const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
     const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
 
     const tossRes = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
@@ -166,15 +167,16 @@ export async function POST(req: Request) {
     // 5. Insert into orders
     console.log('[confirm] Inserting order...');
     const [orderResult]: any = await connection.execute(
-      `INSERT INTO orders (order_number, order_name, customer_id, memo, total_price, payment_key, payment_method,
+      `INSERT INTO orders (order_number, order_name, customer_id, memo, total_price, used_point, payment_key, payment_method,
         receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderNum,
         orderName,
         customerId,
         memo,
         Number(amount),
+        Number(orderInfo?.pointUsed) || 0,
         paymentKey,
         paymentMethod,
         orderInfo?.receiverName || '',
@@ -201,6 +203,31 @@ export async function POST(req: Request) {
     if (orderInfo?.source === 'cart' && customerId) {
       await connection.execute('DELETE FROM cart_items WHERE customer_id = ?', [customerId]);
       console.log('[confirm] Cart cleared for customer:', customerId);
+    }
+
+    // 7. Deduct Points if used
+    if (orderInfo?.pointUsed > 0 && customerId) {
+      console.log('[confirm] Deducting used points:', orderInfo.pointUsed);
+      let pointsToDeduct = Number(orderInfo.pointUsed);
+      const [pointRecords]: any = await connection.execute(
+        `SELECT id, point_amount FROM points WHERE customer_id = ? ORDER BY expired_at ASC FOR UPDATE`,
+        [customerId]
+      );
+      for (const record of pointRecords) {
+        if (pointsToDeduct <= 0) break;
+        const available = record.point_amount;
+        if (available <= pointsToDeduct) {
+          await connection.execute(`DELETE FROM points WHERE id = ?`, [record.id]);
+          pointsToDeduct -= available;
+        } else {
+          await connection.execute(`UPDATE points SET point_amount = point_amount - ? WHERE id = ?`, [pointsToDeduct, record.id]);
+          pointsToDeduct = 0;
+        }
+      }
+      await connection.execute(
+        `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+        [Number(orderInfo.pointUsed), customerId]
+      );
     }
 
     await connection.commit();

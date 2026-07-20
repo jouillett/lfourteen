@@ -24,7 +24,6 @@ export default function MobileOrder() {
   const [userMaxPoint, setUserMaxPoint] = useState(0);
   const [usePoints, setUsePoints] = useState(false);
   const [pointAmount, setPointAmount] = useState<number>(0);
-  const [agreeToss, setAgreeToss] = useState(false);
   const [showTermsPopup, setShowTermsPopup] = useState(false);
   const [summaryExpanded, setSummaryExpanded] = useState(false);
   const [showAddressList, setShowAddressList] = useState(false);
@@ -48,8 +47,9 @@ export default function MobileOrder() {
   const [isPointFocused, setIsPointFocused] = useState(false);
   const pointInputRef = useRef<HTMLInputElement>(null);
   
-  const paymentWidgetRef = useRef<any>(null);
-  const widgetsRef = useRef<any>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("카드");
+  
+  const tossPaymentsRef = useRef<any>(null);
   const tossInitializedRef = useRef(false);
 
   useEffect(() => {
@@ -146,37 +146,17 @@ export default function MobileOrder() {
     }
   }, []);
 
-  // ── Toss: initialise widget ONCE when productTotal first becomes > 0 ──
+  // ── Toss: initialise Core SDK ──
   useEffect(() => {
-    if (productTotal <= 0) return;
     if (tossInitializedRef.current) return;
 
     const initToss = async () => {
       try {
         tossInitializedRef.current = true;
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-        const customerKey = "customer_" + Date.now();
-        const tossPayments = (window as any).TossPayments(clientKey);
-        const widgets = tossPayments.widgets({ customerKey });
-        widgetsRef.current = widgets;
-
-        const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
-        await widgets.setAmount({ currency: "KRW", value: total });
-
-        paymentWidgetRef.current = await widgets.renderPaymentMethods({
-          selector: "#payment-method",
-          variantKey: "DEFAULT",
-        });
-
-        paymentWidgetRef.current.on('paymentMethodSelect', (methodInfo: any) => {
-          let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
-          if (methodInfo.easyPay?.provider) pName = methodInfo.easyPay.provider;
-          if (methodInfo.easypay?.provider) pName = methodInfo.easypay.provider;
-          if (methodInfo.transfer?.provider) pName = methodInfo.transfer.provider;
-          if (pName === 'QUICK_TRANSFER') pName = '퀵계좌이체';
-          if (pName === 'CUSTOM') pName = methodInfo.paymentMethodKey || '퀵계좌이체';
-          sessionStorage.setItem('selectedPaymentMethod', pName);
-        });
+        // API 개별 연동 키 (Core SDK용)는 반드시 'test_ck_' 또는 'live_ck_' 로 시작해야 합니다. 'test_gck_'는 위젯 전용입니다.
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_API_CLIENT_KEY || "test_ck_DnyRpQWGrNLgQyvOYvbe3Kwv1M9E";
+        const toss = (window as any).TossPayments(clientKey);
+        tossPaymentsRef.current = toss.payment({ customerKey: "customer_" + Date.now() });
       } catch (err) {
         console.error("Toss SDK Init Error (Mobile):", err);
       }
@@ -185,6 +165,11 @@ export default function MobileOrder() {
     if ((window as any).TossPayments) {
       initToss();
     } else {
+      if (!document.querySelector('script[src*="v2/standard"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://js.tosspayments.com/v2/standard';
+        document.head.appendChild(script);
+      }
       const interval = setInterval(() => {
         if ((window as any).TossPayments) {
           clearInterval(interval);
@@ -193,14 +178,8 @@ export default function MobileOrder() {
       }, 100);
       return () => clearInterval(interval);
     }
-  }, [productTotal]);
+  }, []);
 
-  // ── Toss: update amount only (widget already rendered) ──
-  useEffect(() => {
-    if (!widgetsRef.current) return;
-    const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
-    widgetsRef.current.setAmount({ currency: "KRW", value: total });
-  }, [productTotal, shippingCost, usePoints, pointAmount]);
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
@@ -275,11 +254,6 @@ export default function MobileOrder() {
       }
     }
 
-    if (!agreeToss) {
-      alert('결제대행서비스 약관에 동의하셔야 합니다.');
-      document.getElementById('m-agree-toss')?.focus();
-      return;
-    }
 
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     
@@ -297,22 +271,7 @@ export default function MobileOrder() {
       sessionStorage.removeItem('pendingAddress');
     }
 
-    let paymentMethodName = '퀵계좌이체';
-    if (paymentWidgetRef.current) {
-      try {
-        const methodInfo = await paymentWidgetRef.current.getSelectedPaymentMethod();
-        paymentMethodName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || '퀵계좌이체';
-        if (methodInfo.easyPay?.provider) paymentMethodName = methodInfo.easyPay.provider;
-        if (methodInfo.easypay?.provider) paymentMethodName = methodInfo.easypay.provider;
-        if (methodInfo.transfer?.provider) paymentMethodName = methodInfo.transfer.provider;
-        if (paymentMethodName === 'QUICK_TRANSFER') paymentMethodName = '퀵계좌이체';
-        if (paymentMethodName === 'CUSTOM' || paymentMethodName === 'NORMAL') {
-          paymentMethodName = methodInfo.paymentMethodKey || '퀵계좌이체';
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    let paymentMethodName = selectedPaymentMethod;
     sessionStorage.setItem('selectedPaymentMethod', paymentMethodName);
 
     const deliveryMessage = memoType === '직접 입력' || memoType === 'direct' ? memoCustom : memoType;
@@ -351,17 +310,35 @@ export default function MobileOrder() {
       isDefault
     }));
 
-    if (widgetsRef.current) {
+    if (tossPaymentsRef.current) {
       try {
-        await widgetsRef.current.requestPayment({
+        const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
+        
+        let methodType = "CARD";
+        if (selectedPaymentMethod === "가상계좌") methodType = "VIRTUAL_ACCOUNT";
+        else if (selectedPaymentMethod === "계좌이체") methodType = "TRANSFER";
+        else if (selectedPaymentMethod === "휴대폰") methodType = "MOBILE_PHONE";
+        else if (selectedPaymentMethod === "토스페이") methodType = "TOSSPAY";
+
+        await tossPaymentsRef.current.requestPayment({
+          method: methodType,
+          amount: {
+            currency: "KRW",
+            value: total
+          },
           orderId: "order_" + Date.now(),
           orderName: cartItems.length > 1 ? `${cartItems[0].product_name} 외 ${cartItems.length - 1}건` : (cartItems[0]?.product_name || '상품 결제'),
           successUrl: window.location.origin + "/payment/success",
           failUrl: window.location.origin + "/payment/fail",
-          customerName: firstName || recentAddress?.recipient_name || "고객"
+          customerName: receiverName || "고객",
+          customerEmail: phone ? phone.replace(/-/g, '') + "@temp.com" : undefined // V2 requires email to be valid format if provided
         });
       } catch (err: any) {
-        console.error("Payment failed", err);
+        if (err.message) {
+          alert(err.message);
+        } else {
+          alert("결제 진행 중 오류가 발생했습니다.");
+        }
       }
     }
   };
@@ -376,7 +353,7 @@ export default function MobileOrder() {
       <Header />
 
       <main className="flex-grow flex flex-col items-center w-full px-md md:px-lg py-xl max-w-7xl mx-auto">
-        <div className="w-full max-w-[440px] md:max-w-2xl lg:max-w-4xl flex flex-col gap-lg pb-48">
+        <div className="w-full max-w-[440px] md:max-w-2xl lg:max-w-4xl flex flex-col gap-lg pb-32">
           
           <div className="mb-sm">
             <h2 className="font-headline-lg text-headline-lg text-on-surface">주문/결제</h2>
@@ -574,94 +551,61 @@ export default function MobileOrder() {
             </div>
           </section>
 
-          {/* Payment Method */}
-          <section className="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
-            <div id="payment-method" className="w-full"></div>
-            <div className="mt-md flex flex-col items-center justify-center">
-              <div className="flex items-center gap-1">
-                <label className="flex items-center gap-2 cursor-pointer p-sm pr-1">
-                  <input 
-                    id="m-agree-toss" 
-                    checked={agreeToss}
-                    onChange={e => setAgreeToss(e.target.checked)}
-                    className="w-5 h-5 text-primary bg-surface-container border-outline-variant rounded cursor-pointer" 
-                    type="checkbox" 
-                  />
-                  <span className="font-label-md text-label-md text-on-surface select-none">[필수] 결제대행서비스 약관 동의</span>
-                </label>
-                <button type="button" onClick={() => setShowTermsPopup(true)} className="p-1 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center rounded-full hover:bg-surface-container">
-                  <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+          <section className="bg-surface-container-high border border-outline-variant/20 mb-6 p-4 md:p-6" style={{ transform: 'translateZ(0)' }}>
+            <h2 className="font-title-lg text-title-lg text-on-surface mb-4">결제 수단</h2>
+            <div className="flex flex-wrap gap-2">
+              {['카드', '가상계좌', '계좌이체', '휴대폰', '토스페이'].map(method => (
+                <button
+                  key={method}
+                  type="button"
+                  onClick={() => setSelectedPaymentMethod(method)}
+                  className={`px-4 py-2 border rounded-full text-sm font-medium transition-colors ${
+                    selectedPaymentMethod === method 
+                      ? 'bg-primary text-white border-primary' 
+                      : 'bg-surface border-outline-variant text-on-surface'
+                  }`}
+                >
+                  {method}
                 </button>
-              </div>
+              ))}
             </div>
+            
+            {selectedPaymentMethod === '카드' && (
+              <p className="text-sm text-outline mt-4">
+                결제하기 버튼을 누르시면 카드사 및 할부 개월 수를 선택하는 창이 나타납니다.
+              </p>
+            )}
+          </section>
+
+          {/* Checkout Summary + Button (inline, not fixed) */}
+          <section className="bg-surface-container-high border border-outline-variant/20 rounded-lg p-md flex flex-col gap-sm">
+            <div className="flex justify-between items-center">
+              <span className="font-label-md text-label-md text-on-surface-variant">상품 금액</span>
+              <span className="font-body-md text-body-md text-on-surface">{productTotal.toLocaleString()}원</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-label-md text-label-md text-on-surface-variant">배송비</span>
+              <span className="font-body-md text-body-md text-on-surface">{shippingCost > 0 ? `+ ${shippingCost.toLocaleString()}원` : '무료배송'}</span>
+            </div>
+            {usePoints && pointAmount > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="font-label-md text-label-md text-on-surface-variant">포인트 할인</span>
+                <span className="font-body-md text-body-md text-primary">- {pointAmount.toLocaleString()}원</span>
+              </div>
+            )}
+            <div className="flex justify-between items-end border-t border-outline-variant/30 pt-sm mt-xs">
+              <span className="font-headline-md text-headline-md font-bold text-on-surface">총 결제 금액</span>
+              <span className="font-headline-md text-headline-md font-bold text-primary">{finalTotal.toLocaleString()}원</span>
+            </div>
+            <p className="font-caption text-caption text-on-surface-variant text-center">위 주문 내용을 확인하였으며, 결제에 동의합니다.</p>
+            <button onClick={handleCheckout} className="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-4 rounded-lg transition-colors flex justify-center items-center gap-sm shadow-sm active:scale-95">
+              <span className="material-symbols-outlined text-[18px]">lock</span>
+              결제하기
+            </button>
           </section>
 
         </div>
       </main>
-
-      {/* Mobile Sticky Checkout Summary */}
-      <div className="fixed bottom-0 left-0 w-full bg-surface-container-high border-t border-outline-variant p-md shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-40 transition-all duration-300">
-        <div className="max-w-[440px] mx-auto w-full flex flex-col gap-sm">
-          
-          {/* COLLAPSED STATE */}
-          {!summaryExpanded && (
-            <div className="flex flex-col gap-sm">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-md">
-                  <span className="font-label-md text-label-md font-bold text-on-surface">총 결제 금액</span>
-                  <span className="font-headline-md text-headline-md font-bold text-primary">{finalTotal.toLocaleString()}원</span>
-                </div>
-                <button onClick={() => setSummaryExpanded(true)} className="p-1 text-on-surface-variant hover:text-primary transition-colors bg-surface rounded-full border border-outline-variant shadow-sm flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[20px]">keyboard_arrow_up</span>
-                </button>
-              </div>
-              <button onClick={handleCheckout} className="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-4 rounded-lg transition-colors flex justify-center items-center gap-sm shadow-sm">
-                <span className="material-symbols-outlined text-[18px]">lock</span>
-                결제하기
-              </button>
-            </div>
-          )}
-
-          {/* EXPANDED STATE */}
-          {summaryExpanded && (
-            <div className="flex flex-col gap-sm">
-              <div className="flex justify-center mb-xs -mt-2">
-                <button onClick={() => setSummaryExpanded(false)} className="p-1 text-on-surface-variant hover:text-primary transition-colors bg-surface rounded-full border border-outline-variant shadow-sm flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
-                </button>
-              </div>
-
-              <div className="flex justify-between items-center mb-xs">
-                <span className="font-label-md text-label-md text-on-surface-variant">상품 금액</span>
-                <span className="font-body-md text-body-md text-on-surface">{productTotal.toLocaleString()}원</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-label-md text-label-md text-on-surface-variant">배송비</span>
-                <span className="font-body-md text-body-md text-on-surface">{shippingCost > 0 ? `+ ${shippingCost.toLocaleString()}원` : '무료배송'}</span>
-              </div>
-              {usePoints && pointAmount > 0 && (
-                <div className="flex justify-between items-center border-b border-outline-variant pb-sm mb-sm">
-                  <span className="font-label-md text-label-md text-on-surface-variant">할인 금액</span>
-                  <span className="font-body-md text-body-md text-primary">- {pointAmount.toLocaleString()}원</span>
-                </div>
-              )}
-              
-              <div className="flex justify-between items-end mb-md mt-sm">
-                <span className="font-headline-md text-headline-md font-bold text-on-surface">총 결제 금액</span>
-                <span className="font-headline-lg text-headline-lg font-bold text-primary">{finalTotal.toLocaleString()}원</span>
-              </div>
-              <div className="flex flex-col gap-sm">
-                <p className="font-caption text-caption text-on-surface-variant text-center">위 주문 내용을 확인하였으며, 결제에 동의합니다.</p>
-                <button onClick={handleCheckout} className="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-4 rounded-lg transition-colors flex justify-center items-center gap-sm shadow-sm">
-                  <span className="material-symbols-outlined text-[18px]">lock</span>
-                  결제하기
-                </button>
-              </div>
-            </div>
-          )}
-
-        </div>
-      </div>
 
       <Footer />
 

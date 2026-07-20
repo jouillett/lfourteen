@@ -113,7 +113,7 @@ export async function issueBillingKeyAndSave(
   }
 }
 
-export async function executeBillingPayment(customerId: number, billingKey: string, customerKey: string, priceId: number) {
+export async function executeBillingPayment(customerId: number, billingKey: string, customerKey: string, priceId: number, isFirstPayment: boolean = false) {
   try {
     // 1. Get product price from DB
     const [priceRows]: any = await pool.query("SELECT price FROM prices WHERE id = ?", [priceId]);
@@ -145,7 +145,10 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
     // Get Product Name
     const [productRows]: any = await pool.query("SELECT name FROM products WHERE id = 1");
     const productName = productRows && productRows.length > 0 ? productRows[0].name : "L.4teen Coordi";
-    const orderNameText = `${productName} (정기구독 첫 결제)`;
+    
+    // Set Order Name based on whether it is the first payment or a recurring payment
+    const suffix = isFirstPayment ? "(정기구독 첫 결제)" : "(정기구독 결제)";
+    const orderNameText = `${productName} ${suffix}`;
 
     // 3. Execute Toss Billing
     const orderId = "auto_order_" + Date.now() + "_" + Math.floor(Math.random() * 1000);

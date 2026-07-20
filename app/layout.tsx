@@ -31,6 +31,14 @@ export const metadata: Metadata = {
   },
 };
 
+import type { Viewport } from 'next';
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 import DisableCopy from "@/components/DisableCopy";
 
 export default function RootLayout({
@@ -39,12 +47,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${inter.variable} h-full antialiased`}>
+    <html lang="ko" className={`${inter.variable} antialiased`}>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
-      <body className="min-h-screen flex flex-col bg-surface text-on-surface font-body-md overflow-x-hidden">
-        <DisableCopy />
+      <body className="bg-surface text-on-surface font-body-md">
         {children}
       </body>
     </html>
