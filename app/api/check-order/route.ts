@@ -26,7 +26,7 @@ export async function GET(req: Request) {
       
       const statusGreaterThan = searchParams.get('statusGreaterThan');
       if (statusGreaterThan) {
-        query += ' AND status > ?';
+        query += ' AND status > ? AND status != 99';
         params.push(parseInt(statusGreaterThan, 10));
       }
       

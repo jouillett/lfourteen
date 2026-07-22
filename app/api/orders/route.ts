@@ -20,7 +20,7 @@ export async function GET(req: Request) {
       let countParams: any[] = [customerId];
 
       if (statusGreaterThan) {
-        countQuery += ` AND status > ?`;
+        countQuery += ` AND status > ? AND status != 99`;
         countParams.push(Number(statusGreaterThan));
       }
       if (search) {
@@ -34,7 +34,7 @@ export async function GET(req: Request) {
       let queryParams: any[] = [customerId];
 
       if (statusGreaterThan) {
-        query += ` AND status > ?`;
+        query += ` AND status > ? AND status != 99`;
         queryParams.push(Number(statusGreaterThan));
       }
       if (search) {
