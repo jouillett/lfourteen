@@ -52,38 +52,11 @@ export async function GET(req: Request) {
 
         if (payment.status === 'DONE') {
           // 입금 확인 → 결제완료(0)로 변경
-          await connection.beginTransaction();
           await connection.execute(
             'UPDATE orders SET status = 0 WHERE id = ?',
             [order.id]
           );
-
-          // 포인트 차감 처리
-          if (order.used_point > 0 && order.customer_id) {
-            console.log(`[cron/check-virtual-accounts] Deducting ${order.used_point} points for order ${order.id}`);
-            let pointsToDeduct = Number(order.used_point);
-            const [pointRecords]: any = await connection.execute(
-              `SELECT id, point_amount FROM points WHERE customer_id = ? ORDER BY expired_at ASC FOR UPDATE`,
-              [order.customer_id]
-            );
-            for (const record of pointRecords) {
-              if (pointsToDeduct <= 0) break;
-              const available = record.point_amount;
-              if (available <= pointsToDeduct) {
-                await connection.execute(`DELETE FROM points WHERE id = ?`, [record.id]);
-                pointsToDeduct -= available;
-              } else {
-                await connection.execute(`UPDATE points SET point_amount = point_amount - ? WHERE id = ?`, [pointsToDeduct, record.id]);
-                pointsToDeduct = 0;
-              }
-            }
-            await connection.execute(
-              `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
-              [Number(order.used_point), order.customer_id]
-            );
-          }
-          await connection.commit();
-
+          
           confirmedCount++;
           console.log(`[cron/check-virtual-accounts] Order ${order.id}: 99 → 0 (결제완료)`);
         } else if (payment.status === 'EXPIRED' || payment.status === 'CANCELED') {

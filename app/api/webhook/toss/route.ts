@@ -66,44 +66,37 @@ export async function POST(req: Request) {
             'UPDATE orders SET status = 0 WHERE id = ?',
             [order.id]
           );
-          
-          // 포인트 차감 처리
-          if (order.used_point > 0 && order.customer_id) {
-            console.log(`[toss-webhook] Deducting ${order.used_point} points for order ${order.id}`);
-            let pointsToDeduct = Number(order.used_point);
-            const [pointRecords]: any = await connection.execute(
-              `SELECT id, point_amount FROM points WHERE customer_id = ? ORDER BY expired_at ASC FOR UPDATE`,
-              [order.customer_id]
-            );
-            for (const record of pointRecords) {
-              if (pointsToDeduct <= 0) break;
-              const available = record.point_amount;
-              if (available <= pointsToDeduct) {
-                await connection.execute(`DELETE FROM points WHERE id = ?`, [record.id]);
-                pointsToDeduct -= available;
-              } else {
-                await connection.execute(`UPDATE points SET point_amount = point_amount - ? WHERE id = ?`, [pointsToDeduct, record.id]);
-                pointsToDeduct = 0;
-              }
-            }
-            await connection.execute(
-              `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
-              [Number(order.used_point), order.customer_id]
-            );
-          }
           await connection.commit();
           console.log('[toss-webhook] Order', order.id, 'status updated: 99 → 0 (결제완료)');
         } else {
           console.log('[toss-webhook] Order', order.id, 'already processed, status:', order.status);
         }
-      } else if (payment.status === 'EXPIRED' || payment.status === 'CANCELED') {
+      } else if (payment.status === 'EXPIRED' || payment.status === 'CANCELED' || payment.status === 'PARTIAL_CANCELED') {
         // 기한 만료 / 취소 → status 3(취소)으로 변경
         if (Number(order.status) === 99) {
+          await connection.beginTransaction();
           await connection.execute(
             'UPDATE orders SET status = 3 WHERE id = ?',
             [order.id]
           );
-          console.log('[toss-webhook] Order', order.id, 'status updated: 99 → 3 (취소). Toss status:', payment.status);
+          
+          // 포인트 환불 처리
+          if (order.used_point > 0 && order.customer_id) {
+            console.log(`[toss-webhook] Refunding ${order.used_point} points for cancelled order ${order.id}`);
+            await connection.execute(
+              `UPDATE customers SET point = point + ? WHERE id = ?`,
+              [Number(order.used_point), order.customer_id]
+            );
+            await connection.execute(
+              `INSERT INTO points (customer_id, point_amount, description, created_at, expired_at) 
+               VALUES (?, ?, '가상계좌 미입금 취소 환불', NOW(), DATE_ADD(NOW(), INTERVAL 1 MONTH))`,
+              [order.customer_id, Number(order.used_point)]
+            );
+          }
+          await connection.commit();
+          console.log('[toss-webhook] Order', order.id, 'status updated: 99 → 3 (취소/만료)');
+        } else {
+          console.log('[toss-webhook] Order', order.id, 'already processed or status not 99, status:', order.status);
         }
       } else {
         console.log('[toss-webhook] Payment status not actionable:', payment.status);

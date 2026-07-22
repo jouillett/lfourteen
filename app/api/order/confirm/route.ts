@@ -209,8 +209,8 @@ export async function POST(req: Request) {
       console.log('[confirm] Cart cleared for customer:', customerId);
     }
 
-    // 7. Deduct Points if used — 가상계좌/계좌이체 대기 주문은 입금 확인 후 차감하지 않음 (크론잡/웹훅에서 처리)
-    if (orderInfo?.pointUsed > 0 && customerId && !isPendingPayment) {
+    // 7. Deduct Points if used (가상계좌 결제대기 시에도 선차감)
+    if (orderInfo?.pointUsed > 0 && customerId) {
       console.log('[confirm] Deducting used points:', orderInfo.pointUsed);
       let pointsToDeduct = Number(orderInfo.pointUsed);
       const [pointRecords]: any = await connection.execute(
