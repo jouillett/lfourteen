@@ -425,11 +425,11 @@ export default function OrderPage() {
 
       {/* Refund Account Modal for virtual account / bank transfer returns */}
       {refundModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-sm shadow-2xl flex flex-col gap-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 w-full max-w-[340px] sm:max-w-sm shadow-2xl flex flex-col gap-5 text-left">
             <div>
               <h3 className="text-[18px] font-bold text-on-surface mb-1">환불 계좌 입력</h3>
-              <p className="text-sm text-on-surface-variant">가상계좌/계좌이체 결제는 환불받으실 계좌 정보가 필요합니다.</p>
+              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">가상계좌/계좌이체 결제는 환불받으실 계좌 정보가 필요합니다.</p>
             </div>
             <div className="flex flex-col gap-3">
               <div>
