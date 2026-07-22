@@ -318,7 +318,7 @@ function OrderDetailContent() {
 
                   const extraButtons = (
                     <>
-                      {Number(order.status) === 0 && (
+                      {(Number(order.status) === 0 || Number(order.status) === 99) && (
                         <button onClick={() => handleCancelOrder(order.id, order.payment_key)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">결제취소</button>
                       )}
                       {Number(order.status) === 2 && (
