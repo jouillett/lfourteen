@@ -146,10 +146,21 @@ export async function DELETE(req: Request) {
       // 6. Delete all customer_id=login-id from the qna table
       await connection.execute('DELETE FROM qna WHERE customer_id = ?', [customerId]);
       
-      // 7. Delete all customer_id=login-id from the review table
+      // 7. Delete reviews and related accuse records
+      const [reviewRows]: any = await connection.execute('SELECT id FROM review WHERE customer_id = ?', [customerId]);
+      for (const row of reviewRows) {
+        await connection.execute('DELETE FROM accuse WHERE review_id = ?', [row.id]);
+      }
       await connection.execute('DELETE FROM review WHERE customer_id = ?', [customerId]);
 
-      // 8. Delete a record customer_id=login-id from the customers table
+      // 8. Delete billing and billing_item
+      const [billingRows]: any = await connection.execute('SELECT id FROM billing WHERE customer_id = ?', [customerId]);
+      for (const row of billingRows) {
+        await connection.execute('DELETE FROM billing_item WHERE billing_id = ?', [row.id]);
+      }
+      await connection.execute('DELETE FROM billing WHERE customer_id = ?', [customerId]);
+
+      // 9. Delete a record customer_id=login-id from the customers table
       await connection.execute('DELETE FROM customers WHERE id = ?', [customerId]);
 
       await connection.commit();
