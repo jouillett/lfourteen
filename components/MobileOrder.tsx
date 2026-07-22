@@ -70,9 +70,9 @@ export default function MobileOrder() {
               const options = [
                 "배송 전에 미리 연락바랍니다.",
                 "부재 시 경비실에 맡겨주세요.",
-                "문앞에 놓아주세요.",
-                "택배함에 넣어주세요.",
-                "파손위험이 있으니 배송시 주의해주세요."
+                "택배함에 보관해 주세요.",
+                "부재 시 문앞에 놓아주세요.",
+                "빠른 배송 부탁드립니다."
               ];
               if (options.includes(data.deliveryMessage)) {
                 setMemoType(data.deliveryMessage);
@@ -422,9 +422,9 @@ export default function MobileOrder() {
                     <option>택배함에 보관해 주세요.</option>
                     <option>부재 시 문앞에 놓아주세요.</option>
                     <option>빠른 배송 부탁드립니다.</option>
-                    <option value="direct">직접 입력</option>
+                    <option>직접 입력</option>
                   </select>
-                  {memoType === "direct" && (
+                  {memoType === "직접 입력" && (
                     <input 
                       type="text" 
                       value={memoCustom}
@@ -469,9 +469,9 @@ export default function MobileOrder() {
                     <option>택배함에 보관해 주세요.</option>
                     <option>부재 시 문앞에 놓아주세요.</option>
                     <option>빠른 배송 부탁드립니다.</option>
-                    <option value="direct">직접 입력</option>
+                    <option>직접 입력</option>
                   </select>
-                  {memoType === "direct" && (
+                  {memoType === "직접 입력" && (
                     <input type="text" value={memoCustom} onChange={(e) => setMemoCustom(e.target.value)} className="mt-2 bg-surface-container border border-outline-variant rounded-lg px-sm py-sm focus:outline-none focus:border-primary text-body-md w-full" placeholder="배송 메모를 입력해주세요." />
                   )}
                 </div>

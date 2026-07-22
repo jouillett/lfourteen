@@ -69,9 +69,9 @@ export default function DesktopOrder() {
               const options = [
                 "배송 전에 미리 연락바랍니다.",
                 "부재 시 경비실에 맡겨주세요.",
-                "문앞에 놓아주세요.",
-                "택배함에 넣어주세요.",
-                "파손위험이 있으니 배송시 주의해주세요."
+                "택배함에 보관해 주세요.",
+                "부재 시 문앞에 놓아주세요.",
+                "빠른 배송 부탁드립니다."
               ];
               if (options.includes(data.deliveryMessage)) {
                 setMemoType(data.deliveryMessage);
