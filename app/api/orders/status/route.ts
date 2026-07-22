@@ -33,8 +33,11 @@ export async function PATCH(req: Request) {
 
           // Only process refund if the status was not already 3 or 6
           if (oldStatus !== 3 && oldStatus !== 6) {
-            // 1. Deduct earned points ONLY if they were actually awarded (status >= 2)
-            if (oldStatus >= 2 && earnedPointAmount > 0) {
+            // 1. Deduct earned points ONLY if they were actually awarded.
+            //    Points are earned at 배송완료(2) and beyond — but status 99 (pending deposit)
+            //    is never "delivered", so explicitly exclude it.
+            const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
+            if (pointsWereEarned && earnedPointAmount > 0) {
               const [points]: any = await connection.execute(
                 `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
                 [customerId]
