@@ -165,8 +165,8 @@ export async function POST(req: Request) {
     }
 
     // 5. Insert into orders
-    // 가상계좌/계좌이체는 즉시 입금되지 않으므로 status=99(결제대기)로 저장
-    const isPendingPayment = paymentMethod === '가상계좌' || paymentMethod === '계좌이체';
+    // 가상계좌(무통장입금) 등 입금 대기 상태인 경우에만 status=99(결제대기)로 저장
+    const isPendingPayment = (paymentMethod === '가상계좌' || paymentMethod === '계좌이체') && payment.status === 'WAITING_FOR_DEPOSIT';
     const initialStatus = isPendingPayment ? 99 : 0;
     console.log('[confirm] Inserting order... paymentMethod:', paymentMethod, 'initialStatus:', initialStatus);
     const [orderResult]: any = await connection.execute(

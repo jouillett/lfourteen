@@ -1,0 +1,1 @@
+UPDATE customers SET point = GREATEST(0, point - 100) WHERE id = 17; DELETE FROM points WHERE customer_id = 17 LIMIT 1;
