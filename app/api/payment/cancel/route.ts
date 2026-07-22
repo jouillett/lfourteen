@@ -8,7 +8,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Missing paymentKey' }, { status: 400 });
     }
 
-    const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+    const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
     const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
 
     // Build cancel body — virtual account/bank transfer refunds require refundReceiveAccount
