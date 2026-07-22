@@ -196,6 +196,7 @@ function OrderDetailContent() {
       case 6: return "교환완료";
       case 7: return "반품진행";
       case 8: return "반품";
+      case 99: return "입금대기";
       default: return "";
     }
   };
@@ -211,6 +212,7 @@ function OrderDetailContent() {
       case 6: return "교환 처리가 완료되었습니다.";
       case 7: return "반품 요청이 접수되어 처리 중입니다.";
       case 8: return "반품 처리가 완료되었습니다.";
+      case 99: return "고객님의 입금을 기다리고 있습니다.";
       default: return "";
     }
   };

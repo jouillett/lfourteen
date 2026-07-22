@@ -415,7 +415,8 @@ export default function OrderPage() {
                           5: '교환진행',
                           6: '교환완료',
                           7: '반품진행',
-                          8: '반품완료'
+                          8: '반품완료',
+                          99: '입금대기'
                         }[order.status as number] || ''}
                       </span>
                     </div>
@@ -430,13 +431,13 @@ export default function OrderPage() {
                   <div className="flex flex-col sm:flex-row gap-6">
                     {/* Product Image */}
                     <div className="flex-shrink-0">
-                      <Link href="/">
+                      <Link href={`/mypage/detail?id=${order.id}`}>
                         <img alt={order.order_name || "상품 이미지"} className="w-[120px] h-[120px] rounded-lg object-cover shadow-sm cursor-pointer" src={order.image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAQGq5OqykcE-elmyBXi8h71OqyJokOSJOHkXZdYKY7KffWgbDkK7mXGP5W8roAHlPDnN12GRyH512wrW5zhIBB0eE-HkNGINNLuZQbpqKrNOO9kO0Yb_Wwac6JDZGtpeEA58zSlwZL0u3mBIsjk8wnoauAPD-aWL2eGv5hcA0VCjVsNd6VwcpNPaZM1QFeS2Gx70B0oyKLXqZppRK9kBrcVrtVfsRd80cnSrFxA1EZH4kVKBOs3DIMsaQSi5d4AR9K0Bfe7ayFTg"}/>
                       </Link>
                     </div>
                     {/* Product Info & Actions */}
                     <div className="flex-1 flex flex-col justify-center">
-                      <Link href="/">
+                      <Link href={`/mypage/detail?id=${order.id}`}>
                         <h3 className={`text-[17px] font-medium mb-1 hover:underline cursor-pointer ${order.status === 3 ? 'line-through text-on-surface-variant' : 'text-on-surface'}`}>
                           {order.order_name || '엘포틴 코디 15ml X 15포'}
                         </h3>
@@ -471,11 +472,11 @@ export default function OrderPage() {
                           )}
                         </div>
                         <div className="flex space-x-2">
-                          <button onClick={() => handleAddToCart(order.id)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">
+                          <button onClick={() => handleAddToCart(order.id)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none whitespace-nowrap">
                             장바구니
                           </button>
-                          <button onClick={() => handleBuyNow(order.id)} className="bg-primary-container text-on-primary-container py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary outline-none">
-                            구매하기
+                          <button onClick={() => handleBuyNow(order.id)} className="bg-primary-container text-on-primary-container py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-primary-fixed-dim transition-colors focus:ring-2 focus:ring-primary outline-none whitespace-nowrap">
+                            구매
                           </button>
                         </div>
                       </div>
