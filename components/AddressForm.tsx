@@ -168,7 +168,7 @@ export default function AddressForm({ userId, onComplete, onCancel, initialData 
               />
             </div>
 
-            <div className="flex flex-row gap-md">
+            <div className="flex flex-col gap-md">
               <div className="flex flex-col gap-xs flex-1">
                 <label className="text-sm text-on-surface-variant">휴대전화</label>
                 <PhoneInput
