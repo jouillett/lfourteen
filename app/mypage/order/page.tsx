@@ -290,8 +290,39 @@ export default function OrderPage() {
 
   const handleDeleteOrder = async (orderId: number, status: number | string) => {
     const numStatus = Number(status);
-    if (numStatus === 0 || numStatus === 99) {
+    if (numStatus === 0) {
       alert("배송 준비중이어서 삭제할 수 없습니다.");
+      return;
+    }
+    if (numStatus === 99) {
+      if (confirm("아직 입금 전 상태입니다. 주문을 취소하고 삭제하시겠습니까?")) {
+        try {
+          // 1. Cancel the order in local DB & refund used points
+          const res = await fetch(`/api/orders/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: orderId, status: 3 })
+          });
+          const data = await res.json();
+          if (!data.success) {
+            alert("주문 취소에 실패했습니다.");
+            return;
+          }
+          
+          // 2. Delete the order
+          const delRes = await fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' });
+          const delData = await delRes.json();
+          if (delData.success) {
+            alert("주문이 취소 및 삭제되었습니다.");
+            setOrders(prev => prev.filter(order => order.id !== orderId));
+          } else {
+            alert("주문 삭제에 실패했습니다.");
+          }
+        } catch (e) {
+          console.error(e);
+          alert("오류가 발생했습니다.");
+        }
+      }
       return;
     }
     if (numStatus === 1) {
