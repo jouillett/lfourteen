@@ -318,7 +318,6 @@ export default function MobileOrder() {
         if (selectedPaymentMethod === "가상계좌") methodType = "VIRTUAL_ACCOUNT";
         else if (selectedPaymentMethod === "계좌이체") methodType = "TRANSFER";
         else if (selectedPaymentMethod === "휴대폰") methodType = "MOBILE_PHONE";
-        else if (selectedPaymentMethod === "토스페이") methodType = "TOSSPAY";
 
         await tossPaymentsRef.current.requestPayment({
           method: methodType,
@@ -554,7 +553,7 @@ export default function MobileOrder() {
           <section className="bg-surface-container-high border border-outline-variant/20 mb-6 p-4 md:p-6" style={{ transform: 'translateZ(0)' }}>
             <h2 className="font-title-lg text-title-lg text-on-surface mb-4">결제 수단</h2>
             <div className="flex flex-wrap gap-2">
-              {['카드', '가상계좌', '계좌이체', '휴대폰', '토스페이'].map(method => (
+              {['카드', '가상계좌', '계좌이체', '휴대폰'].map(method => (
                 <button
                   key={method}
                   type="button"
