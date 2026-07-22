@@ -114,25 +114,33 @@ export default function OrderPage() {
     }
   };
 
-  const handleCancelOrder = async (orderId: number, paymentKey: string) => {
+  const handleCancelOrder = async (orderId: number, paymentKey: string, orderStatus: number) => {
     if (confirm("정말 취소하시겠습니까?")) {
       try {
-        const res = await fetch(`/api/payment/cancel`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
-        });
-        const data = await res.json();
-        if (data.success) {
-          await fetch(`/api/orders/status`, {
-            method: 'PATCH',
+        if (orderStatus !== 99) {
+          const res = await fetch(`/api/payment/cancel`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: orderId, status: 3 })
+            body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
           });
+          const data = await res.json();
+          if (!data.success) {
+            alert("결제 취소에 실패했습니다: " + (data.message || ''));
+            return;
+          }
+        }
+
+        const res2 = await fetch(`/api/orders/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: 3 })
+        });
+        const data2 = await res2.json();
+        if (data2.success) {
           alert("결제가 취소되었습니다.");
           window.location.href = "/mypage/cancel";
         } else {
-          alert("결제 취소에 실패했습니다: " + (data.message || ''));
+          alert("취소 처리에 실패했습니다.");
         }
       } catch (e) {
         console.error(e);
@@ -460,7 +468,7 @@ export default function OrderPage() {
                           <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
                           {(order.status === 0 || order.status === 99) && (
                             <div className="flex items-center text-on-surface-variant text-[12px] md:text-[13px] gap-2">
-                              <button onClick={() => handleCancelOrder(order.id, order.payment_key)} className="hover:underline">취소</button>
+                              <button onClick={() => handleCancelOrder(order.id, order.payment_key, Number(order.status))} className="hover:underline">취소</button>
                             </div>
                           )}
                           {order.status === 2 && (

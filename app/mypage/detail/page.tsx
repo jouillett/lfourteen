@@ -114,26 +114,29 @@ function OrderDetailContent() {
     window.location.href = `/order?source=reorder&orderId=${orderId}`;
   };
 
-  const handleCancelOrder = async (orderId: number, paymentKey: string) => {
+  const handleCancelOrder = async (orderId: number, paymentKey: string, orderStatus: number) => {
     if (confirm("정말 취소하시겠습니까?")) {
       try {
-        const res = await fetch(`/api/payment/cancel`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
-        });
-        const data = await res.json();
-        if (data.success) {
-          await fetch(`/api/orders/status`, {
-            method: 'PATCH',
+        if (orderStatus !== 99) {
+          const res = await fetch(`/api/payment/cancel`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: orderId, status: 3 })
+            body: JSON.stringify({ paymentKey, cancelReason: "고객 취소" })
           });
-          alert("결제가 취소되었습니다.");
-          window.location.href = "/mypage/cancel";
-        } else {
-          alert("결제 취소에 실패했습니다: " + (data.message || ''));
+          const data = await res.json();
+          if (!data.success) {
+            alert("결제 취소에 실패했습니다: " + (data.message || ''));
+            return;
+          }
         }
+
+        await fetch(`/api/orders/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: 3 })
+        });
+        alert("결제가 취소되었습니다.");
+        window.location.href = "/mypage/cancel";
       } catch (e) {
         console.error(e);
         alert("오류가 발생했습니다.");
@@ -319,7 +322,7 @@ function OrderDetailContent() {
                   const extraButtons = (
                     <>
                       {(Number(order.status) === 0 || Number(order.status) === 99) && (
-                        <button onClick={() => handleCancelOrder(order.id, order.payment_key)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">결제취소</button>
+                        <button onClick={() => handleCancelOrder(order.id, order.payment_key, Number(order.status))} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">결제취소</button>
                       )}
                       {Number(order.status) === 2 && (
                         <>
