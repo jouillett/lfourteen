@@ -290,7 +290,7 @@ export default function OrderPage() {
 
   const handleDeleteOrder = async (orderId: number, status: number | string) => {
     const numStatus = Number(status);
-    if (numStatus === 0) {
+    if (numStatus === 0 || numStatus === 99) {
       alert("배송 준비중이어서 삭제할 수 없습니다.");
       return;
     }
