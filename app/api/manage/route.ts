@@ -18,7 +18,7 @@ export async function GET(req: Request) {
         return pItem;
       });
 
-      const [orderRows]: any = await connection.query('SELECT * FROM orders WHERE status IN (0, 4, 5, 7) ORDER BY created_at DESC');
+      const [orderRows]: any = await connection.query('SELECT * FROM orders WHERE status IN (99, 0, 4, 5, 7) ORDER BY created_at DESC');
       const processedOrders = orderRows.map((item: any) => {
         const pItem = { ...item };
         for (const key in pItem) {

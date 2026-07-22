@@ -75,7 +75,7 @@ export default function LoginPage() {
         } else if (data.reason === "not_found") {
           const wantsJoin = window.confirm("가입되지 않은 전화번호입니다.\n지금 가입하시겠습니까?");
           if (wantsJoin) {
-            window.location.href = "/join";
+            window.location.href = `/join?phone=${encodeURIComponent(phone.replace(/\D/g, ""))}`;
           }
         } else {
           alert(data.message || "로그인에 실패했습니다.");

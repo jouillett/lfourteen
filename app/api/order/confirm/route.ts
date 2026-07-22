@@ -165,11 +165,14 @@ export async function POST(req: Request) {
     }
 
     // 5. Insert into orders
-    console.log('[confirm] Inserting order...');
+    // 가상계좌/계좌이체는 즉시 입금되지 않으므로 status=99(결제대기)로 저장
+    const isPendingPayment = paymentMethod === '가상계좌' || paymentMethod === '계좌이체';
+    const initialStatus = isPendingPayment ? 99 : 0;
+    console.log('[confirm] Inserting order... paymentMethod:', paymentMethod, 'initialStatus:', initialStatus);
     const [orderResult]: any = await connection.execute(
-      `INSERT INTO orders (order_number, order_name, customer_id, memo, total_price, used_point, payment_key, payment_method,
+      `INSERT INTO orders (order_number, order_name, customer_id, memo, total_price, used_point, payment_key, payment_method, status,
         receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderNum,
         orderName,
@@ -179,6 +182,7 @@ export async function POST(req: Request) {
         Number(orderInfo?.pointUsed) || 0,
         paymentKey,
         paymentMethod,
+        initialStatus,
         orderInfo?.receiverName || '',
         (orderInfo?.receiverMobile || '').replace(/-/g, ''),
         (orderInfo?.receiverPhone || '').replace(/-/g, ''),
@@ -205,8 +209,8 @@ export async function POST(req: Request) {
       console.log('[confirm] Cart cleared for customer:', customerId);
     }
 
-    // 7. Deduct Points if used
-    if (orderInfo?.pointUsed > 0 && customerId) {
+    // 7. Deduct Points if used — 가상계좌/계좌이체 대기 주문은 입금 확인 후 차감하지 않음 (크론잡/웹훅에서 처리)
+    if (orderInfo?.pointUsed > 0 && customerId && !isPendingPayment) {
       console.log('[confirm] Deducting used points:', orderInfo.pointUsed);
       let pointsToDeduct = Number(orderInfo.pointUsed);
       const [pointRecords]: any = await connection.execute(

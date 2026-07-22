@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -12,6 +12,23 @@ export default function JoinPage() {
   const [authCode, setAuthCode] = useState("");
   const [expectedCode, setExpectedCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const phoneParam = params.get("phone");
+      if (phoneParam) {
+        // Simple formatter for 01012345678 -> 010-1234-5678
+        let formatted = phoneParam.replace(/\D/g, "");
+        if (formatted.length === 11) {
+          formatted = `${formatted.slice(0, 3)}-${formatted.slice(3, 7)}-${formatted.slice(7)}`;
+        } else if (formatted.length === 10) {
+          formatted = `${formatted.slice(0, 3)}-${formatted.slice(3, 6)}-${formatted.slice(6)}`;
+        }
+        setPhone(formatted);
+      }
+    }
+  }, []);
 
   const isPhoneValid = phone.length === 13; // 010-XXXX-XXXX
   const isCodeValid = authCode.length === 6;

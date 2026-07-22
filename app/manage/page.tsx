@@ -52,6 +52,7 @@ export default function ManagePage() {
 
   const getStatusText = (status: any) => {
     switch(Number(status)) {
+      case 99: return "결제대기";
       case 0: return "결제완료";
       case 1: return "배송중";
       case 2: return "배송완료";
@@ -62,6 +63,14 @@ export default function ManagePage() {
       case 7: return "반품진행";
       case 8: return "반품완료";
       default: return "";
+    }
+  };
+
+  const getStatusBadgeStyle = (status: any) => {
+    switch(Number(status)) {
+      case 99: return { background: '#fef08a', color: '#854d0e', border: '1px solid #eab308', borderRadius: '6px', padding: '2px 8px', fontWeight: 700, fontSize: '12px' };
+      case 0: return { background: '#dcfce7', color: '#166534', border: '1px solid #16a34a', borderRadius: '6px', padding: '2px 8px', fontWeight: 600, fontSize: '12px' };
+      default: return { background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '2px 8px', fontWeight: 600, fontSize: '12px' };
     }
   };
 
@@ -122,7 +131,7 @@ export default function ManagePage() {
             </section>
 
             <section>
-              <h2 className="text-[22px] font-bold text-on-surface mb-6">결제완료, 교환/반품 진행중 (Orders: Status 0, 4, 5, 7)</h2>
+              <h2 className="text-[22px] font-bold text-on-surface mb-6">결제대기, 결제완료, 교환/반품 진행중 (Orders: Status 99, 0, 4, 5, 7)</h2>
               {orders.length === 0 ? (
                 <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 text-center text-on-surface-variant">
                   진행중인 교환/반품 건이 없습니다.
@@ -153,7 +162,7 @@ export default function ManagePage() {
                           <td className="px-6 py-4">{order.customer_id}</td>
                           <td className="px-6 py-4">{order.order_name || '-'}</td>
                           <td className="px-6 py-4">
-                            <span className="font-bold text-red-500">{getStatusText(order.status)}</span>
+                            <span style={getStatusBadgeStyle(order.status)}>{getStatusText(order.status)}</span>
                           </td>
                           <td className="px-6 py-4">{order.total_price ? order.total_price.toLocaleString() : '0'}원</td>
                           <td className="px-6 py-4">{formatDate(order.created_at)}</td>
