@@ -192,35 +192,76 @@ export async function GET(req: Request) {
             const paymentKey = parseBuffer(order.payment_key);
             const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
             const customerId = parseBuffer(order.customer_id);
-            const amount = Math.round(actualTotalPrice * 0.001);
+            const usedPoint = Number(parseBuffer(order.used_point)) || 0;
+            const oldStatus = Number(order.status) || 0;
+            const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
+            const paymentMethod = parseBuffer(order.payment_method);
 
-            // Step 1: Toss payment cancel
-            const tossOk = await cancelTossPayment(paymentKey);
-            if (!tossOk) {
-              console.error(`[check-delivery] Toss cancel failed for order ${order.id}`);
-              continue; // skip, will retry on next cron run
+            // Step 1: Toss payment cancel. If Virtual Account/Transfer, we don't have refund account info here
+            // because it wasn't saved in order table. But wait! For virtual account or transfer,
+            // the customer had already called cancel during return request, so it is already canceled!
+            // Let's call cancel. If it fails with ALREADY_CANCELED_PAYMENT or FORBIDDEN_REQUEST (if already canceled), we can ignore.
+            // Or we check if it is already canceled.
+            let tossOk = false;
+            try {
+              const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+              const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+              const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cancelReason: '반품 완료' }),
+              });
+              const data = await res.json();
+              if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT') {
+                tossOk = true;
+              } else {
+                console.error(`[check-delivery] Toss cancel failed for order ${order.id}:`, data);
+              }
+            } catch (error) {
+              console.error('[check-delivery] Toss cancel error:', error);
             }
 
-            // Step 2-4: DB updates in a transaction
+            if (!tossOk) {
+              console.error(`[check-delivery] Toss cancel failed for order ${order.id}. Skipping.`);
+              continue;
+            }
+
+            // Step 2: DB updates in a transaction
             await connection.beginTransaction();
             try {
-              // Deduct from points table (oldest record for this customer)
-              const [points]: any = await connection.execute(
-                'SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1',
-                [customerId]
-              );
-              if (points.length > 0) {
+              // 1. Deduct earned points ONLY if they were actually awarded.
+              //    Points are earned at 배송완료(2) and beyond — but status 99 (pending deposit)
+              //    is never "delivered", so explicitly exclude it.
+              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
+              if (pointsWereEarned && earnedPointAmount > 0) {
+                const [points]: any = await connection.execute(
+                  `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
+                  [customerId]
+                );
+                if (points.length > 0) {
+                  const firstPoint = points[0];
+                  await connection.execute(
+                    `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
+                    [earnedPointAmount, firstPoint.id]
+                  );
+                }
                 await connection.execute(
-                  'UPDATE points SET point_amount = point_amount - ? WHERE id = ?',
-                  [amount, points[0].id]
+                  `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+                  [earnedPointAmount, customerId]
                 );
               }
 
-              // Update customer point
-              await connection.execute(
-                'UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?',
-                [amount, customerId]
-              );
+              // 2. Refund used points
+              if (usedPoint > 0) {
+                await connection.execute(
+                  `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
+                  [customerId, usedPoint]
+                );
+                await connection.execute(
+                  `UPDATE customers SET point = point + ? WHERE id = ?`,
+                  [usedPoint, customerId]
+                );
+              }
 
               // Set order status to 8 (반품완료)
               if (deliveredAt) {
