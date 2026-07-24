@@ -1,0 +1,3 @@
+{
+  "/api/orders/cancel-completed/route": "app/api/orders/cancel-completed/route.js"
+}
