@@ -152,36 +152,112 @@ export async function GET(req: Request) {
           }
 
         } else if (order.status === 5 && reshipmentField) {
-          // Re-shipment delivered → 교환완료(6)
+          // Re-shipment delivered → process Toss refund + DB updates → 교환완료(6)
           const { isDone, deliveredAt } = await checkDeliveryDone(reshipmentField);
           if (isDone) {
-            if (deliveredAt) {
-              const d = new Date(deliveredAt);
-              const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
-              const formattedDate = kst.toISOString().slice(0, 19).replace('T', ' ');
-              await connection.execute('UPDATE orders SET status = 6, received_at = ? WHERE id = ?', [formattedDate, order.id]);
-            } else {
-              await connection.execute('UPDATE orders SET status = 6, received_at = NOW() WHERE id = ?', [order.id]);
-            }
-            updatedCount++;
+            const paymentKey = parseBuffer(order.payment_key);
+            const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
+            const customerId = parseBuffer(order.customer_id);
+            const usedPoint = Number(parseBuffer(order.used_point)) || 0;
+            const oldStatus = Number(order.status) || 0;
+            const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
 
-            // Send mail4.html
-            if (order.email) {
-              const [imgRows]: any = await connection.execute('SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
-              let productImage = '';
-              if (imgRows.length > 0) {
-                productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
+            // Step 1: Toss payment cancel
+            let tossOk = false;
+            try {
+              const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+              const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+              const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cancelReason: '교환 완료 환불' }),
+              });
+              const data = await res.json();
+              if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT') {
+                tossOk = true;
+              } else {
+                console.error(`[check-delivery] Toss cancel failed for order ${order.id}:`, data);
               }
-              try {
-                await sendExchangeEmail(order.email, {
-                  customerName: parseBuffer(order.customer_name),
-                  orderNumber: parseBuffer(order.order_number),
-                  createdAt: new Date(order.created_at).toISOString().split('T')[0],
-                  productImage,
-                  productName: parseBuffer(order.order_name),
-                  price: order.total_price ? Number(parseBuffer(order.total_price)).toLocaleString() : '0',
-                });
-              } catch (e) { console.error('Failed to send exchange email in cron:', e); }
+            } catch (error) {
+              console.error('[check-delivery] Toss cancel error:', error);
+            }
+
+            if (!tossOk) {
+              console.error(`[check-delivery] Toss cancel failed for order ${order.id}. Skipping.`);
+              continue;
+            }
+
+            // Step 2: DB updates in a transaction
+            await connection.beginTransaction();
+            try {
+              // 1. Deduct earned points ONLY if they were actually awarded.
+              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
+              if (pointsWereEarned && earnedPointAmount > 0) {
+                const [points]: any = await connection.execute(
+                  `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
+                  [customerId]
+                );
+                if (points.length > 0) {
+                  const firstPoint = points[0];
+                  await connection.execute(
+                    `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
+                    [earnedPointAmount, firstPoint.id]
+                  );
+                }
+                await connection.execute(
+                  `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+                  [earnedPointAmount, customerId]
+                );
+              }
+
+              // 2. Refund used points
+              if (usedPoint > 0) {
+                await connection.execute(
+                  `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
+                  [customerId, usedPoint]
+                );
+                await connection.execute(
+                  `UPDATE customers SET point = point + ? WHERE id = ?`,
+                  [usedPoint, customerId]
+                );
+              }
+
+              // Set order status to 6 (교환완료)
+              if (deliveredAt) {
+                const d = new Date(deliveredAt);
+                const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);
+                const formattedDate = kst.toISOString().slice(0, 19).replace('T', ' ');
+                await connection.execute('UPDATE orders SET status = 6, received_at = ? WHERE id = ?', [formattedDate, order.id]);
+              } else {
+                await connection.execute('UPDATE orders SET status = 6, received_at = NOW() WHERE id = ?', [order.id]);
+              }
+
+              await connection.commit();
+              updatedCount++;
+              console.log(`[check-delivery] Order ${order.id} refunded and set to status 6`);
+
+              // Send mail4.html
+              if (order.email) {
+                const [imgRows]: any = await connection.execute('SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
+                let productImage = '';
+                if (imgRows.length > 0) {
+                  productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
+                }
+                try {
+                  await sendExchangeEmail(order.email, {
+                    customerName: parseBuffer(order.customer_name),
+                    orderNumber: parseBuffer(order.order_number),
+                    createdAt: new Date(order.created_at).toISOString().split('T')[0],
+                    productImage,
+                    productName: parseBuffer(order.order_name),
+                    price: order.total_price ? Number(parseBuffer(order.total_price)).toLocaleString() : '0',
+                  });
+                } catch (e) { console.error('Failed to send exchange email in cron:', e); }
+              }
+
+            } catch (dbErr) {
+              await connection.rollback();
+              console.error(`[check-delivery] DB error for order ${order.id}:`, dbErr);
             }
           }
 
