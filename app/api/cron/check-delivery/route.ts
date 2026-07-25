@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
 import { sendShippingEmail, sendReturnEmail, sendExchangeEmail } from '../../../../lib/email';
 
+export const dynamic = 'force-dynamic';
+
 const CARRIERS = [
   { id: "kr.cjlogistics", name: "CJ대한통운" },
   { id: "kr.lotte", name: "롯데택배" },
