@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>교환 완료</title>
+<title>발송준비 완료</title>
 </head>
 <body style="margin:0;padding:0;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans KR',sans-serif;color:#333333;">
 
@@ -23,11 +23,13 @@
     <div style="padding:8px 0 32px 0;">
       <h2 style="margin:0 0 16px 0;font-size:22px;font-weight:400;line-height:1.4;color:#111111;">
         주문하신 상품의<br/>
-        <strong style="font-weight:700;color:#941F32;">교환</strong>이 완료되었습니다.
+        <strong style="font-weight:700;color:#941F32;">발송준비</strong>가 완료되었습니다.
       </h2>
       <p style="margin:0;font-size:14px;color:#555555;line-height:1.8;">
         $customer 고객님, 안녕하세요.<br/>
-        고객님께서 주문하신 상품이 교환 완료되었습니다.<br/>
+        고객님께서 주문하신 상품을 택배사에 전달하기 위한 발송준비가 완료되었습니다.<br/>
+        자세한 배송상태는 <a href="https://lfourteen.life/mypage/order" style="color:#1a73e8;text-decoration:underline;">마이페이지&gt;주문/배송조회</a>에서 확인하시기 바랍니다.<br/>
+        <span style="font-size:12px;color:#888888;">(단, 상품이 택배사로 전달된 이후부터 배송조회가 가능합니다)</span>
       </p>
     </div>
 
@@ -49,6 +51,39 @@
         <p style="margin:0;font-size:16px;font-weight:700;color:#111111;">$price<span style="font-size:13px;font-weight:400;color:#999999;">원</span></p>
       </div>
     </div>
+  </div>
+
+  <!-- Shipping Info Section -->
+  <div style="border-top:6px solid #f5f5f5;padding:24px;">
+    <h3 style="margin:0 0 12px 0;font-size:17px;font-weight:700;color:#111111;">배송 정보</h3>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+      <tr>
+        <td style="width:90px;padding:12px 0;font-size:13px;color:#999999;border-bottom:1px solid #f0f0f0;vertical-align:top;">택배사명</td>
+        <td style="padding:12px 0;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #f0f0f0;vertical-align:top;">$shipment_company</td>
+      </tr>
+      <tr>
+        <td style="width:90px;padding:12px 0;font-size:13px;color:#999999;border-bottom:1px solid #f0f0f0;vertical-align:top;">송장번호</td>
+        <td style="padding:12px 0;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #f0f0f0;vertical-align:top;">
+          <a href="$trackingUrl" style="color:#1a73e8;text-decoration:underline;">$shipment_number</a>
+        </td>
+      </tr>
+      <tr>
+        <td style="width:90px;padding:12px 0;font-size:13px;color:#999999;border-bottom:1px solid #f0f0f0;vertical-align:top;">발송일시</td>
+        <td style="padding:12px 0;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #f0f0f0;vertical-align:top;">$yyyy-mm-dd hh:nn</td>
+      </tr>
+      <tr>
+        <td style="width:90px;padding:12px 0;font-size:13px;color:#999999;border-bottom:1px solid #f0f0f0;vertical-align:top;">받는 사람</td>
+        <td style="padding:12px 0;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #f0f0f0;vertical-align:top;">$receiver_name</td>
+      </tr>
+      <tr>
+        <td style="width:90px;padding:12px 0;font-size:13px;color:#999999;border-bottom:1px solid #f0f0f0;vertical-align:top;">연락처</td>
+        <td style="padding:12px 0;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #f0f0f0;vertical-align:top;">$receiver_phone</td>
+      </tr>
+      <tr>
+        <td style="width:90px;padding:12px 0;font-size:13px;color:#999999;vertical-align:top;">받는 주소</td>
+        <td style="padding:12px 0;font-size:13px;font-weight:600;color:#111111;vertical-align:top;">$receive_address</td>
+      </tr>
+    </table>
   </div>
 
   <!-- Notice Area -->

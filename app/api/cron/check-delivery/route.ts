@@ -99,48 +99,6 @@ export async function GET(req: Request) {
               await connection.execute('UPDATE orders SET status = 2, received_at = NOW() WHERE id = ?', [order.id]);
             }
             updatedCount++;
-
-            // Send mail2.html
-            if (order.email) {
-              const [imgRows]: any = await connection.execute('SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
-              let productImage = '';
-              if (imgRows.length > 0) {
-                productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
-              }
-              const parts = shipmentField.split('|');
-              const now = new Date();
-              const nowStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-              
-              const formatReceiverName = (name: string) => (!name || name.length <= 1) ? (name||'') : name[0] + '*' + name[name.length - 1];
-              const formatMobile = (mobile: string) => {
-                if (!mobile) return '';
-                const parts = mobile.split('-');
-                return parts.length === 3 ? `${parts[0]}-****-${parts[2]}` : mobile;
-              };
-              const formatAddress = (address: string) => {
-                if (!address) return '';
-                const idx = address.indexOf('] ');
-                let addr = idx !== -1 ? address.substring(idx + 2) : address;
-                return addr.trim().split(/\s+/).slice(0, 2).join(' ');
-              };
-
-              try {
-                await sendShippingEmail(order.email, {
-                  customerName: parseBuffer(order.customer_name),
-                  now: nowStr,
-                  createdAt: new Date(order.created_at).toISOString().split('T')[0],
-                  orderNumber: parseBuffer(order.order_number),
-                  productImage,
-                  productName: parseBuffer(order.order_name),
-                  price: order.total_price ? Number(parseBuffer(order.total_price)).toLocaleString() : '0',
-                  shipmentCompany: parts[0] || '',
-                  shipmentNumber: parts[1] || '',
-                  receiverName: formatReceiverName(parseBuffer(order.receiver_name)),
-                  receiverPhone: formatMobile(parseBuffer(order.mobile)),
-                  receiveAddress: formatAddress(parseBuffer(order.receiver_address))
-                });
-              } catch (e) { console.error('Failed to send shipping email in cron:', e); }
-            }
           }
 
         } else if (order.status === 4 && returnField) {
