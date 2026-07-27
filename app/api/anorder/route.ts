@@ -116,9 +116,14 @@ export async function GET(req: Request) {
                   await connection.execute('UPDATE points SET point_amount = ? WHERE id = ?', [usedPoint, pointRecnum]);
                 }
                 
+                // Synchronize customers.point with actual sum from points table
+                const [sumRows]: any = await connection.execute(
+                  'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+                  [customerId]
+                );
                 await connection.execute(
-                  'UPDATE customers SET point = GREATEST(0, point - ? + ?) WHERE id = ?',
-                  [amount, usedPoint, customerId]
+                  'UPDATE customers SET point = ? WHERE id = ?',
+                  [sumRows[0].total, customerId]
                 );
               } else {
                 // Cancel scenario: points were not earned yet, just refund used points
@@ -127,9 +132,13 @@ export async function GET(req: Request) {
                     'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
                     [customerId, usedPoint]
                   );
+                  const [sumRows]: any = await connection.execute(
+                    'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+                    [customerId]
+                  );
                   await connection.execute(
-                    'UPDATE customers SET point = point + ? WHERE id = ?',
-                    [usedPoint, customerId]
+                    'UPDATE customers SET point = ? WHERE id = ?',
+                    [sumRows[0].total, customerId]
                   );
                 }
               }
@@ -161,9 +170,13 @@ export async function GET(req: Request) {
                   );
                   pointId = result.insertId;
                   
+                  const [sumRows]: any = await connection.execute(
+                    'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+                    [customerId]
+                  );
                   await connection.execute(
-                    'UPDATE customers SET point = point + ? WHERE id = ?',
-                    [amount, customerId]
+                    'UPDATE customers SET point = ? WHERE id = ?',
+                    [sumRows[0].total, customerId]
                   );
                 } else {
                   pointId = awarded[0].id;
