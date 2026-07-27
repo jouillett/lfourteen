@@ -80,10 +80,14 @@ export async function GET(req: Request) {
           if (paymentKey) {
             const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
             const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+            const refundAmount = finalStatus === 8 ? Math.max(0, actualTotalPrice - 7000) : actualTotalPrice;
             const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
               method: 'POST',
               headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ cancelReason: finalStatus === 3 ? '관리자 취소' : '관리자 반품 완료' }),
+              body: JSON.stringify({ 
+                cancelReason: finalStatus === 3 ? '관리자 취소' : '관리자 반품 완료',
+                cancelAmount: refundAmount
+              }),
             });
 
             if (!tossRes.ok) {

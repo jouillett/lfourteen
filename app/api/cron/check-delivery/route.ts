@@ -197,10 +197,14 @@ export async function GET(req: Request) {
             try {
               const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
               const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+              const refundAmount = Math.max(0, actualTotalPrice - 7000);
               const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
                 method: 'POST',
                 headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cancelReason: '반품 완료' }),
+                body: JSON.stringify({ 
+                  cancelReason: '반품 완료',
+                  cancelAmount: refundAmount 
+                }),
               });
               const data = await res.json();
               if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT') {
