@@ -73,6 +73,46 @@ export async function PATCH(req: Request) {
         }
       }
 
+      // If status is changed to 2 (Delivery Complete)
+      if (status === 2) {
+        const [orderRecs]: any = await connection.execute(
+          `SELECT total_price, customer_id, status as old_status FROM orders WHERE id = ?`,
+          [id]
+        );
+        if (orderRecs.length > 0) {
+          const orderRecord = orderRecs[0];
+          const oldStatus = Number(orderRecord.old_status) || 0;
+          
+          if (oldStatus !== 2) {
+            const parseBuffer = (val: any) => {
+              if (Buffer.isBuffer(val)) return val.toString('utf8');
+              if (val && val.type === 'Buffer') return Buffer.from(val.data).toString('utf8');
+              return val;
+            };
+
+            const actualTotalPrice = Number(parseBuffer(orderRecord.total_price)) || 0;
+            const customerId = parseBuffer(orderRecord.customer_id);
+            if (customerId) {
+              const amount = Math.round(actualTotalPrice * 0.001);
+              if (amount > 0) {
+                // Check if already awarded
+                const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [id]);
+                if (awarded.length === 0) {
+                  await connection.execute(
+                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                    [customerId, id, amount]
+                  );
+                  await connection.execute(
+                    'UPDATE customers SET point = point + ? WHERE id = ?',
+                    [amount, customerId]
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+
       await connection.execute('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
       await connection.commit();
       return NextResponse.json({ success: true });

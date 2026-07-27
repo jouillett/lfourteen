@@ -61,18 +61,21 @@ export async function GET(req: Request) {
           finalStatus = 1;
         }
 
-        // Check if we are changing to 3 or 8 from a different status
-        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id FROM orders WHERE id = ?', [id]);
+        // Check if we are changing to 3 or 8 from a different status, or changing to 2
+        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id, used_point FROM orders WHERE id = ?', [id]);
         if (currRows.length === 0) return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
         
         const currentOrder = currRows[0];
-        const isCanceling = (finalStatus === 3 || finalStatus === 8) && currentOrder.status !== 3 && currentOrder.status !== 8;
+        const oldStatus = Number(currentOrder.status) || 0;
+        const isCanceling = (finalStatus === 3 || finalStatus === 8) && oldStatus !== 3 && oldStatus !== 8;
+        const isEarningPoints = (finalStatus === 2) && (oldStatus !== 2);
 
         if (isCanceling) {
           // Parse buffers
           const paymentKey = Buffer.isBuffer(currentOrder.payment_key) ? currentOrder.payment_key.toString('utf8') : currentOrder.payment_key;
           const actualTotalPrice = Number(Buffer.isBuffer(currentOrder.total_price) ? currentOrder.total_price.toString('utf8') : currentOrder.total_price) || 0;
           const customerId = Buffer.isBuffer(currentOrder.customer_id) ? currentOrder.customer_id.toString('utf8') : currentOrder.customer_id;
+          const usedPoint = Number(Buffer.isBuffer(currentOrder.used_point) ? currentOrder.used_point.toString('utf8') : currentOrder.used_point) || 0;
           
           if (paymentKey) {
             const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
@@ -98,21 +101,67 @@ export async function GET(req: Request) {
             const amount = Math.round(actualTotalPrice * 0.001);
             await connection.beginTransaction();
             try {
-              const [points]: any = await connection.execute(
-                'SELECT id FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1',
-                [customerId]
-              );
-              if (points.length > 0) {
-                await connection.execute('UPDATE points SET point_amount = point_amount - ? WHERE id = ?', [amount, points[0].id]);
+              // 1. Deduct earned points ONLY if they were actually awarded
+              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
+              if (pointsWereEarned && amount > 0) {
+                const [points]: any = await connection.execute(
+                  'SELECT id FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1',
+                  [customerId]
+                );
+                if (points.length > 0) {
+                  await connection.execute('UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?', [amount, points[0].id]);
+                }
+                await connection.execute(
+                  'UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?',
+                  [amount, customerId]
+                );
               }
-              await connection.execute(
-                'UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?',
-                [amount, customerId]
-              );
+              
+              // 2. Refund used points
+              if (usedPoint > 0) {
+                await connection.execute(
+                  'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                  [customerId, usedPoint]
+                );
+                await connection.execute(
+                  'UPDATE customers SET point = point + ? WHERE id = ?',
+                  [usedPoint, customerId]
+                );
+              }
               await connection.commit();
             } catch (err) {
               await connection.rollback();
               console.error('Failed to update points/spent during cancellation:', err);
+            }
+          }
+        }
+
+        if (isEarningPoints) {
+          const actualTotalPrice = Number(Buffer.isBuffer(currentOrder.total_price) ? currentOrder.total_price.toString('utf8') : currentOrder.total_price) || 0;
+          const customerId = Buffer.isBuffer(currentOrder.customer_id) ? currentOrder.customer_id.toString('utf8') : currentOrder.customer_id;
+          
+          if (customerId) {
+            const amount = Math.round(actualTotalPrice * 0.001);
+            if (amount > 0) {
+              await connection.beginTransaction();
+              try {
+                // Check if already awarded
+                const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [id]);
+                if (awarded.length === 0) {
+                  await connection.execute(
+                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                    [customerId, id, amount]
+                  );
+                  await connection.execute(
+                    'UPDATE customers SET point = point + ? WHERE id = ?',
+                    [amount, customerId]
+                  );
+                }
+                await connection.commit();
+              } catch (err) {
+                await connection.rollback();
+                console.error('Failed to reward points for delivery:', err);
+              }
             }
           }
         }

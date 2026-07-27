@@ -100,6 +100,26 @@ export async function GET(req: Request) {
             } else {
               await connection.execute('UPDATE orders SET status = 2, received_at = NOW() WHERE id = ?', [order.id]);
             }
+
+            // Reward points
+            const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
+            const customerId = parseBuffer(order.customer_id);
+            if (customerId) {
+              const amount = Math.round(actualTotalPrice * 0.001);
+              if (amount > 0) {
+                const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
+                if (awarded.length === 0) {
+                  await connection.execute(
+                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                    [customerId, order.id, amount]
+                  );
+                  await connection.execute(
+                    'UPDATE customers SET point = point + ? WHERE id = ?',
+                    [amount, customerId]
+                  );
+                }
+              }
+            }
             updatedCount++;
           }
 
