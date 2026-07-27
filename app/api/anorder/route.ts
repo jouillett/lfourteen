@@ -108,10 +108,7 @@ export async function GET(req: Request) {
               // 1. Deduct earned points ONLY if they were actually awarded
               const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
               if (pointsWereEarned && amount > 0) {
-                const [points]: any = await connection.execute(
-                  'SELECT id FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1',
-                  [customerId]
-                );
+                const [points]: any = await connection.execute('SELECT id, point_amount FROM points WHERE order_id = ?', [id]);
                 if (points.length > 0) {
                   await connection.execute('UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?', [amount, points[0].id]);
                 }

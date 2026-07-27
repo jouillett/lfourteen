@@ -230,8 +230,8 @@ export async function GET(req: Request) {
               const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
               if (pointsWereEarned && earnedPointAmount > 0) {
                 const [points]: any = await connection.execute(
-                  `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
-                  [customerId]
+                  `SELECT id FROM points WHERE order_id = ?`,
+                  [order.id]
                 );
                 if (points.length > 0) {
                   const firstPoint = points[0];
