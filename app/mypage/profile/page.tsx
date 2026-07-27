@@ -315,11 +315,11 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* 휴대폰 */}
+              {/* 휴대폰 (아이디) */}
               <div className="flex border-b border-[#EAEAEA]">
-                <LabelCol required>휴대폰</LabelCol>
+                <LabelCol required>휴대폰 (아이디)</LabelCol>
                 <div className="flex-1 py-3 px-4 flex items-center gap-2">
-                  <select {...register("mobile1")} className="border border-[#CCCCCC] px-2 py-1.5 w-[70px] outline-none focus:border-black bg-white">
+                  <select {...register("mobile1")} className="bg-[#F5F5F5] border border-[#CCCCCC] px-2 py-1.5 w-[70px] outline-none text-[#888888] pointer-events-none" tabIndex={-1}>
                     <option value="010">010</option>
                     <option value="011">011</option>
                     <option value="016">016</option>
@@ -328,9 +328,9 @@ export default function ProfilePage() {
                     <option value="019">019</option>
                   </select>
                   <span className="text-[#888888]">-</span>
-                  <input type="text" maxLength={4} {...register("mobile2")} className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-[70px] text-center outline-none focus:border-black" />
+                  <input type="text" maxLength={4} {...register("mobile2")} className="bg-[#F5F5F5] border border-[#CCCCCC] px-3 py-1.5 w-[70px] text-center outline-none text-[#888888]" readOnly tabIndex={-1} />
                   <span className="text-[#888888]">-</span>
-                  <input type="text" maxLength={4} {...register("mobile3")} className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-[70px] text-center outline-none focus:border-black" />
+                  <input type="text" maxLength={4} {...register("mobile3")} className="bg-[#F5F5F5] border border-[#CCCCCC] px-3 py-1.5 w-[70px] text-center outline-none text-[#888888]" readOnly tabIndex={-1} />
               {(errors.mobile2 || errors.mobile3) && <p className="text-error text-xs ml-3">번호를 확인해주세요.</p>}
                 </div>
               </div>
