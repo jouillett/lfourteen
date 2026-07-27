@@ -9,8 +9,8 @@ export async function PATCH(req: Request) {
     try {
       await connection.beginTransaction();
 
-      // If status is changed to 3 (Cancel Complete) or 6 (Return Complete)
-      if (status === 3 || status === 6) {
+      // If status is changed to 3 (Cancel Complete) or 8 (Return Complete)
+      if (status === 3 || status === 8) {
         const [orderRecs]: any = await connection.execute(
           `SELECT total_price, customer_id, status as old_status, used_point FROM orders WHERE id = ?`,
           [id]
@@ -31,8 +31,8 @@ export async function PATCH(req: Request) {
           const oldStatus = Number(orderRecord.old_status) || 0;
           const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
 
-          // Only process refund if the status was not already 3 or 6
-          if (oldStatus !== 3 && oldStatus !== 6) {
+          // Only process refund if the status was not already 3 or 8
+          if (oldStatus !== 3 && oldStatus !== 8) {
             // 1. Deduct earned points ONLY if they were actually awarded.
             //    Points are earned at 배송완료(2) and beyond — but status 99 (pending deposit)
             //    is never "delivered", so explicitly exclude it.

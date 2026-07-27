@@ -132,76 +132,11 @@ export async function GET(req: Request) {
           }
 
         } else if (order.status === 5 && reshipmentField) {
-          // Re-shipment delivered → process Toss refund + DB updates → 교환완료(6)
+          // Re-shipment delivered → 교환완료(6)
           const { isDone, deliveredAt } = await checkDeliveryDone(reshipmentField);
           if (isDone) {
-            const paymentKey = parseBuffer(order.payment_key);
-            const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
-            const customerId = parseBuffer(order.customer_id);
-            const usedPoint = Number(parseBuffer(order.used_point)) || 0;
-            const oldStatus = Number(order.status) || 0;
-            const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
-
-            // Step 1: Toss payment cancel
-            let tossOk = false;
-            try {
-              const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
-              const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
-              const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
-                method: 'POST',
-                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cancelReason: '교환 완료 환불' }),
-              });
-              const data = await res.json();
-              if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT') {
-                tossOk = true;
-              } else {
-                console.error(`[check-delivery] Toss cancel failed for order ${order.id}:`, data);
-              }
-            } catch (error) {
-              console.error('[check-delivery] Toss cancel error:', error);
-            }
-
-            if (!tossOk) {
-              console.error(`[check-delivery] Toss cancel failed for order ${order.id}. Skipping.`);
-              continue;
-            }
-
-            // Step 2: DB updates in a transaction
             await connection.beginTransaction();
             try {
-              // 1. Deduct earned points ONLY if they were actually awarded.
-              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
-              if (pointsWereEarned && earnedPointAmount > 0) {
-                const [points]: any = await connection.execute(
-                  `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
-                  [customerId]
-                );
-                if (points.length > 0) {
-                  const firstPoint = points[0];
-                  await connection.execute(
-                    `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
-                    [earnedPointAmount, firstPoint.id]
-                  );
-                }
-                await connection.execute(
-                  `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
-                  [earnedPointAmount, customerId]
-                );
-              }
-
-              // 2. Refund used points
-              if (usedPoint > 0) {
-                await connection.execute(
-                  `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
-                  [customerId, usedPoint]
-                );
-                await connection.execute(
-                  `UPDATE customers SET point = point + ? WHERE id = ?`,
-                  [usedPoint, customerId]
-                );
-              }
-
               // Set order status to 6 (교환완료)
               if (deliveredAt) {
                 const d = new Date(deliveredAt);
@@ -214,7 +149,7 @@ export async function GET(req: Request) {
 
               await connection.commit();
               updatedCount++;
-              console.log(`[check-delivery] Order ${order.id} refunded and set to status 6`);
+              console.log(`[check-delivery] Order ${order.id} set to status 6 (Exchange Complete)`);
 
               // Send mail4.html
               if (order.email) {
