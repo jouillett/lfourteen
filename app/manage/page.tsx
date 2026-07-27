@@ -88,7 +88,39 @@ export default function ManagePage() {
     <div className="bg-background text-on-background antialiased min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 max-w-7xl mx-auto w-full pt-6 md:pt-16 px-4 md:px-16 pb-24 space-y-12">
-        <h1 className="text-[28px] font-bold text-on-surface">관리자 페이지</h1>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <h1 className="text-[28px] font-bold text-on-surface">관리자 페이지</h1>
+          <div className="flex gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/cron/check-delivery');
+                  const data = await res.json();
+                  alert('Check Delivery 실행 결과:\n' + JSON.stringify(data, null, 2));
+                } catch (e: any) {
+                  alert('실행 실패: ' + e.message);
+                }
+              }}
+              className="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold shadow hover:bg-primary/90 transition-colors"
+            >
+              Run Check Delivery
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/cron/check-virtual-accounts');
+                  const data = await res.json();
+                  alert('Check Virtual Accounts 실행 결과:\n' + JSON.stringify(data, null, 2));
+                } catch (e: any) {
+                  alert('실행 실패: ' + e.message);
+                }
+              }}
+              className="px-4 py-2 bg-[#f97316] text-white rounded-lg text-sm font-bold shadow hover:bg-[#ea580c] transition-colors"
+            >
+              Run Check Virtual Accounts
+            </button>
+          </div>
+        </div>
         
         {loading ? (
           <p>로딩중...</p>
