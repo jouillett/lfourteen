@@ -75,6 +75,7 @@ export async function GET(req: Request) {
       const [orders]: any = await connection.execute(`
         SELECT o.id, o.status, o.shipment, o.\`return\`, o.reshipment, o.payment_key, o.total_price, o.customer_id,
                o.order_number, o.order_name, o.created_at, o.receiver_name, o.receiver_address,
+               o.point_recnum, o.used_point,
                c.name as customer_name, c.email, c.mobile
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.id
@@ -108,15 +109,25 @@ export async function GET(req: Request) {
               const amount = Math.round(actualTotalPrice * 0.001);
               if (amount > 0) {
                 const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
+                let pointId = 0;
+                
                 if (awarded.length === 0) {
-                  await connection.execute(
+                  const [result]: any = await connection.execute(
                     'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
                     [customerId, order.id, amount]
                   );
+                  pointId = result.insertId;
+                  
                   await connection.execute(
                     'UPDATE customers SET point = point + ? WHERE id = ?',
                     [amount, customerId]
                   );
+                } else {
+                  pointId = awarded[0].id;
+                }
+                
+                if (pointId > 0) {
+                  await connection.execute('UPDATE orders SET point_recnum = ? WHERE id = ?', [pointId, order.id]);
                 }
               }
             }
@@ -227,35 +238,33 @@ export async function GET(req: Request) {
               // 1. Deduct earned points ONLY if they were actually awarded.
               //    Points are earned at 배송완료(2) and beyond — but status 99 (pending deposit)
               //    is never "delivered", so explicitly exclude it.
-              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
-              if (pointsWereEarned && earnedPointAmount > 0) {
-                const [points]: any = await connection.execute(
-                  `SELECT id FROM points WHERE order_id = ?`,
-                  [order.id]
+              const pointRecnum = Number(parseBuffer(order.point_recnum)) || 0;
+              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99 && pointRecnum > 0;
+              
+              if (pointsWereEarned) {
+                // Return scenario: points were earned (point_recnum exists)
+                if (usedPoint === 0) {
+                  await connection.execute('DELETE FROM points WHERE id = ?', [pointRecnum]);
+                } else {
+                  await connection.execute('UPDATE points SET point_amount = ? WHERE id = ?', [usedPoint, pointRecnum]);
+                }
+                
+                await connection.execute(
+                  'UPDATE customers SET point = GREATEST(0, point - ? + ?) WHERE id = ?',
+                  [earnedPointAmount, usedPoint, customerId]
                 );
-                if (points.length > 0) {
-                  const firstPoint = points[0];
+              } else {
+                // Cancel scenario: points were not earned yet, just refund used points
+                if (usedPoint > 0) {
                   await connection.execute(
-                    `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
-                    [earnedPointAmount, firstPoint.id]
+                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                    [customerId, usedPoint]
+                  );
+                  await connection.execute(
+                    'UPDATE customers SET point = point + ? WHERE id = ?',
+                    [usedPoint, customerId]
                   );
                 }
-                await connection.execute(
-                  `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
-                  [earnedPointAmount, customerId]
-                );
-              }
-
-              // 2. Refund used points
-              if (usedPoint > 0) {
-                await connection.execute(
-                  `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
-                  [customerId, usedPoint]
-                );
-                await connection.execute(
-                  `UPDATE customers SET point = point + ? WHERE id = ?`,
-                  [usedPoint, customerId]
-                );
               }
 
               // Set order status to 8 (반품완료)

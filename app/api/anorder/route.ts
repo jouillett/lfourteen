@@ -105,29 +105,33 @@ export async function GET(req: Request) {
             const amount = Math.round(actualTotalPrice * 0.001);
             await connection.beginTransaction();
             try {
-              // 1. Deduct earned points ONLY if they were actually awarded
-              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99;
-              if (pointsWereEarned && amount > 0) {
-                const [points]: any = await connection.execute('SELECT id, point_amount FROM points WHERE order_id = ?', [id]);
-                if (points.length > 0) {
-                  await connection.execute('UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?', [amount, points[0].id]);
-                }
-                await connection.execute(
-                  'UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?',
-                  [amount, customerId]
-                );
-              }
+              const pointRecnum = Number(Buffer.isBuffer(currentOrder.point_recnum) ? currentOrder.point_recnum.toString('utf8') : currentOrder.point_recnum) || 0;
+              const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99 && pointRecnum > 0;
               
-              // 2. Refund used points
-              if (usedPoint > 0) {
+              if (pointsWereEarned) {
+                // Return scenario: points were earned (point_recnum exists)
+                if (usedPoint === 0) {
+                  await connection.execute('DELETE FROM points WHERE id = ?', [pointRecnum]);
+                } else {
+                  await connection.execute('UPDATE points SET point_amount = ? WHERE id = ?', [usedPoint, pointRecnum]);
+                }
+                
                 await connection.execute(
-                  'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
-                  [customerId, usedPoint]
+                  'UPDATE customers SET point = GREATEST(0, point - ? + ?) WHERE id = ?',
+                  [amount, usedPoint, customerId]
                 );
-                await connection.execute(
-                  'UPDATE customers SET point = point + ? WHERE id = ?',
-                  [usedPoint, customerId]
-                );
+              } else {
+                // Cancel scenario: points were not earned yet, just refund used points
+                if (usedPoint > 0) {
+                  await connection.execute(
+                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                    [customerId, usedPoint]
+                  );
+                  await connection.execute(
+                    'UPDATE customers SET point = point + ? WHERE id = ?',
+                    [usedPoint, customerId]
+                  );
+                }
               }
               await connection.commit();
             } catch (err) {
@@ -148,15 +152,25 @@ export async function GET(req: Request) {
               try {
                 // Check if already awarded
                 const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [id]);
+                let pointId = 0;
+                
                 if (awarded.length === 0) {
-                  await connection.execute(
+                  const [result]: any = await connection.execute(
                     'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
                     [customerId, id, amount]
                   );
+                  pointId = result.insertId;
+                  
                   await connection.execute(
                     'UPDATE customers SET point = point + ? WHERE id = ?',
                     [amount, customerId]
                   );
+                } else {
+                  pointId = awarded[0].id;
+                }
+                
+                if (pointId > 0) {
+                  await connection.execute('UPDATE orders SET point_recnum = ? WHERE id = ?', [pointId, id]);
                 }
                 await connection.commit();
               } catch (err) {
