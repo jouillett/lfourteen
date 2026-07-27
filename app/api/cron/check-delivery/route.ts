@@ -304,7 +304,7 @@ export async function GET(req: Request) {
       connection.release();
     }
   } catch (error: any) {
-    console.error('Check delivery cron error:', error);
-    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
+    console.error('Error in cron job:', error);
+    return NextResponse.json({ success: false, message: 'Internal server error', error: error?.message || String(error), stack: error?.stack }, { status: 500 });
   }
 }
