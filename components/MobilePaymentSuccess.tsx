@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 export default function MobilePaymentSuccess() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
+  const [rawAmount, setRawAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [visible, setVisible] = useState(false);
   const fetchStarted = React.useRef(false);
@@ -21,7 +22,10 @@ export default function MobilePaymentSuccess() {
     const fallbackMethod = sessionStorage.getItem("selectedPaymentMethod") || "결제수단";
 
     if (parsedOrderId) setOrderId(parsedOrderId);
-    if (amountParam) setAmount("₩" + Number(amountParam).toLocaleString());
+    if (amountParam) {
+      setAmount("₩" + Number(amountParam).toLocaleString());
+      setRawAmount(Number(amountParam));
+    }
 
     const pendingOrderStr = sessionStorage.getItem("pendingOrderInfo");
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
@@ -96,6 +100,7 @@ export default function MobilePaymentSuccess() {
           if (data.success && data.order) {
             const o = data.order;
             setAmount("₩" + Number(o.total_price).toLocaleString());
+            setRawAmount(Number(o.total_price));
             setPaymentMethod(o.payment_method || fallbackMethod);
           } else {
             setPaymentMethod(fallbackMethod);
@@ -173,8 +178,25 @@ export default function MobilePaymentSuccess() {
           <p style={{
             ...fadeStyle(100),
             fontSize: 17, lineHeight: "26px", fontWeight: 400,
-            color: "#4b463d", marginBottom: 64, textAlign: "center",
+            color: "#4b463d", marginBottom: rawAmount > 0 ? 24 : 64, textAlign: "center",
           }}>주문해주셔서 감사합니다</p>
+
+          {rawAmount > 0 && (
+            <div style={{
+              ...fadeStyle(150),
+              width: "100%", textAlign: "center", marginBottom: 32
+            }}>
+              <p style={{
+                fontSize: 14, color: "#504530", fontWeight: 500,
+                backgroundColor: "rgba(242, 224, 195, 0.5)",
+                padding: "12px 16px", borderRadius: 12,
+                display: "inline-flex", alignItems: "center", gap: 8
+              }}>
+                <span className="mat-icon" style={{fontSize: 18}}>volunteer_activism</span>
+                배송이 완료되면 <strong style={{fontWeight: 700}}>{Math.round(rawAmount * 0.01).toLocaleString()}원</strong>이 적립됩니다.
+              </p>
+            </div>
+          )}
 
           {/* Summary Card */}
           <div style={{

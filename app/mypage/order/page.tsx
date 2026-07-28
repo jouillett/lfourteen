@@ -4,6 +4,7 @@ import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import TrackingModal from "../../../components/TrackingModal";
 
 export default function OrderPage() {
@@ -218,7 +219,7 @@ export default function OrderPage() {
       return;
     }
 
-    if (confirm("반품 진행 시 왕복 택배비 3,300원이 차감 후 환불됩니다.\n반품을 정말 원하십니까?")) {
+    if (confirm("반품 진행 시 반품 택배비 3,300원이 차감 후 환불됩니다.\n반품을 정말 원하십니까?")) {
       try {
         const res = await fetch(`/api/orders/status`, {
           method: 'PATCH',
@@ -262,7 +263,7 @@ export default function OrderPage() {
       const statusData = await statusRes.json();
       if (statusData.success) {
         setRefundModalOpen(false);
-        alert('반품 요청이 접수되었습니다. 왕복 택배비 3,300원이 차감된 금액이 반품 완료 후 입력하신 계좌로 환불 진행됩니다.');
+        alert('반품 요청이 접수되었습니다. 반품 택배비 3,300원이 차감된 금액이 반품 완료 후 입력하신 계좌로 환불 진행됩니다.');
         window.location.href = '/mypage/cancel';
       } else {
         alert('반품 상태 변경에 실패했습니다.');
@@ -408,63 +409,84 @@ export default function OrderPage() {
         shipmentString={selectedTrackingNumber || ""}
       />
 
-      {/* Refund Account Modal for virtual account / bank transfer returns */}
-      {refundModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl p-6 sm:p-8 w-full max-w-[340px] sm:max-w-sm shadow-2xl flex flex-col gap-5 text-left">
-            <div>
-              <h3 className="text-[18px] font-bold text-on-surface mb-1">환불 계좌 입력</h3>
-              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">가상계좌/계좌이체 결제는 환불받으실 계좌 정보가 필요합니다.</p>
-            </div>
-            <div className="flex flex-col gap-3">
+      {/* Refund Account Modal - rendered via Portal to document.body to avoid parent CSS transform issues */}
+      {refundModalOpen && typeof window !== 'undefined' && createPortal(
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)', padding: '16px',
+            writingMode: 'horizontal-tb', textOrientation: 'mixed'
+          }}
+          onClick={() => setRefundModalOpen(false)}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: '16px',
+              width: 'calc(100vw - 32px)', maxWidth: '340px',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+              display: 'flex', flexDirection: 'column',
+              maxHeight: '90vh', overflowY: 'auto',
+              flexShrink: 0
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px'}}>
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">은행명</label>
-                <input
-                  type="text"
-                  placeholder="예: 국민, 신한, 우리, 카카오뱅크..."
-                  value={refundBank}
-                  onChange={e => setRefundBank(e.target.value)}
-                  className="w-full border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
-                />
+                <h3 style={{fontSize: '18px', fontWeight: 700, color: '#1d1b18', marginBottom: '4px'}}>환불 계좌 입력</h3>
+                <p style={{fontSize: '13px', color: '#4b463d', lineHeight: 1.6}}>가상계좌/계좌이체 결제는 환불받으실 계좌 정보가 필요합니다.</p>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">계좌번호</label>
-                <input
-                  type="text"
-                  placeholder="숫자만 입력"
-                  value={refundAccountNumber}
-                  onChange={e => setRefundAccountNumber(e.target.value)}
-                  className="w-full border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
-                />
+              <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                <div>
+                  <label style={{display: 'block', fontSize: '14px', fontWeight: 500, color: '#1d1b18', marginBottom: '4px'}}>은행명</label>
+                  <input
+                    type="text"
+                    placeholder="예: 국민, 신한, 우리, 카카오뱅크..."
+                    value={refundBank}
+                    onChange={e => setRefundBank(e.target.value)}
+                    style={{width: '100%', border: '1px solid #cec5b9', borderRadius: '8px', padding: '10px 16px', fontSize: '14px', color: '#1d1b18', outline: 'none', boxSizing: 'border-box'}}
+                  />
+                </div>
+                <div>
+                  <label style={{display: 'block', fontSize: '14px', fontWeight: 500, color: '#1d1b18', marginBottom: '4px'}}>계좌번호</label>
+                  <input
+                    type="text"
+                    placeholder="숫자만 입력"
+                    value={refundAccountNumber}
+                    onChange={e => setRefundAccountNumber(e.target.value)}
+                    style={{width: '100%', border: '1px solid #cec5b9', borderRadius: '8px', padding: '10px 16px', fontSize: '14px', color: '#1d1b18', outline: 'none', boxSizing: 'border-box'}}
+                  />
+                </div>
+                <div>
+                  <label style={{display: 'block', fontSize: '14px', fontWeight: 500, color: '#1d1b18', marginBottom: '4px'}}>예금주명</label>
+                  <input
+                    type="text"
+                    placeholder="예금주 성함"
+                    value={refundHolderName}
+                    onChange={e => setRefundHolderName(e.target.value)}
+                    style={{width: '100%', border: '1px solid #cec5b9', borderRadius: '8px', padding: '10px 16px', fontSize: '14px', color: '#1d1b18', outline: 'none', boxSizing: 'border-box'}}
+                  />
+                </div>
+                <p style={{fontSize: '12px', color: '#4b463d'}}>환불 예상 금액: <strong>{Math.max(0, refundAmount - 3300).toLocaleString()}원</strong> (반품 택배비 3,300원 차감)</p>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-on-surface mb-1">예금주명</label>
-                <input
-                  type="text"
-                  placeholder="예금주 성함"
-                  value={refundHolderName}
-                  onChange={e => setRefundHolderName(e.target.value)}
-                  className="w-full border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
-                />
+              <div style={{display: 'flex', gap: '12px'}}>
+                <button
+                  onClick={() => setRefundModalOpen(false)}
+                  style={{flex: 1, padding: '10px', border: '1px solid #cec5b9', borderRadius: '8px', fontSize: '14px', color: '#1d1b18', background: 'transparent', cursor: 'pointer'}}
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleRefundModalSubmit}
+                  style={{flex: 1, padding: '10px', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: 600, color: '#fff', background: '#504530', cursor: 'pointer'}}
+                >
+                  반품 신청
+                </button>
               </div>
-              <p className="text-xs text-on-surface-variant">환불 예상 금액: <strong>{Math.max(0, refundAmount - 3300).toLocaleString()}원</strong> (왕복 택배비 3,300원 차감)</p>
-            </div>
-            <div className="flex gap-3 mt-2">
-              <button
-                onClick={() => setRefundModalOpen(false)}
-                className="flex-1 py-2.5 border border-outline-variant rounded-lg text-sm text-on-surface hover:bg-surface-container-low transition-colors"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleRefundModalSubmit}
-                className="flex-1 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
-              >
-                반품 신청
-              </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       
       <main className="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row pt-6 md:pt-16 px-4 md:px-16 pb-24 gap-6 md:gap-12 lg:gap-24" data-purpose="mypage-layout">
