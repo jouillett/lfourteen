@@ -68,7 +68,8 @@ export default function MobilePaymentSuccess() {
           orderId: orderIdRaw, 
           amount: amountParam,
           pendingAddress: pendingAddressObj,
-          orderInfo: pendingOrderObj
+          orderInfo: pendingOrderObj,
+          clientType: 'API'
         }),
       })
         .then((res) => res.json().catch(() => ({ success: false, message: 'Invalid JSON response from server' })))

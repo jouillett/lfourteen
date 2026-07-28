@@ -71,7 +71,8 @@ export default function DesktopPaymentSuccess() {
           orderId: orderIdRaw, 
           amount: amountParam,
           pendingAddress: pendingAddressObj,
-          orderInfo: pendingOrderObj
+          orderInfo: pendingOrderObj,
+          clientType: 'WIDGET'
         })
       })
       .then(res => res.json().catch(() => ({ success: false, message: 'Invalid JSON response from server' })))

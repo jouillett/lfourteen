@@ -6,9 +6,9 @@ export async function POST(req: Request) {
   let connection;
   try {
     const body = await req.json();
-    const { paymentKey, orderId, amount, pendingAddress, orderInfo } = body;
+    const { paymentKey, orderId, amount, pendingAddress, orderInfo, clientType } = body;
 
-    console.log('[confirm] Received:', { paymentKey: !!paymentKey, orderId, amount, hasOrderInfo: !!orderInfo, hasAddress: !!pendingAddress });
+    console.log('[confirm] Received:', { paymentKey: !!paymentKey, orderId, amount, hasOrderInfo: !!orderInfo, hasAddress: !!pendingAddress, clientType });
     console.log('[confirm] orderInfo:', JSON.stringify(orderInfo));
 
     if (!paymentKey || !orderId || !amount) {
@@ -16,8 +16,11 @@ export async function POST(req: Request) {
     }
 
     // 1. Confirm with Toss Payments
-    // 프론트엔드에서 API 개별 연동 키(test_ck_)를 사용했으므로 백엔드도 API 개별 연동 시크릿 키(test_sk_)를 사용해야 합니다.
-    const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+    // Desktop (Payment Widget) uses TOSS_SECRET_KEY, Mobile (Core SDK) uses TOSS_API_SECRET_KEY
+    const secretKey = clientType === 'WIDGET' 
+      ? (process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6')
+      : (process.env.TOSS_API_SECRET_KEY || 'test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ');
+      
     const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
 
     const tossRes = await fetch('https://api.tosspayments.com/v1/payments/confirm', {

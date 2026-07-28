@@ -159,6 +159,7 @@ export default function DesktopOrder() {
       try {
         tossInitializedRef.current = true;
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+        console.log("[DesktopOrder] loadTossPayments clientKey:", clientKey);
         const customerKey = "customer_" + Date.now();
         const tossPayments = (window as any).TossPayments(clientKey);
         const widgets = tossPayments.widgets({ customerKey });
