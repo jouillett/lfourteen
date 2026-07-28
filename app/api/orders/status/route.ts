@@ -89,7 +89,7 @@ export async function PATCH(req: Request) {
               const actualTotalPrice = Number(parseBuffer(orderRecord.total_price)) || 0;
               const customerId = parseBuffer(orderRecord.customer_id);
               if (customerId) {
-                const amount = Math.round(actualTotalPrice * 0.001);
+                const amount = Math.round(actualTotalPrice * 0.01);
                 if (amount > 0) {
                   // Check if already awarded
                   const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [id]);

@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       const customerId = parseBuffer(orderRecord.customer_id);
       const usedPoint = Number(parseBuffer(orderRecord.used_point)) || 0;
       const orderStatus = Number(orderRecord.status) || 0;
-      const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
+      const earnedPointAmount = Math.round(actualTotalPrice * 0.01);
 
       console.log('[cancel-completed] orderId:', orderId, 'customerId:', customerId, 'status:', orderStatus, 'earnedPointAmount:', earnedPointAmount, 'usedPoint:', usedPoint);
 

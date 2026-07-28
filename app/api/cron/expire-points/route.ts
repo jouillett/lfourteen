@@ -128,14 +128,16 @@ export async function GET(req: Request) {
                 [order.id]
               );
               
-              const pointAmount = Math.round((order.total_price || 0) * 0.001);
-              await connection.execute(
-                'INSERT INTO points (customer_id, order_id, point_amount, expired_at) VALUES (?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 30 DAY))',
-                [customerId, order.id, pointAmount]
-              );
-              
-              Rpoint += pointAmount;
-              pointsChanged = true;
+              const pointAmount = Math.round((order.total_price || 0) * 0.01);
+              if (pointAmount > 0) {
+                await connection.execute(
+                  'INSERT INTO points (customer_id, order_id, point_amount, expired_at) VALUES (?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 30 DAY))',
+                  [customerId, order.id, pointAmount]
+                );
+                
+                Rpoint += pointAmount;
+                pointsChanged = true;
+              }
               deliveredCount++;
             }
           }

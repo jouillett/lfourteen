@@ -588,7 +588,7 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
             <div className="p-md">
               <div className="bg-white border border-outline-variant/30 rounded-xl p-md shadow-sm text-[13px] leading-relaxed text-on-surface">
                 <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">신청 방법</span><span>상품을 수령하신 날로부터 7일 이내로 홈페이지 접수</span></div>
-                <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송 비용</span><span>단순 변심은 왕복 택배비 6,000원</span></div>
+                <div className="flex mb-2"><span className="font-bold w-[70px] shrink-0">배송 비용</span><span>교환 6,600원, 반품 3,300원</span></div>
                 <div className="flex mb-4"><span className="font-bold w-[70px] shrink-0">반품 주소</span><span>경기도 성남시 중원구 갈마치로 176, 6층</span></div>
                 
                 <div className="font-bold mb-2">유의사항</div>

@@ -107,7 +107,7 @@ export async function GET(req: Request) {
             const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
             const customerId = parseBuffer(order.customer_id);
             if (customerId) {
-              const amount = Math.round(actualTotalPrice * 0.001);
+              const amount = Math.round(actualTotalPrice * 0.01);
               if (amount > 0) {
                 const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
                 let pointId = 0;
@@ -197,7 +197,7 @@ export async function GET(req: Request) {
             const customerId = parseBuffer(order.customer_id);
             const usedPoint = Number(parseBuffer(order.used_point)) || 0;
             const oldStatus = Number(order.status) || 0;
-            const earnedPointAmount = Math.round(actualTotalPrice * 0.001);
+            const earnedPointAmount = Math.round(actualTotalPrice * 0.01);
             const paymentMethod = parseBuffer(order.payment_method);
 
             // Step 1: Toss payment cancel. If Virtual Account/Transfer, we don't have refund account info here
@@ -209,7 +209,7 @@ export async function GET(req: Request) {
             try {
               const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
               const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
-              const refundAmount = Math.max(0, actualTotalPrice - 7000);
+              const refundAmount = Math.max(0, actualTotalPrice - 3300);
               
               const cancelBody: any = {
                 cancelReason: '반품 완료',

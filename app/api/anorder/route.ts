@@ -80,7 +80,7 @@ export async function GET(req: Request) {
           if (paymentKey) {
             const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
             const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
-            const refundAmount = finalStatus === 8 ? Math.max(0, actualTotalPrice - 7000) : actualTotalPrice;
+            const refundAmount = finalStatus === 8 ? Math.max(0, actualTotalPrice - 3300) : actualTotalPrice;
             
             const cancelBody: any = {
               cancelReason: finalStatus === 3 ? '관리자 취소' : '관리자 반품 완료',
@@ -123,7 +123,7 @@ export async function GET(req: Request) {
           }
 
           if (customerId) {
-            const amount = Math.round(actualTotalPrice * 0.001);
+            const amount = Math.round(actualTotalPrice * 0.01);
             await connection.beginTransaction();
             try {
               const pointRecnum = Number(Buffer.isBuffer(currentOrder.point_recnum) ? currentOrder.point_recnum.toString('utf8') : currentOrder.point_recnum) || 0;
@@ -176,7 +176,7 @@ export async function GET(req: Request) {
           const customerId = Buffer.isBuffer(currentOrder.customer_id) ? currentOrder.customer_id.toString('utf8') : currentOrder.customer_id;
           
           if (customerId) {
-            const amount = Math.round(actualTotalPrice * 0.001);
+            const amount = Math.round(actualTotalPrice * 0.01);
             if (amount > 0) {
               await connection.beginTransaction();
               try {

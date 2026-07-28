@@ -218,7 +218,7 @@ export default function OrderPage() {
       return;
     }
 
-    if (confirm("반품 진행 시 왕복 택배비 7,000원이 차감 후 환불됩니다.\n반품을 정말 원하십니까?")) {
+    if (confirm("반품 진행 시 왕복 택배비 3,300원이 차감 후 환불됩니다.\n반품을 정말 원하십니까?")) {
       try {
         const res = await fetch(`/api/orders/status`, {
           method: 'PATCH',
@@ -262,7 +262,7 @@ export default function OrderPage() {
       const statusData = await statusRes.json();
       if (statusData.success) {
         setRefundModalOpen(false);
-        alert('반품 요청이 접수되었습니다. 왕복 택배비 7,000원이 차감된 금액이 반품 완료 후 입력하신 계좌로 환불 진행됩니다.');
+        alert('반품 요청이 접수되었습니다. 왕복 택배비 3,300원이 차감된 금액이 반품 완료 후 입력하신 계좌로 환불 진행됩니다.');
         window.location.href = '/mypage/cancel';
       } else {
         alert('반품 상태 변경에 실패했습니다.');
@@ -447,7 +447,7 @@ export default function OrderPage() {
                   className="w-full border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
-              <p className="text-xs text-on-surface-variant">환불 예상 금액: <strong>{Math.max(0, refundAmount - 7000).toLocaleString()}원</strong> (왕복 택배비 7,000원 차감)</p>
+              <p className="text-xs text-on-surface-variant">환불 예상 금액: <strong>{Math.max(0, refundAmount - 3300).toLocaleString()}원</strong> (왕복 택배비 3,300원 차감)</p>
             </div>
             <div className="flex gap-3 mt-2">
               <button
