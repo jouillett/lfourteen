@@ -218,8 +218,11 @@ export async function GET(req: Request) {
                 }),
               });
               const data = await res.json();
-              if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT') {
+              if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT' || data.code === 'NOT_CANCELABLE_AMOUNT') {
                 tossOk = true;
+                if (!res.ok) {
+                  console.log(`[check-delivery] Toss cancel already processed for order ${order.id} (${data.code})`);
+                }
               } else {
                 console.error(`[check-delivery] Toss cancel failed for order ${order.id}:`, data);
               }

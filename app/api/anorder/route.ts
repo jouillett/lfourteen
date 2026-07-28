@@ -95,7 +95,7 @@ export async function GET(req: Request) {
               // If already canceled, Toss returns a specific error we could ignore, but let's log it
               console.error(`Toss cancel failed for order ${id}:`, errData);
               // Only fail if it's a critical error, otherwise proceed
-              if (errData.code !== 'ALREADY_CANCELED_PAYMENT') {
+              if (errData.code !== 'ALREADY_CANCELED_PAYMENT' && errData.code !== 'NOT_CANCELABLE_AMOUNT') {
                 return NextResponse.json({ success: false, message: '토스 결제 취소에 실패했습니다: ' + (errData.message || 'Unknown') }, { status: 400 });
               }
             }
