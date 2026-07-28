@@ -75,7 +75,8 @@ export async function GET(req: Request) {
       const [orders]: any = await connection.execute(`
         SELECT o.id, o.status, o.shipment, o.\`return\`, o.reshipment, o.payment_key, o.total_price, o.customer_id,
                o.order_number, o.order_name, o.created_at, o.receiver_name, o.receiver_address,
-               o.point_recnum, o.used_point,
+               o.point_recnum, o.used_point, o.payment_method,
+               o.refund_bank, o.refund_account, o.refund_holder,
                c.name as customer_name, c.email, c.mobile
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.id
@@ -209,13 +210,28 @@ export async function GET(req: Request) {
               const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
               const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
               const refundAmount = Math.max(0, actualTotalPrice - 7000);
+              
+              const cancelBody: any = {
+                cancelReason: '반품 완료',
+                cancelAmount: refundAmount 
+              };
+
+              const refundBank = parseBuffer(order.refund_bank);
+              const refundAccount = parseBuffer(order.refund_account);
+              const refundHolder = parseBuffer(order.refund_holder);
+              
+              if (refundBank && refundAccount && refundHolder) {
+                cancelBody.refundReceiveAccount = {
+                  bank: refundBank,
+                  accountNumber: refundAccount,
+                  holderName: refundHolder
+                };
+              }
+
               const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
                 method: 'POST',
                 headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                  cancelReason: '반품 완료',
-                  cancelAmount: refundAmount 
-                }),
+                body: JSON.stringify(cancelBody),
               });
               const data = await res.json();
               if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT' || data.code === 'NOT_CANCELABLE_AMOUNT') {

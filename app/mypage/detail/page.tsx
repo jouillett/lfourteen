@@ -217,35 +217,21 @@ function OrderDetailContent() {
     if (!refundOrderId) return;
 
     try {
-      const cancelRes = await fetch('/api/payment/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          paymentKey: refundPaymentKey,
-          cancelReason: '고객 반품 요청',
-          cancelAmount: refundAmount,
-          refundReceiveAccount: {
-            bank: refundBank,
-            accountNumber: refundAccountNumber,
-            holderName: refundHolderName,
-          }
-        })
-      });
-      const cancelData = await cancelRes.json();
-      if (!cancelData.success) {
-        alert('환불 요청에 실패했습니다: ' + (cancelData.message || ''));
-        return;
-      }
-
       const statusRes = await fetch('/api/orders/status', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: refundOrderId, status: 7 })
+        body: JSON.stringify({ 
+          id: refundOrderId, 
+          status: 7,
+          refundBank: refundBank,
+          refundAccount: refundAccountNumber,
+          refundHolder: refundHolderName
+        })
       });
       const statusData = await statusRes.json();
       if (statusData.success) {
         setRefundModalOpen(false);
-        alert('반품 요청이 접수되었습니다. 입력하신 계좌로 환불이 진행됩니다.');
+        alert('반품 요청이 접수되었습니다. 반품 완료 후 입력하신 계좌로 환불이 진행됩니다.');
         window.location.href = '/mypage/cancel';
       } else {
         alert('반품 상태 변경에 실패했습니다.');

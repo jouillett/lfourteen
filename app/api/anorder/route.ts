@@ -62,7 +62,7 @@ export async function GET(req: Request) {
         }
 
         // Check if we are changing to 3 or 8 from a different status, or changing to 2
-        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id, used_point FROM orders WHERE id = ?', [id]);
+        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id, used_point, refund_bank, refund_account, refund_holder FROM orders WHERE id = ?', [id]);
         if (currRows.length === 0) return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
         
         const currentOrder = currRows[0];
@@ -81,13 +81,34 @@ export async function GET(req: Request) {
             const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
             const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
             const refundAmount = finalStatus === 8 ? Math.max(0, actualTotalPrice - 7000) : actualTotalPrice;
+            
+            const cancelBody: any = {
+              cancelReason: finalStatus === 3 ? '관리자 취소' : '관리자 반품 완료',
+              cancelAmount: refundAmount
+            };
+
+            const parseBuffer = (val: any) => {
+              if (Buffer.isBuffer(val)) return val.toString('utf8');
+              if (val && val.type === 'Buffer') return Buffer.from(val.data).toString('utf8');
+              return val;
+            };
+
+            const refundBank = parseBuffer(currentOrder.refund_bank);
+            const refundAccount = parseBuffer(currentOrder.refund_account);
+            const refundHolder = parseBuffer(currentOrder.refund_holder);
+
+            if (refundBank && refundAccount && refundHolder) {
+              cancelBody.refundReceiveAccount = {
+                bank: refundBank,
+                accountNumber: refundAccount,
+                holderName: refundHolder
+              };
+            }
+
             const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
               method: 'POST',
               headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                cancelReason: finalStatus === 3 ? '관리자 취소' : '관리자 반품 완료',
-                cancelAmount: refundAmount
-              }),
+              body: JSON.stringify(cancelBody),
             });
 
             if (!tossRes.ok) {
