@@ -122,6 +122,16 @@ export async function DELETE(req: Request) {
     try {
       await connection.beginTransaction();
 
+      // 0. Save mobile to quit table if not exists
+      const [customerRows]: any = await connection.execute('SELECT mobile FROM customers WHERE id = ?', [customerId]);
+      if (customerRows.length > 0 && customerRows[0].mobile) {
+        const mobile = customerRows[0].mobile;
+        const [existingQuit]: any = await connection.execute('SELECT id FROM quit WHERE mobile = ? LIMIT 1', [mobile]);
+        if (existingQuit.length === 0) {
+          await connection.execute('INSERT INTO quit (mobile, created_at) VALUES (?, NOW())', [mobile]);
+        }
+      }
+
       // 1. Delete all customer_id=login-id from the address table
       await connection.execute('DELETE FROM address WHERE customer_id = ?', [customerId]);
       

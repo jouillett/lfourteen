@@ -24,11 +24,33 @@ export async function POST(req: Request) {
       const [customerResult]: any = await connection.execute(customerQuery, [mobile, encryptedPassword]);
       const customerId = customerResult.insertId;
 
-      const pointsQuery = `
-        INSERT INTO points (customer_id, order_id, point_amount, expired_at)
-        VALUES (?, 0, 1000, DATE_ADD(NOW(), INTERVAL 1 MONTH))
-      `;
-      await connection.execute(pointsQuery, [customerId]);
+      // Check if user exists in quit table
+      const [quitRows]: any = await connection.execute(
+        'SELECT created_at FROM quit WHERE mobile = ? ORDER BY created_at DESC LIMIT 1', 
+        [mobile]
+      );
+
+      let givePoints = true;
+      if (quitRows.length > 0) {
+        const quitDate = new Date(quitRows[0].created_at);
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        if (quitDate > oneYearAgo) {
+          givePoints = false;
+        }
+      }
+
+      if (givePoints) {
+        const pointsQuery = `
+          INSERT INTO points (customer_id, order_id, point_amount, expired_at)
+          VALUES (?, 0, 1000, DATE_ADD(NOW(), INTERVAL 1 MONTH))
+        `;
+        await connection.execute(pointsQuery, [customerId]);
+
+        if (quitRows.length > 0) {
+          await connection.execute('DELETE FROM quit WHERE mobile = ?', [mobile]);
+        }
+      }
 
       await connection.commit();
       return NextResponse.json({ success: true, message: 'Customer registered successfully', userId: customerId });
