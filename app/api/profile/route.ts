@@ -126,9 +126,11 @@ export async function DELETE(req: Request) {
       const [customerRows]: any = await connection.execute('SELECT mobile FROM customers WHERE id = ?', [customerId]);
       if (customerRows.length > 0 && customerRows[0].mobile) {
         const mobile = customerRows[0].mobile;
-        const [existingQuit]: any = await connection.execute('SELECT id FROM quit WHERE mobile = ? LIMIT 1', [mobile]);
-        if (existingQuit.length === 0) {
+        const [quitRows]: any = await connection.execute('SELECT * FROM quit WHERE mobile = ?', [mobile]);
+        if (quitRows.length === 0) {
           await connection.execute('INSERT INTO quit (mobile, created_at) VALUES (?, NOW())', [mobile]);
+        } else {
+          await connection.execute('UPDATE quit SET created_at = NOW() WHERE mobile = ?', [mobile]);
         }
       }
 
