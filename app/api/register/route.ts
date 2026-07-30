@@ -50,6 +50,9 @@ export async function POST(req: Request) {
         if (quitRows.length > 0) {
           await connection.execute('DELETE FROM quit WHERE mobile = ?', [mobile]);
         }
+      } else {
+        // customers table has a DEFAULT '1000' for point, so we must reset it to 0
+        await connection.execute('UPDATE customers SET point = 0 WHERE id = ?', [customerId]);
       }
 
       await connection.commit();
