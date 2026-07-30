@@ -42,8 +42,8 @@ export default function MobilePaymentSuccess() {
       fetch(`/api/profile?customerId=${userId}`)
         .then(res => res.json())
         .then(data => {
-          if (data.success && data.profile) {
-            setTotalPoints(Number(data.profile.point) || 0);
+          if (data.success && data.data) {
+            setTotalPoints(Number(data.data.point) || 0);
           }
         })
         .catch(console.error);
