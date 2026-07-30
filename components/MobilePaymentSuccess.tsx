@@ -198,7 +198,7 @@ export default function MobilePaymentSuccess() {
             <div className="w-full text-center mb-6" style={{ ...fadeStyle(150) }}>
               <p className="text-[13px] text-primary font-medium bg-[#f2e0c3]/50 py-3 px-4 rounded-xl inline-flex items-center gap-2">
                 <span className="material-symbols-outlined text-[16px]">volunteer_activism</span>
-                배송이 완료되면 <strong style={{fontWeight: 700}}>{Math.round(rawAmount * 0.01).toLocaleString()}원(전체 포인트: {totalPoints.toLocaleString()})</strong>이 적립됩니다.
+                배송이 완료되면 <strong style={{fontWeight: 700}}>{Math.round(rawAmount * 0.01).toLocaleString()}원(전체 포인트: {(totalPoints + Math.round(rawAmount * 0.01)).toLocaleString()}원)</strong>이 적립됩니다.
               </p>
             </div>
           )}
