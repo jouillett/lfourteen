@@ -39,6 +39,14 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
+        if (data.point && data.point > 0) {
+          if (data.name) {
+            alert(`반갑습니다. ${data.name} 고객님 전체 보유 포인트는 ${data.point.toLocaleString()}원입니다.`);
+          } else {
+            alert(`반갑습니다. 고객님 전체 보유 포인트는 ${data.point.toLocaleString()}원입니다.`);
+          }
+        }
+        
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("customerId", data.userId);
         localStorage.setItem("lastActivity", Date.now().toString());

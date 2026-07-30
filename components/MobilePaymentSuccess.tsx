@@ -7,6 +7,7 @@ export default function MobilePaymentSuccess() {
   const [amount, setAmount] = useState<string | null>(null);
   const [rawAmount, setRawAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
+  const [totalPoints, setTotalPoints] = useState<number>(0);
   const [visible, setVisible] = useState(false);
   const fetchStarted = React.useRef(false);
 
@@ -35,6 +36,17 @@ export default function MobilePaymentSuccess() {
         const pendingOrder = JSON.parse(pendingOrderStr);
         // Points are now safely deducted on the backend during /api/order/confirm transaction
       } catch (e) {}
+    }
+
+    if (userId) {
+      fetch(`/api/profile?customerId=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.profile) {
+            setTotalPoints(Number(data.profile.point) || 0);
+          }
+        })
+        .catch(console.error);
     }
 
     let pendingAddressObj = null;
@@ -183,18 +195,10 @@ export default function MobilePaymentSuccess() {
           }}>주문해주셔서 감사합니다</p>
 
           {rawAmount > 0 && (
-            <div style={{
-              ...fadeStyle(150),
-              width: "100%", textAlign: "center", marginBottom: 32
-            }}>
-              <p style={{
-                fontSize: 14, color: "#504530", fontWeight: 500,
-                backgroundColor: "rgba(242, 224, 195, 0.5)",
-                padding: "12px 16px", borderRadius: 12,
-                display: "inline-flex", alignItems: "center", gap: 8
-              }}>
-                <span className="mat-icon" style={{fontSize: 18}}>volunteer_activism</span>
-                배송이 완료되면 <strong style={{fontWeight: 700}}>{Math.round(rawAmount * 0.01).toLocaleString()}원</strong>이 적립됩니다.
+            <div className="w-full text-center mb-6" style={{ ...fadeStyle(150) }}>
+              <p className="text-[13px] text-primary font-medium bg-[#f2e0c3]/50 py-3 px-4 rounded-xl inline-flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px]">volunteer_activism</span>
+                배송이 완료되면 <strong style={{fontWeight: 700}}>{Math.round(rawAmount * 0.01).toLocaleString()}원(전체 포인트: {totalPoints.toLocaleString()})</strong>이 적립됩니다.
               </p>
             </div>
           )}

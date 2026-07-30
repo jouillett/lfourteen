@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const connection = await pool.getConnection();
     try {
       const [rows]: any = await connection.execute(
-        'SELECT name, zip_code, address, detail_address, mobile, phone, email FROM customers WHERE id = ?',
+        'SELECT name, zip_code, address, detail_address, mobile, phone, email, point FROM customers WHERE id = ?',
         [customerId]
       );
       

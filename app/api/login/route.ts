@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const connection = await pool.getConnection();
     try {
       const [userRows]: any = await connection.execute(
-        'SELECT id, password, name FROM customers WHERE mobile = ?',
+        'SELECT id, password, name, point FROM customers WHERE mobile = ?',
         [mobile]
       );
 
@@ -43,7 +43,8 @@ export async function POST(req: Request) {
 
       const userId = userRows[0].id;
       const userName = userRows[0].name;
-      return NextResponse.json({ success: true, message: 'Login successful', userId, name: userName });
+      const point = userRows[0].point || 0;
+      return NextResponse.json({ success: true, message: 'Login successful', userId, name: userName, point });
     } finally {
       connection.release();
     }

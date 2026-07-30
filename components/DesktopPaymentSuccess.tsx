@@ -9,6 +9,7 @@ export default function DesktopPaymentSuccess() {
   const [amount, setAmount] = useState<string | null>(null);
   const [rawAmount, setRawAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
+  const [totalPoints, setTotalPoints] = useState<number>(0);
   const fetchStarted = React.useRef(false);
 
   useEffect(() => {
@@ -38,6 +39,17 @@ export default function DesktopPaymentSuccess() {
         const pendingOrder = JSON.parse(pendingOrderStr);
         // Points are now safely deducted on the backend during /api/order/confirm transaction
       } catch(e) {}
+    }
+
+    if (userId) {
+      fetch(`/api/profile?customerId=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.profile) {
+            setTotalPoints(Number(data.profile.point) || 0);
+          }
+        })
+        .catch(console.error);
     }
 
     let pendingAddressObj = null;
@@ -144,7 +156,7 @@ export default function DesktopPaymentSuccess() {
               <div className="w-full text-center mb-6 opacity-0 animate-fade-up delay-100">
                 <p className="text-[14px] text-primary font-medium bg-[#f2e0c3]/50 py-3 px-5 rounded-xl inline-flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px]">volunteer_activism</span>
-                  배송이 완료되면 <strong>{Math.round(rawAmount * 0.01).toLocaleString()}원</strong>이 적립됩니다.
+                  배송이 완료되면 <strong>{Math.round(rawAmount * 0.01).toLocaleString()}원(전체 포인트: {totalPoints.toLocaleString()})</strong>이 적립됩니다.
                 </p>
               </div>
             )}
