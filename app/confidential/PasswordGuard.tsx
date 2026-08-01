@@ -25,7 +25,7 @@ export default function PasswordGuard({ children, correctPassword }: { children:
         if (data.success) {
           const user = data.data;
           if (String(user.grade) !== "8") {
-            setDeniedMessage(`${user.name || "고객"}님 죄송합니다. 입장하실 수 없습니다.`);
+            setDeniedMessage(`${user.name || "고객"}님 죄송합니다.\n입장하실 수 없습니다.`);
           }
         } else {
            window.location.href = "/login?redirect=/confidential";
@@ -68,7 +68,7 @@ export default function PasswordGuard({ children, correctPassword }: { children:
       <div className="min-h-screen flex items-center justify-center bg-surface w-full">
         <div className="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant w-[90%] max-w-[400px] text-center">
           <span className="material-symbols-outlined text-[48px] text-error mb-4 block">lock</span>
-          <h2 className="text-xl font-bold mb-4 text-on-surface whitespace-pre-wrap">{deniedMessage}</h2>
+          <h2 className="text-xl font-bold mb-4 text-on-surface whitespace-pre-wrap break-keep">{deniedMessage}</h2>
           <button 
             onClick={() => window.location.href = "/"}
             className="mt-4 px-6 py-2 bg-surface-container-high hover:bg-surface-container-highest rounded-lg transition-colors"
