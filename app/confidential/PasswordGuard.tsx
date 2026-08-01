@@ -21,9 +21,9 @@ export default function PasswordGuard({ children, correctPassword }: { children:
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface">
-      <div className="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant max-w-sm w-full mx-4">
-        <h2 className="text-2xl font-bold mb-6 text-on-surface text-center">보안 페이지</h2>
+    <div className="min-h-screen flex items-center justify-center bg-surface w-full">
+      <div className="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant w-[90%] max-w-[400px]">
+        <h2 className="text-2xl font-bold mb-6 text-on-surface text-center whitespace-nowrap">보안 페이지</h2>
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <input 
             type="password" 
