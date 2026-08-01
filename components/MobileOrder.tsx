@@ -41,6 +41,7 @@ export default function MobileOrder() {
   
   const [memoType, setMemoType] = useState("배송 전에 미리 연락바랍니다.");
   const [memoCustom, setMemoCustom] = useState("");
+  const [userGrade, setUserGrade] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   
@@ -103,6 +104,7 @@ export default function MobileOrder() {
     }).then(r => r.json()).then(d => {
       if (d.success) {
         setUserMaxPoint(Number(d.point) || 0);
+        setUserGrade(String(d.grade));
         if (!usePoints) {
           setPointAmount(Number(d.point) || 0);
         }
@@ -504,51 +506,53 @@ export default function MobileOrder() {
           </section>
 
           {/* Points */}
-          <section className="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
-            <h3 className="font-headline-md text-headline-md text-on-surface mb-sm">포인트</h3>
-            <div className="flex items-center gap-2 w-full">
-                <input 
-                  ref={pointInputRef}
-                  type="text" 
-                  value={isPointFocused ? (pointAmount === 0 ? '' : pointAmount) : (pointAmount === 0 ? '' : pointAmount.toLocaleString() + '원')}
-                  onChange={handlePointChange}
-                  disabled={!usePoints}
-                  placeholder={usePoints ? "0" : userMaxPoint.toLocaleString() + "원"}
-                  onFocus={() => setIsPointFocused(true)}
-                onBlur={() => setIsPointFocused(false)}
-                className="flex-grow min-w-0 w-full bg-surface-container border border-outline-variant rounded-lg px-sm py-sm text-body-md text-on-surface-variant text-right focus:outline-none" 
-              />
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <input 
-                  checked={usePoints} 
-                  disabled={userMaxPoint === 0}
-                  onChange={e => {
-                    setUsePoints(e.target.checked);
-                    if (e.target.checked) {
+          {userGrade !== "8" && (
+            <section className="bg-surface-container-low rounded-lg p-md lg:p-lg border border-outline-variant/20">
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-sm">포인트</h3>
+              <div className="flex items-center gap-2 w-full">
+                  <input 
+                    ref={pointInputRef}
+                    type="text" 
+                    value={isPointFocused ? (pointAmount === 0 ? '' : pointAmount) : (pointAmount === 0 ? '' : pointAmount.toLocaleString() + '원')}
+                    onChange={handlePointChange}
+                    disabled={!usePoints}
+                    placeholder={usePoints ? "0" : userMaxPoint.toLocaleString() + "원"}
+                    onFocus={() => setIsPointFocused(true)}
+                  onBlur={() => setIsPointFocused(false)}
+                  className="flex-grow min-w-0 w-full bg-surface-container border border-outline-variant rounded-lg px-sm py-sm text-body-md text-on-surface-variant text-right focus:outline-none" 
+                />
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <input 
+                    checked={usePoints} 
+                    disabled={userMaxPoint === 0}
+                    onChange={e => {
+                      setUsePoints(e.target.checked);
+                      if (e.target.checked) {
+                        let val = Math.min(userMaxPoint, productTotal + shippingCost);
+                        setPointAmount(val);
+                        setTimeout(() => pointInputRef.current?.focus(), 0);
+                      } else {
+                        setPointAmount(0);
+                      }
+                    }}
+                    className="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded cursor-pointer disabled:opacity-50" 
+                    type="checkbox" 
+                  />
+                  <label className={`font-label-md text-label-md text-on-surface cursor-pointer select-none whitespace-nowrap ${userMaxPoint === 0 ? 'opacity-50' : ''}`} onClick={() => {
+                    if (userMaxPoint === 0) return;
+                    setUsePoints(!usePoints);
+                    if (!usePoints) {
                       let val = Math.min(userMaxPoint, productTotal + shippingCost);
                       setPointAmount(val);
                       setTimeout(() => pointInputRef.current?.focus(), 0);
                     } else {
                       setPointAmount(0);
                     }
-                  }}
-                  className="w-4 h-4 text-primary bg-surface-container border-outline-variant rounded cursor-pointer disabled:opacity-50" 
-                  type="checkbox" 
-                />
-                <label className={`font-label-md text-label-md text-on-surface cursor-pointer select-none whitespace-nowrap ${userMaxPoint === 0 ? 'opacity-50' : ''}`} onClick={() => {
-                  if (userMaxPoint === 0) return;
-                  setUsePoints(!usePoints);
-                  if (!usePoints) {
-                    let val = Math.min(userMaxPoint, productTotal + shippingCost);
-                    setPointAmount(val);
-                    setTimeout(() => pointInputRef.current?.focus(), 0);
-                  } else {
-                    setPointAmount(0);
-                  }
-                }}>포인트 사용</label>
+                  }}>포인트 사용</label>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           <section className="bg-surface-container-high border border-outline-variant/20 mb-6 p-4 md:p-6" style={{ transform: 'translateZ(0)' }}>
             <h2 className="font-title-lg text-title-lg text-on-surface mb-4">결제 수단</h2>
