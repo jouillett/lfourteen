@@ -57,10 +57,10 @@ export default async function Home() {
         }
       `}</style>
       <div className="desktop-only-view">
-        <DesktopHome initialReviewCount={reviewCount} initialQnaCount={qnaCount} topReviews={topReviews} />
+        <DesktopHome initialReviewCount={reviewCount} initialQnaCount={qnaCount} topReviews={topReviews} productId={2} />
       </div>
       <div className="mobile-only-view">
-        <MobileHome initialReviewCount={reviewCount} initialQnaCount={qnaCount} topReviews={topReviews} />
+        <MobileHome initialReviewCount={reviewCount} initialQnaCount={qnaCount} topReviews={topReviews} productId={2} />
       </div>
     </PasswordGuard>
   );

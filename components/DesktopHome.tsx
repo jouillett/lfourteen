@@ -4,8 +4,42 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 0, topReviews = [] }: { initialReviewCount?: number, initialQnaCount?: number, topReviews?: any[] }) {
-  const [totalAmount, setTotalAmount] = useState("65,000원");
+export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
+  const productConfigs = {
+    1: {
+      prices: {
+        "1": "65,000원",
+        "2": "110,000원",
+        "3": "270,000원",
+        "4": "480,000원",
+      },
+      options: [
+        { value: "1", label: "1개: 65,000원" },
+        { value: "2", label: "2개: 110,000원" },
+        { value: "3", label: "6개: 270,000원" },
+        { value: "4", label: "12개: 480,000원" },
+      ]
+    },
+    2: {
+      prices: {
+        "5": "40,000원",
+        "6": "80,000원",
+        "7": "240,000원",
+        "8": "480,000원",
+      },
+      options: [
+        { value: "5", label: "1개: 40,000원" },
+        { value: "6", label: "2개: 80,000원" },
+        { value: "7", label: "6개: 240,000원" },
+        { value: "8", label: "12개: 480,000원" },
+      ]
+    }
+  };
+  const config = productConfigs[productId as 1 | 2] || productConfigs[1];
+  const prices = config.prices;
+  const initialValue = Object.keys(prices)[0];
+
+  const [totalAmount, setTotalAmount] = useState(prices[initialValue]);
   const [reviewCount, setReviewCount] = useState<number>(initialReviewCount);
   const [qnaCount, setQnaCount] = useState<number>(initialQnaCount);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -18,12 +52,7 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
   const [showPolicyPopup, setShowPolicyPopup] = useState(false);
   const nameResolverRef = React.useRef<((name: string | null) => void) | null>(null);
 
-  const prices: Record<string, string> = {
-    "1": "65,000원",
-    "2": "110,000원",
-    "3": "270,000원",
-    "4": "480,000원",
-  };
+
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -458,12 +487,11 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                     className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container transition-all cursor-pointer appearance-none" 
                     id="pricing-options"
                     onChange={handlePriceChange}
-                    defaultValue="1"
+                    defaultValue={initialValue}
                   >
-                    <option value="1">1개: 65,000원</option>
-                    <option value="2">2개: 110,000원</option>
-                    <option value="3">6개: 270,000원</option>
-                    <option value="4">12개: 480,000원</option>
+                    {config.options.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex justify-between items-center py-xs">

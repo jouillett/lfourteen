@@ -4,7 +4,40 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0, topReviews = [] }: { initialReviewCount?: number, initialQnaCount?: number, topReviews?: any[] }) {
+export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
+  const productConfigs = {
+    1: {
+      prices: {
+        "1": "65,000원",
+        "2": "110,000원",
+        "3": "270,000원",
+        "4": "480,000원",
+      },
+      options: [
+        { value: "1", label: "1개: 65,000원" },
+        { value: "2", label: "2개: 110,000원" },
+        { value: "3", label: "6개: 270,000원" },
+        { value: "4", label: "12개: 480,000원" },
+      ]
+    },
+    2: {
+      prices: {
+        "5": "40,000원",
+        "6": "80,000원",
+        "7": "240,000원",
+        "8": "480,000원",
+      },
+      options: [
+        { value: "5", label: "1개: 40,000원" },
+        { value: "6", label: "2개: 80,000원" },
+        { value: "7", label: "6개: 240,000원" },
+        { value: "8", label: "12개: 480,000원" },
+      ]
+    }
+  };
+  const config = productConfigs[productId as 1 | 2] || productConfigs[1];
+  const initialValue = Object.keys(config.prices)[0];
+
   const [reviewCount, setReviewCount] = useState<number>(initialReviewCount);
   const [qnaCount, setQnaCount] = useState<number>(initialQnaCount);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -286,12 +319,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
     // Pricing select
     const pricingSelect   = document.getElementById("m-pricing-options") as HTMLSelectElement | null;
     const totalAmountEl   = document.getElementById("m-total-amount");
-    const prices: Record<string, string> = {
-      "1": "65,000원",
-      "2": "110,000원",
-      "3": "270,000원",
-      "4": "480,000원",
-    };
+    const prices = config.prices;
     if (pricingSelect && totalAmountEl) {
       pricingSelect.addEventListener("change", (e) => {
         const val = (e.target as HTMLSelectElement).value;
@@ -496,12 +524,11 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
             <select
               className="w-full bg-surface-container-low border border-outline-variant rounded-lg p-sm text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container transition-all cursor-pointer"
               id="m-pricing-options"
-              defaultValue="1"
+              defaultValue={initialValue}
             >
-              <option value="1">1개: 65,000원</option>
-              <option value="2">2개: 110,000원</option>
-              <option value="3">6개: 270,000원</option>
-              <option value="4">12개: 480,000원</option>
+              {config.options.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
           </div>
 
@@ -514,7 +541,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
 
           <div className="flex justify-between items-end mb-4">
             <span className="text-sm text-gray-600">총 금액</span>
-            <span className="text-xl font-bold text-black" id="m-total-amount">65,000원</span>
+            <span className="text-xl font-bold text-black" id="m-total-amount">{config.prices[initialValue]}</span>
           </div>
 
           <div className="flex flex-col gap-3">
