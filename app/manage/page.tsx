@@ -267,7 +267,8 @@ export default function ManagePage() {
                       {customers.map(customer => (
                         <tr 
                           key={customer.id} 
-                          className="hover:bg-surface-container-low transition-colors"
+                          className="hover:bg-surface-container-low transition-colors cursor-pointer"
+                          onClick={() => window.location.href = `/manage/person?id=${customer.id}`}
                         >
                           <td className="px-6 py-4">{customer.name}</td>
                           <td className="px-6 py-4">{customer.grade}</td>
