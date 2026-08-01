@@ -138,8 +138,9 @@ export default function PersonManagePage() {
                   name="grade" value={formData.grade} onChange={handleChange}
                   className="px-4 py-2 border border-outline-variant rounded-lg bg-surface-container-low focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                 >
-                  <option value="1">1 (VIP)</option>
-                  <option value="5">5 (우수)</option>
+                  <option value="0">0 (관리자)</option>
+                  <option value="1">1 (중간관리자)</option>
+                  <option value="8">8 (스페셜)</option>
                   <option value="9">9 (일반)</option>
                 </select>
               </div>
