@@ -1,11 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function PasswordGuard({ children, correctPassword }: { children: React.ReactNode, correctPassword: string }) {
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [deniedMessage, setDeniedMessage] = useState("");
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+      const customerId = localStorage.getItem("customerId");
+      
+      if (!loggedIn || !customerId) {
+        window.location.href = "/login?redirect=/confidential";
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/profile?customerId=${customerId}`);
+        const data = await res.json();
+        if (data.success) {
+          const user = data.data;
+          if (String(user.grade) !== "8") {
+            setDeniedMessage(`${user.name || "고객"}님 죄송합니다. 입장하실 수 없습니다.`);
+          }
+        } else {
+           window.location.href = "/login?redirect=/confidential";
+           return;
+        }
+      } catch (e) {
+        console.error(e);
+        // Fallback to error message
+        setDeniedMessage("사용자 정보를 불러올 수 없습니다.");
+      }
+      setCheckingAuth(false);
+    };
+    checkAuth();
+  }, []);
 
   if (authenticated) {
     return <>{children}</>;
@@ -20,6 +54,31 @@ export default function PasswordGuard({ children, correctPassword }: { children:
       setPassword("");
     }
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface w-full">
+        <div className="text-on-surface-variant animate-pulse">로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (deniedMessage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface w-full">
+        <div className="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant w-[90%] max-w-[400px] text-center">
+          <span className="material-symbols-outlined text-[48px] text-error mb-4 block">lock</span>
+          <h2 className="text-xl font-bold mb-4 text-on-surface whitespace-pre-wrap">{deniedMessage}</h2>
+          <button 
+            onClick={() => window.location.href = "/"}
+            className="mt-4 px-6 py-2 bg-surface-container-high hover:bg-surface-container-highest rounded-lg transition-colors"
+          >
+            홈으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface w-full">
