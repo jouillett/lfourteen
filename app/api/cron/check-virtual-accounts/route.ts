@@ -19,8 +19,8 @@ export async function GET(req: Request) {
   try {
     // Status 99인 주문 모두 조회
     const [pendingOrders]: any = await connection.execute(
-      `SELECT id, order_number, payment_key, payment_method, customer_id, used_point, created_at
-       FROM orders WHERE status = 99 ORDER BY created_at ASC`
+      `SELECT o.id, o.order_number, o.payment_key, o.payment_method, o.customer_id, o.used_point, o.created_at, c.grade 
+       FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE o.status = 99 ORDER BY o.created_at ASC`
     );
 
     console.log('[cron/check-virtual-accounts] Found pending orders:', pendingOrders.length);
@@ -69,17 +69,19 @@ export async function GET(req: Request) {
           console.log(`[cron/check-virtual-accounts] Order ${order.id}: 99 → 3 (취소/만료). Toss status: ${payment.status}`);
 
           // 사용 포인트 환불 처리
-          if (order.used_point > 0 && order.customer_id) {
-            await connection.execute(
-              `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at)
-               VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
-              [order.customer_id, order.id, order.used_point]
-            );
-            await connection.execute(
-              'UPDATE customers SET point = point + ? WHERE id = ?',
-              [order.used_point, order.customer_id]
-            );
-            console.log(`[cron/check-virtual-accounts] Refunded ${order.used_point} points to customer ${order.customer_id}`);
+          if (String(order.grade) !== "8") {
+            if (order.used_point > 0 && order.customer_id) {
+              await connection.execute(
+                `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at)
+                 VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
+                [order.customer_id, order.id, order.used_point]
+              );
+              await connection.execute(
+                'UPDATE customers SET point = point + ? WHERE id = ?',
+                [order.used_point, order.customer_id]
+              );
+              console.log(`[cron/check-virtual-accounts] Refunded ${order.used_point} points to customer ${order.customer_id}`);
+            }
           }
         } else {
           // WAITING_FOR_DEPOSIT 등 아직 입금 대기 중

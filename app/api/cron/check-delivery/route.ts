@@ -77,7 +77,7 @@ export async function GET(req: Request) {
                o.order_number, o.order_name, o.created_at, o.receiver_name, o.receiver_address,
                o.point_recnum, o.used_point, o.payment_method,
                o.refund_bank, o.refund_account, o.refund_holder,
-               c.name as customer_name, c.email, c.mobile
+               c.name as customer_name, c.email, c.mobile, c.grade as customer_grade
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.id
         WHERE o.status IN (1, 4, 5, 7)
@@ -106,7 +106,8 @@ export async function GET(req: Request) {
             // Reward points
             const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
             const customerId = parseBuffer(order.customer_id);
-            if (customerId) {
+            const customerGrade = order.customer_grade;
+            if (customerId && String(customerGrade) !== "8") {
               const amount = Math.round(actualTotalPrice * 0.01);
               if (amount > 0) {
                 const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
@@ -198,6 +199,7 @@ export async function GET(req: Request) {
             const usedPoint = Number(parseBuffer(order.used_point)) || 0;
             const oldStatus = Number(order.status) || 0;
             const earnedPointAmount = Math.round(actualTotalPrice * 0.01);
+            const customerGrade = order.customer_grade;
             const paymentMethod = parseBuffer(order.payment_method);
 
             // Step 1: Toss payment cancel. If Virtual Account/Transfer, we don't have refund account info here
@@ -260,30 +262,16 @@ export async function GET(req: Request) {
               const pointRecnum = Number(parseBuffer(order.point_recnum)) || 0;
               const pointsWereEarned = oldStatus >= 2 && oldStatus !== 99 && pointRecnum > 0;
               
-              if (pointsWereEarned) {
-                // Return scenario: points were earned (point_recnum exists)
-                if (usedPoint === 0) {
-                  await connection.execute('DELETE FROM points WHERE id = ?', [pointRecnum]);
-                } else {
-                  await connection.execute('UPDATE points SET point_amount = ? WHERE id = ?', [usedPoint, pointRecnum]);
-                }
-                
-                // Synchronize customers.point with actual sum from points table
-                const [sumRows]: any = await connection.execute(
-                  'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
-                  [customerId]
-                );
-                await connection.execute(
-                  'UPDATE customers SET point = ? WHERE id = ?',
-                  [sumRows[0].total, customerId]
-                );
-              } else {
-                // Cancel scenario: points were not earned yet, just refund used points
-                if (usedPoint > 0) {
-                  await connection.execute(
-                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
-                    [customerId, usedPoint]
-                  );
+              if (String(customerGrade) !== "8") {
+                if (pointsWereEarned) {
+                  // Return scenario: points were earned (point_recnum exists)
+                  if (usedPoint === 0) {
+                    await connection.execute('DELETE FROM points WHERE id = ?', [pointRecnum]);
+                  } else {
+                    await connection.execute('UPDATE points SET point_amount = ? WHERE id = ?', [usedPoint, pointRecnum]);
+                  }
+                  
+                  // Synchronize customers.point with actual sum from points table
                   const [sumRows]: any = await connection.execute(
                     'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
                     [customerId]
@@ -292,6 +280,22 @@ export async function GET(req: Request) {
                     'UPDATE customers SET point = ? WHERE id = ?',
                     [sumRows[0].total, customerId]
                   );
+                } else {
+                  // Cancel scenario: points were not earned yet, just refund used points
+                  if (usedPoint > 0) {
+                    await connection.execute(
+                      'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                      [customerId, usedPoint]
+                    );
+                    const [sumRows]: any = await connection.execute(
+                      'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+                      [customerId]
+                    );
+                    await connection.execute(
+                      'UPDATE customers SET point = ? WHERE id = ?',
+                      [sumRows[0].total, customerId]
+                    );
+                  }
                 }
               }
 

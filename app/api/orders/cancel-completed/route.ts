@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     try {
       const [orderRecs]: any = await connection.execute(
-        `SELECT total_price, customer_id, status, used_point FROM orders WHERE id = ?`,
+        `SELECT o.total_price, o.customer_id, o.status, o.used_point, c.grade as customer_grade FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE o.id = ?`,
         [orderId]
       );
       
@@ -34,44 +34,47 @@ export async function POST(req: Request) {
       const customerId = parseBuffer(orderRecord.customer_id);
       const usedPoint = Number(parseBuffer(orderRecord.used_point)) || 0;
       const orderStatus = Number(orderRecord.status) || 0;
+      const customerGrade = orderRecord.customer_grade;
       const earnedPointAmount = Math.round(actualTotalPrice * 0.01);
 
-      console.log('[cancel-completed] orderId:', orderId, 'customerId:', customerId, 'status:', orderStatus, 'earnedPointAmount:', earnedPointAmount, 'usedPoint:', usedPoint);
+      console.log('[cancel-completed] orderId:', orderId, 'customerId:', customerId, 'status:', orderStatus, 'earnedPointAmount:', earnedPointAmount, 'usedPoint:', usedPoint, 'customerGrade:', customerGrade);
 
-      // 1. Deduct earned points ONLY if they were actually awarded (status >= 2)
-      if (orderStatus >= 2 && earnedPointAmount > 0) {
-        const [points]: any = await connection.execute(
-          `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
-          [customerId]
-        );
-        
-        if (points.length > 0) {
-          const firstPoint = points[0];
-          await connection.execute(
-            `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
-            [earnedPointAmount, firstPoint.id]
+      if (String(customerGrade) !== "8") {
+        // 1. Deduct earned points ONLY if they were actually awarded (status >= 2)
+        if (orderStatus >= 2 && earnedPointAmount > 0) {
+          const [points]: any = await connection.execute(
+            `SELECT * FROM points WHERE customer_id = ? ORDER BY created_at ASC LIMIT 1`,
+            [customerId]
           );
+          
+          if (points.length > 0) {
+            const firstPoint = points[0];
+            await connection.execute(
+              `UPDATE points SET point_amount = GREATEST(0, point_amount - ?) WHERE id = ?`,
+              [earnedPointAmount, firstPoint.id]
+            );
+          }
+
+          await connection.execute(
+            `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+            [earnedPointAmount, customerId]
+          );
+          console.log('[cancel-completed] Deducted earned points:', earnedPointAmount);
         }
 
-        await connection.execute(
-          `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
-          [earnedPointAmount, customerId]
-        );
-        console.log('[cancel-completed] Deducted earned points:', earnedPointAmount);
-      }
-
-      // 2. Refund used points
-      if (usedPoint > 0) {
-        await connection.execute(
-          `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
-          [customerId, usedPoint]
-        );
-        
-        await connection.execute(
-          `UPDATE customers SET point = point + ? WHERE id = ?`,
-          [usedPoint, customerId]
-        );
-        console.log('[cancel-completed] Refunded used points:', usedPoint);
+        // 2. Refund used points
+        if (usedPoint > 0) {
+          await connection.execute(
+            `INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, 0, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))`,
+            [customerId, usedPoint]
+          );
+          
+          await connection.execute(
+            `UPDATE customers SET point = point + ? WHERE id = ?`,
+            [usedPoint, customerId]
+          );
+          console.log('[cancel-completed] Refunded used points:', usedPoint);
+        }
       }
 
       // 3. Update order status

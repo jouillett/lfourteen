@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     const connection = await pool.getConnection();
     try {
       const [orderRows]: any = await connection.execute(
-        'SELECT id, status, used_point, customer_id FROM orders WHERE order_number = ? LIMIT 1',
+        'SELECT o.id, o.status, o.used_point, o.customer_id, c.grade FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE o.order_number = ? LIMIT 1',
         [orderNum]
       );
 
@@ -81,17 +81,19 @@ export async function POST(req: Request) {
           );
           
           // 포인트 환불 처리
-          if (order.used_point > 0 && order.customer_id) {
-            console.log(`[toss-webhook] Refunding ${order.used_point} points for cancelled order ${order.id}`);
-            await connection.execute(
-              `UPDATE customers SET point = point + ? WHERE id = ?`,
-              [Number(order.used_point), order.customer_id]
-            );
-            await connection.execute(
-              `INSERT INTO points (customer_id, point_amount, description, created_at, expired_at) 
-               VALUES (?, ?, '가상계좌 미입금 취소 환불', NOW(), DATE_ADD(NOW(), INTERVAL 1 MONTH))`,
-              [order.customer_id, Number(order.used_point)]
-            );
+          if (String(order.grade) !== "8") {
+            if (order.used_point > 0 && order.customer_id) {
+              console.log(`[toss-webhook] Refunding ${order.used_point} points for cancelled order ${order.id}`);
+              await connection.execute(
+                `UPDATE customers SET point = point + ? WHERE id = ?`,
+                [Number(order.used_point), order.customer_id]
+              );
+              await connection.execute(
+                `INSERT INTO points (customer_id, point_amount, description, created_at, expired_at) 
+                 VALUES (?, ?, '가상계좌 미입금 취소 환불', NOW(), DATE_ADD(NOW(), INTERVAL 1 MONTH))`,
+                [order.customer_id, Number(order.used_point)]
+              );
+            }
           }
           await connection.commit();
           console.log('[toss-webhook] Order', order.id, 'status updated: 99 → 3 (취소/만료)');
