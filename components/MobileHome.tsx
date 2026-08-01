@@ -36,7 +36,8 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
     }
   };
   const config = productConfigs[productId as 1 | 2] || productConfigs[1];
-  const initialValue = Object.keys(config.prices)[0];
+  const prices = config.prices as Record<string, string>;
+  const initialValue = Object.keys(prices)[0];
 
   const [reviewCount, setReviewCount] = useState<number>(initialReviewCount);
   const [qnaCount, setQnaCount] = useState<number>(initialQnaCount);
@@ -318,17 +319,25 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
 
     // Pricing select
     const pricingSelect   = document.getElementById("m-pricing-options") as HTMLSelectElement | null;
-    const totalAmountEl   = document.getElementById("m-total-amount");
-    const prices = config.prices;
-    if (pricingSelect && totalAmountEl) {
-      pricingSelect.addEventListener("change", (e) => {
-        const val = (e.target as HTMLSelectElement).value;
+    const prices = config.prices as Record<string, string>;
+    
+    const handlePriceChange = (e: Event) => {
+      const val = (e.target as HTMLSelectElement).value;
+      const totalAmountEl = document.getElementById("m-total-amount");
+      if (totalAmountEl) {
         if (prices[val]) totalAmountEl.textContent = prices[val];
-      });
+      }
+    };
+
+    if (pricingSelect) {
+      pricingSelect.addEventListener("change", handlePriceChange);
     }
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (pricingSelect) {
+        pricingSelect.removeEventListener("change", handlePriceChange);
+      }
     };
   }, []);
 
@@ -541,7 +550,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
 
           <div className="flex justify-between items-end mb-4">
             <span className="text-sm text-gray-600">총 금액</span>
-            <span className="text-xl font-bold text-black" id="m-total-amount">{config.prices[initialValue]}</span>
+            <span className="text-xl font-bold text-black" id="m-total-amount">{prices[initialValue]}</span>
           </div>
 
           <div className="flex flex-col gap-3">

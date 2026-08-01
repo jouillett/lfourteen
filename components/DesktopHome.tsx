@@ -36,7 +36,7 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
     }
   };
   const config = productConfigs[productId as 1 | 2] || productConfigs[1];
-  const prices = config.prices;
+  const prices = config.prices as Record<string, string>;
   const initialValue = Object.keys(prices)[0];
 
   const [totalAmount, setTotalAmount] = useState(prices[initialValue]);
