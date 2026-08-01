@@ -1,6 +1,6 @@
-import DesktopHome from "../components/DesktopHome";
-import MobileHome from "../components/MobileHome";
-import pool from "../lib/db";
+import DesktopHome from "../../components/DesktopHome";
+import MobileHome from "../../components/MobileHome";
+import pool from "../../lib/db";
 import { RowDataPacket } from '@/lib/db';
 import PasswordGuard from "./PasswordGuard";
 
