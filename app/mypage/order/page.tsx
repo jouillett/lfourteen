@@ -633,7 +633,13 @@ export default function OrderPage() {
                       {/* Action Buttons */}
                       <div className="flex justify-between items-center mt-auto w-full">
                         <div className="flex items-center gap-4">
-                          <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                          <button 
+                            onClick={() => handleTrackingClick(order.shipment)} 
+                            disabled={!order.shipment}
+                            className={`bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium transition-colors focus:ring-2 focus:ring-outline outline-none ${!order.shipment ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-container-low'}`}
+                          >
+                            배송조회
+                          </button>
                           {(order.status === 0 || order.status === 99) && (
                             <div className="flex items-center text-on-surface-variant text-[12px] md:text-[13px] gap-2">
                               <button onClick={() => handleCancelOrder(order.id, order.payment_key, Number(order.status))} className="hover:underline">취소</button>

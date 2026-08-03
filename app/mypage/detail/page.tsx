@@ -495,7 +495,13 @@ function OrderDetailContent() {
                           <option value="return">고객배송</option>
                           <option value="reshipment">업체재배송</option>
                         </select>
-                        <button onClick={() => handleTrackingClick(order[selectedShipmentType])} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        <button 
+                          onClick={() => handleTrackingClick(order[selectedShipmentType])} 
+                          disabled={!order[selectedShipmentType]}
+                          className={`bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium transition-colors focus:ring-2 focus:ring-outline outline-none ${!order[selectedShipmentType] ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-container-low'}`}
+                        >
+                          배송조회
+                        </button>
                         {extraButtons}
                       </div>
                     );
@@ -510,14 +516,26 @@ function OrderDetailContent() {
                           <option value="shipment">업체배송</option>
                           <option value="return">고객배송</option>
                         </select>
-                        <button onClick={() => handleTrackingClick(order[selectedShipmentType])} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        <button 
+                          onClick={() => handleTrackingClick(order[selectedShipmentType])} 
+                          disabled={!order[selectedShipmentType]}
+                          className={`bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium transition-colors focus:ring-2 focus:ring-outline outline-none ${!order[selectedShipmentType] ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-container-low'}`}
+                        >
+                          배송조회
+                        </button>
                         {extraButtons}
                       </div>
                     );
                   } else {
                     return (
                       <div className="flex items-center gap-2 flex-wrap">
-                        <button onClick={() => handleTrackingClick(order.shipment)} className="bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-outline outline-none">배송조회</button>
+                        <button 
+                          onClick={() => handleTrackingClick(order.shipment)} 
+                          disabled={!order.shipment}
+                          className={`bg-surface-container-lowest border border-outline text-on-surface py-2 px-4 md:px-5 rounded-md text-[12px] md:text-[14px] font-medium transition-colors focus:ring-2 focus:ring-outline outline-none ${!order.shipment ? 'opacity-50 cursor-not-allowed' : 'hover:bg-surface-container-low'}`}
+                        >
+                          배송조회
+                        </button>
                         {extraButtons}
                       </div>
                     );
