@@ -97,7 +97,8 @@ export async function GET(req: Request) {
             const refundAccount = parseBuffer(currentOrder.refund_account);
             const refundHolder = parseBuffer(currentOrder.refund_holder);
 
-            if (refundBank && refundAccount && refundHolder) {
+            const paymentMethod = parseBuffer(currentOrder.payment_method);
+            if ((paymentMethod === '가상계좌' || paymentMethod === '계좌이체') && refundBank && refundAccount && refundHolder) {
               cancelBody.refundReceiveAccount = {
                 bank: refundBank,
                 accountNumber: refundAccount,
