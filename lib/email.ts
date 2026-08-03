@@ -184,6 +184,9 @@ export async function sendReturnEmail(toEmail: string, data: any) {
   htmlContent = htmlContent.replace(/\$prduct name/g, data.productName || '');
   htmlContent = htmlContent.replace(/\$price/g, data.price || '');
 
+  const rawPrice = data.price ? Number(data.price.replace(/,/g, '')) : 0;
+  const refundAmount = rawPrice > 3300 ? rawPrice - 3300 : 0;
+  htmlContent = htmlContent.replace(/\$refundAmount/g, refundAmount.toLocaleString());
   try {
     const info = await transporter.sendMail({
       from: fromEmail,
