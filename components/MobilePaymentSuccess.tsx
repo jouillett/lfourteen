@@ -8,6 +8,7 @@ export default function MobilePaymentSuccess() {
   const [rawAmount, setRawAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [userGrade, setUserGrade] = useState<string>("");
   const [visible, setVisible] = useState(false);
   const fetchStarted = React.useRef(false);
 
@@ -44,6 +45,7 @@ export default function MobilePaymentSuccess() {
         .then(data => {
           if (data.success && data.data) {
             setTotalPoints(Number(data.data.point) || 0);
+            setUserGrade(String(data.data.grade));
           }
         })
         .catch(console.error);
@@ -194,10 +196,22 @@ export default function MobilePaymentSuccess() {
             color: "#4b463d", marginBottom: rawAmount > 0 ? 24 : 64, textAlign: "center",
           }}>주문해주셔서 감사합니다</p>
 
-          {rawAmount > 0 && (
-            <div className="w-full text-center mb-6" style={{ ...fadeStyle(150) }}>
-              <p className="text-[13px] text-primary font-medium bg-[#f2e0c3]/50 py-3 px-4 rounded-xl inline-flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px]">volunteer_activism</span>
+          {rawAmount > 0 && userGrade !== "8" && (
+            <div style={{
+              width: '100%',
+              textAlign: 'center',
+              marginBottom: '32px',
+              opacity: visible ? 1 : 0,
+              transform: visible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s'
+            }}>
+              <p style={{
+                fontSize: '14px', color: '#504530', fontWeight: 500,
+                backgroundColor: 'rgba(242, 224, 195, 0.5)',
+                padding: '12px 20px', borderRadius: '12px',
+                display: 'inline-flex', alignItems: 'center', gap: '8px'
+              }}>
+                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>volunteer_activism</span>
                 배송이 완료되면 <strong style={{fontWeight: 700}}>{Math.round(rawAmount * 0.01).toLocaleString()}원(전체 포인트: {(totalPoints + Math.round(rawAmount * 0.01)).toLocaleString()}원)</strong>이 적립됩니다.
               </p>
             </div>

@@ -10,6 +10,7 @@ export default function DesktopPaymentSuccess() {
   const [rawAmount, setRawAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [userGrade, setUserGrade] = useState<string>("");
   const fetchStarted = React.useRef(false);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function DesktopPaymentSuccess() {
         .then(data => {
           if (data.success && data.data) {
             setTotalPoints(Number(data.data.point) || 0);
+            setUserGrade(String(data.data.grade));
           }
         })
         .catch(console.error);
@@ -152,7 +154,7 @@ export default function DesktopPaymentSuccess() {
             <h1 className="font-headline-lg text-headline-lg text-primary mb-sm">결제가 완료되었습니다</h1>
             <p className="font-body-lg text-body-lg text-on-surface-variant mb-xl">주문해주셔서 감사합니다</p>
 
-            {rawAmount > 0 && (
+            {rawAmount > 0 && userGrade !== "8" && (
               <div className="w-full text-center mb-6 opacity-0 animate-fade-up delay-100">
                 <p className="text-[14px] text-primary font-medium bg-[#f2e0c3]/50 py-3 px-5 rounded-xl inline-flex items-center gap-2">
                   <span className="material-symbols-outlined text-[18px]">volunteer_activism</span>
