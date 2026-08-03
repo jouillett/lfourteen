@@ -17,7 +17,7 @@ export default function Header() {
       return loggedIn;
     };
 
-    const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour
+    const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 minutes
 
     const resetTimer = () => {
       if (localStorage.getItem("isLoggedIn") === "true") {
@@ -31,6 +31,7 @@ export default function Header() {
       localStorage.removeItem("userId");
       localStorage.removeItem("lastActivity");
       localStorage.removeItem("authPhone");
+      sessionStorage.removeItem("confidentialAuth");
       window.location.href = "/";
     };
 
@@ -92,6 +93,7 @@ export default function Header() {
     localStorage.removeItem("userId");
     localStorage.removeItem("lastActivity");
     localStorage.removeItem("authPhone");
+    sessionStorage.removeItem("confidentialAuth");
     window.location.href = "/";
   };
 

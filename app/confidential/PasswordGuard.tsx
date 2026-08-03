@@ -19,6 +19,10 @@ export default function PasswordGuard({ children, correctPassword }: { children:
         return;
       }
       
+      if (sessionStorage.getItem("confidentialAuth") === "true") {
+        setAuthenticated(true);
+      }
+      
       try {
         const res = await fetch(`/api/profile?customerId=${customerId}`);
         const data = await res.json();
@@ -48,6 +52,7 @@ export default function PasswordGuard({ children, correctPassword }: { children:
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (password === correctPassword) {
+      sessionStorage.setItem("confidentialAuth", "true");
       setAuthenticated(true);
     } else {
       alert("비밀번호가 일치하지 않습니다.");
