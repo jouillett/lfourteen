@@ -171,7 +171,7 @@ export default function OrderPage() {
       }
     }
 
-    if (confirm("교환을 정말 원하십니까?")) {
+    if (confirm("교환을 정말 원하십니까?\n\n왕복 택배비 6,600원을 입금해주세요.\n입금 정보: 79423195492 카카오뱅크 (예금주: 조민균)")) {
       try {
         const res = await fetch(`/api/orders/status`, {
           method: 'PATCH',
