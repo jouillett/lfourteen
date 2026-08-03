@@ -17,7 +17,7 @@ export default function Header() {
       return loggedIn;
     };
 
-    const INACTIVITY_LIMIT = 10 * 60 * 1000; // 10 minutes
+    const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour
 
     const resetTimer = () => {
       if (localStorage.getItem("isLoggedIn") === "true") {
