@@ -58,7 +58,7 @@ export default function JoinPage() {
 
       const generatedCode = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
       setExpectedCode(generatedCode);
-      const message = `[기쁜 하루] 문자 인증 안내\n기쁜 하루 쇼핑몰 회원 가입을 위한 인증번호는 [${generatedCode}] 입니다.`;
+      const message = `[기쁜 하루] 인증번호: [${generatedCode}]\n기쁜 하루 쇼핑몰 회원 가입을 위한 문자 인증 안내입니다.`;
 
       try {
         await fetch("/api/send-auth-sms", {

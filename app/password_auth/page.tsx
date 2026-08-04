@@ -27,7 +27,7 @@ export default function PasswordAuthPage() {
     if (phone.trim().length > 0) {
       const generatedCode = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
       setExpectedCode(generatedCode);
-      const message = `[기쁜 하루] 문자 인증 안내\n기쁜 하루 쇼핑몰 인증번호는 [${generatedCode}] 예요.`;
+      const message = `[기쁜 하루] 인증번호: [${generatedCode}]\n타인 유출로 인한 피해에 주의바랍니다.`;
 
       try {
         const response = await fetch("/api/send-auth-sms", {
