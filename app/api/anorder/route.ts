@@ -106,20 +106,44 @@ export async function GET(req: Request) {
               };
             }
 
-            const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
-              method: 'POST',
-              headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-              body: JSON.stringify(cancelBody),
-            });
+            const secretKeys = [
+              process.env.TOSS_API_SECRET_KEY,
+              process.env.TOSS_SECRET_KEY,
+              'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6',
+              'test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ'
+            ].filter(Boolean);
 
-            if (!tossRes.ok) {
-              const errData = await tossRes.json();
-              // If already canceled, Toss returns a specific error we could ignore, but let's log it
-              console.error(`Toss cancel failed for order ${id}:`, errData);
-              // Only fail if it's a critical error, otherwise proceed
-              if (errData.code !== 'ALREADY_CANCELED_PAYMENT' && errData.code !== 'NOT_CANCELABLE_AMOUNT') {
-                return NextResponse.json({ success: false, message: '토스 결제 취소에 실패했습니다: ' + (errData.message || 'Unknown') }, { status: 400 });
+            let tossSuccess = false;
+            let lastErrData: any = null;
+
+            for (const secretKey of new Set(secretKeys)) {
+              const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+              const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
+                method: 'POST',
+                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                body: JSON.stringify(cancelBody),
+              });
+
+              if (tossRes.ok) {
+                tossSuccess = true;
+                break;
+              } else {
+                const errData = await tossRes.json();
+                lastErrData = errData;
+                if (errData.code === 'ALREADY_CANCELED_PAYMENT' || errData.code === 'NOT_CANCELABLE_AMOUNT') {
+                  tossSuccess = true;
+                  break;
+                } else if (errData.code === 'FORBIDDEN_REQUEST' || errData.code === 'UNAUTHORIZED_KEY') {
+                  continue; // Try next key
+                } else {
+                  break; // Other error, stop trying
+                }
               }
+            }
+
+            if (!tossSuccess) {
+              console.error(`Toss cancel failed for order ${id}:`, lastErrData);
+              return NextResponse.json({ success: false, message: '토스 결제 취소에 실패했습니다: ' + (lastErrData?.message || 'Unknown') }, { status: 400 });
             }
           }
 

@@ -11,6 +11,7 @@ export default function DesktopPaymentSuccess() {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [userGrade, setUserGrade] = useState<string>("");
+  const [virtualAccount, setVirtualAccount] = useState<any>(null);
   const fetchStarted = React.useRef(false);
 
   useEffect(() => {
@@ -96,7 +97,10 @@ export default function DesktopPaymentSuccess() {
           if (data.payment.easyPay?.provider) realMethod = data.payment.easyPay.provider;
           if (data.payment.card && !data.payment.easyPay) realMethod = "카드";
           if (data.payment.transfer) realMethod = "계좌이체";
-          if (data.payment.virtualAccount) realMethod = "가상계좌";
+          if (data.payment.virtualAccount) {
+            realMethod = "가상계좌";
+            setVirtualAccount(data.payment.virtualAccount);
+          }
           if (data.payment.mobilePhone) realMethod = "휴대폰";
           if (realMethod === "QUICK_TRANSFER") realMethod = "퀵계좌이체";
           if (realMethod) {
@@ -174,6 +178,22 @@ export default function DesktopPaymentSuccess() {
                   <span className="font-label-md text-label-md text-on-surface-variant">결제 수단</span>
                   <span className="font-body-md text-body-md text-on-surface">{paymentMethod || "-"}</span>
                 </div>
+                {virtualAccount && (
+                  <>
+                    <div className="flex justify-between items-center py-sm border-b border-outline-variant/20">
+                      <span className="font-label-md text-label-md text-on-surface-variant">입금 은행</span>
+                      <span className="font-body-md text-body-md text-on-surface font-medium">{virtualAccount.bank}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-sm border-b border-outline-variant/20">
+                      <span className="font-label-md text-label-md text-on-surface-variant">계좌 번호</span>
+                      <span className="font-body-md text-body-md text-primary font-bold">{virtualAccount.accountNumber}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-sm border-b border-outline-variant/20">
+                      <span className="font-label-md text-label-md text-on-surface-variant">예금주</span>
+                      <span className="font-body-md text-body-md text-on-surface">{virtualAccount.customerName}</span>
+                    </div>
+                  </>
+                )}
                 <div className="flex justify-between items-center pt-sm">
                   <span className="font-label-md text-label-md text-on-surface-variant">총 결제 금액</span>
                   <span className="font-headline-md text-headline-md text-primary font-semibold">{amount || "-"}</span>

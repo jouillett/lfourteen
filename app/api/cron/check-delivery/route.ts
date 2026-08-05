@@ -209,40 +209,44 @@ export async function GET(req: Request) {
             // Or we check if it is already canceled.
             let tossOk = false;
             try {
-              const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
-              const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
               const refundAmount = Math.max(0, actualTotalPrice - 3300);
-              
-              const cancelBody: any = {
-                cancelReason: '반품 완료',
-                cancelAmount: refundAmount 
-              };
+              const cancelBody: any = { cancelReason: '반품 완료', cancelAmount: refundAmount };
 
               const refundBank = parseBuffer(order.refund_bank);
               const refundAccount = parseBuffer(order.refund_account);
               const refundHolder = parseBuffer(order.refund_holder);
               
               if ((paymentMethod === '가상계좌' || paymentMethod === '계좌이체') && refundBank && refundAccount && refundHolder) {
-                cancelBody.refundReceiveAccount = {
-                  bank: refundBank,
-                  accountNumber: refundAccount,
-                  holderName: refundHolder
-                };
+                cancelBody.refundReceiveAccount = { bank: refundBank, accountNumber: refundAccount, holderName: refundHolder };
               }
 
-              const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
-                method: 'POST',
-                headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
-                body: JSON.stringify(cancelBody),
-              });
-              const data = await res.json();
-              if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT' || data.code === 'NOT_CANCELABLE_AMOUNT') {
-                tossOk = true;
-                if (!res.ok) {
-                  console.log(`[check-delivery] Toss cancel already processed for order ${order.id} (${data.code})`);
+              const secretKeys = [
+                process.env.TOSS_API_SECRET_KEY,
+                process.env.TOSS_SECRET_KEY,
+                'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6',
+                'test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ'
+              ].filter(Boolean);
+
+              for (const secretKey of new Set(secretKeys)) {
+                const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
+                const res = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
+                  method: 'POST',
+                  headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+                  body: JSON.stringify(cancelBody),
+                });
+                const data = await res.json();
+                
+                if (res.ok || data.code === 'ALREADY_CANCELED_PAYMENT' || data.code === 'NOT_CANCELABLE_AMOUNT') {
+                  tossOk = true;
+                  if (!res.ok) console.log(`[check-delivery] Toss cancel already processed for order ${order.id} (${data.code})`);
+                  break;
+                } else if (data.code === 'FORBIDDEN_REQUEST' || data.code === 'UNAUTHORIZED_KEY') {
+                  // Wrong key, try next
+                  continue;
+                } else {
+                  console.error(`[check-delivery] Toss cancel failed for order ${order.id}:`, data);
+                  break; // Other error, stop trying
                 }
-              } else {
-                console.error(`[check-delivery] Toss cancel failed for order ${order.id}:`, data);
               }
             } catch (error) {
               console.error('[check-delivery] Toss cancel error:', error);

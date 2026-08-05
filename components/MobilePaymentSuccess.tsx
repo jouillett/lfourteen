@@ -9,6 +9,7 @@ export default function MobilePaymentSuccess() {
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [userGrade, setUserGrade] = useState<string>("");
+  const [virtualAccount, setVirtualAccount] = useState<any>(null);
   const [visible, setVisible] = useState(false);
   const fetchStarted = React.useRef(false);
 
@@ -93,10 +94,16 @@ export default function MobilePaymentSuccess() {
             if (data.payment.easyPay?.provider) m = data.payment.easyPay.provider;
             if (data.payment.card && !data.payment.easyPay) m = "카드";
             if (data.payment.transfer) m = "계좌이체";
-            if (data.payment.virtualAccount) m = "가상계좌";
+            if (data.payment.virtualAccount) {
+              m = "가상계좌";
+              setVirtualAccount(data.payment.virtualAccount);
+            }
             if (data.payment.mobilePhone) m = "휴대폰";
             if (m === "QUICK_TRANSFER") m = "퀵계좌이체";
-            if (m) { setPaymentMethod(m); sessionStorage.setItem("selectedPaymentMethod", m); }
+            if (m) {
+              setPaymentMethod(m);
+              sessionStorage.setItem("selectedPaymentMethod", m);
+            }
           } else {
             console.error("[MobilePaymentSuccess] confirm failed:", data);
             alert("[DEBUG] 주문 저장 실패: " + (data.message || JSON.stringify(data)));
@@ -232,12 +239,28 @@ export default function MobilePaymentSuccess() {
               <span style={{ fontSize: 16, lineHeight: "24px", fontWeight: 500, color: "#1F1B15" }}>{orderId || "-"}</span>
             </div>
             {/* Payment method */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12, paddingBottom: 12, borderBottom: "1px solid rgba(206,197,185,0.2)" }}>
-              <span style={{ fontSize: 14, lineHeight: "20px", letterSpacing: "0.01em", fontWeight: 500, color: "#4b463d" }}>결제 수단</span>
-              <span style={{ fontSize: 16, lineHeight: "24px", fontWeight: 400, color: "#1F1B15" }}>{paymentMethod || "-"}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(206, 197, 185, 0.3)' }}>
+              <span style={{ fontSize: '14px', color: '#8a857d' }}>결제 수단</span>
+              <span style={{ fontSize: '15px', color: '#4b463d' }}>{paymentMethod || "-"}</span>
             </div>
+            {virtualAccount && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(206, 197, 185, 0.3)' }}>
+                  <span style={{ fontSize: '14px', color: '#8a857d' }}>입금 은행</span>
+                  <span style={{ fontSize: '15px', color: '#4b463d', fontWeight: 500 }}>{virtualAccount.bank}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(206, 197, 185, 0.3)' }}>
+                  <span style={{ fontSize: '14px', color: '#8a857d' }}>계좌 번호</span>
+                  <span style={{ fontSize: '15px', color: '#941F32', fontWeight: 700 }}>{virtualAccount.accountNumber}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(206, 197, 185, 0.3)' }}>
+                  <span style={{ fontSize: '14px', color: '#8a857d' }}>예금주</span>
+                  <span style={{ fontSize: '15px', color: '#4b463d' }}>{virtualAccount.customerName}</span>
+                </div>
+              </>
+            )}
             {/* Total */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '12px' }}>
               <span style={{ fontSize: 14, lineHeight: "20px", letterSpacing: "0.01em", fontWeight: 500, color: "#4b463d" }}>총 결제 금액</span>
               <span style={{ fontSize: 24, lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: 600, color: "#504530" }}>{amount || "-"}</span>
             </div>
