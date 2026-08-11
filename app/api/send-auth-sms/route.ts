@@ -9,9 +9,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Missing parameters' }, { status: 400 });
     }
 
-    const accessKey = process.env.SMS_ACCESS_KEY;
-    const secretKey = process.env.SMS_SECRET_KEY;
-    const apiId = process.env.SMS_API_ID;
+    const accessKey = process.env.SMS_ACCESS_KEY?.trim();
+    const secretKey = process.env.SMS_SECRET_KEY?.trim();
+    const apiId = process.env.SMS_API_ID?.trim();
     
     // Fallback if env vars are missing
     if (!accessKey || !secretKey || !apiId) {
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       type: "SMS",
       contentType: "COMM",
       countryCode: "82",
-      from: "01095941568", // Registered sender number
+      from: "01021152249", // Registered sender number
       content: message,
       messages: [
         {
