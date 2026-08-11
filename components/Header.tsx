@@ -12,9 +12,18 @@ export default function Header() {
     setMounted(true);
 
     const checkLoginStatus = () => {
-      const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      setIsLoggedIn(loggedIn);
-      return loggedIn;
+      const loggedInFlag = localStorage.getItem("isLoggedIn") === "true";
+      const hasId = !!(localStorage.getItem("customerId") || localStorage.getItem("userId"));
+      const trulyLoggedIn = loggedInFlag && hasId;
+      
+      if (loggedInFlag && !hasId) {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("lastActivity");
+        localStorage.removeItem("authPhone");
+      }
+      
+      setIsLoggedIn(trulyLoggedIn);
+      return trulyLoggedIn;
     };
 
     const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour
