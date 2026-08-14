@@ -119,38 +119,40 @@ export default function BillingPage() {
               </div>
 
               {/* Numeric Input */}
-              <div className="flex flex-col gap-xs w-full sm:w-32">
+              <div className="flex flex-col gap-xs w-full">
                 <label className="font-caption text-caption text-on-surface-variant">구독 기간 ({period === "weeks" ? "주" : "개월"})</label>
-                <div className="relative flex items-center bg-surface-lowest border border-outline-variant rounded-lg focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all h-[46px] overflow-hidden">
-                  <div className="flex items-center flex-1 w-full justify-center pl-4">
-                    <input 
-                      className="w-12 bg-transparent border-none p-0 text-center font-body-lg outline-none focus:ring-0" 
-                      min="1" 
-                      type="number" 
-                      value={duration}
-                      onChange={handleDurationChange}
-                      style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
-                    />
-                    <div className="flex flex-col justify-center px-1">
-                      <button type="button" onClick={() => {
-                        const maxVal = period === "weeks" ? 4 : 1;
-                        setDuration(d => Math.min(maxVal, (d === "" ? 1 : Number(d)) + 1));
-                      }} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">
-                        ▲
-                      </button>
-                      <button type="button" onClick={() => setDuration(d => Math.max(1, (d === "" ? 1 : Number(d)) - 1))} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">
-                        ▼
-                      </button>
+                <div className="flex flex-row items-center gap-sm">
+                  <div className="relative flex items-center bg-surface-lowest border border-outline-variant rounded-lg focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all h-[46px] overflow-hidden w-32 shrink-0">
+                    <div className="flex items-center flex-1 w-full justify-center pl-4">
+                      <input 
+                        className="w-12 bg-transparent border-none p-0 text-center font-body-lg outline-none focus:ring-0" 
+                        min="1" 
+                        type="number" 
+                        value={duration}
+                        onChange={handleDurationChange}
+                        style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
+                      />
+                      <div className="flex flex-col justify-center px-1">
+                        <button type="button" onClick={() => {
+                          const maxVal = period === "weeks" ? 4 : 1;
+                          setDuration(d => Math.min(maxVal, (d === "" ? 1 : Number(d)) + 1));
+                        }} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">
+                          ▲
+                        </button>
+                        <button type="button" onClick={() => setDuration(d => Math.max(1, (d === "" ? 1 : Number(d)) - 1))} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">
+                          ▼
+                        </button>
+                      </div>
                     </div>
+                    <span className="pr-4 font-body-md text-on-surface-variant whitespace-nowrap">
+                      {period === "weeks" ? "주" : "개월"}
+                    </span>
                   </div>
-                  <span className="pr-4 font-body-md text-on-surface-variant whitespace-nowrap">
-                    {period === "weeks" ? "주" : "개월"}
+                  <span className="font-caption text-caption text-outline">
+                    {period === "weeks" ? `${duration}주마다 결제됩니다.` : `${duration}개월마다 결제됩니다.`}<br />
+                    (최대 4주까지 조절 가능합니다)
                   </span>
                 </div>
-                <span className="font-caption text-caption text-outline">
-                  {period === "weeks" ? `${duration}주마다 결제됩니다.` : `${duration}개월마다 결제됩니다.`}<br />
-                  (최대 4주까지 조절 가능합니다)
-                </span>
               </div>
             </div>
           </section>
