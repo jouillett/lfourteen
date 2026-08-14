@@ -61,7 +61,12 @@ export default function BillingPage() {
 
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
-    setDuration(isNaN(val) ? "" : val);
+    if (isNaN(val)) {
+      setDuration("");
+      return;
+    }
+    const maxVal = period === "weeks" ? 4 : 1;
+    setDuration(Math.min(maxVal, Math.max(1, val)));
   };
 
   async function handleBilling() {
@@ -153,7 +158,10 @@ export default function BillingPage() {
                       style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                     />
                     <div className="flex flex-col justify-center px-1">
-                      <button type="button" onClick={() => setDuration(d => (d === "" ? 1 : Number(d)) + 1)} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">
+                      <button type="button" onClick={() => {
+                        const maxVal = period === "weeks" ? 4 : 1;
+                        setDuration(d => Math.min(maxVal, (d === "" ? 1 : Number(d)) + 1));
+                      }} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">
                         ▲
                       </button>
                       <button type="button" onClick={() => setDuration(d => Math.max(1, (d === "" ? 1 : Number(d)) - 1))} className="text-on-surface-variant hover:text-primary text-[10px] p-1 h-[16px] flex items-center justify-center">

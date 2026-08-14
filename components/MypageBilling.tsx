@@ -248,13 +248,21 @@ export default function MypageBilling() {
                       <input 
                         type="number" 
                         value={billingInfo?.interval} 
-                        onChange={(e) => setBillingInfo(prev => prev ? {...prev, interval: parseInt(e.target.value) || 1} : prev)}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 1;
+                          const maxVal = billingInfo?.period === 0 ? 4 : 1;
+                          setBillingInfo(prev => prev ? {...prev, interval: Math.min(maxVal, Math.max(1, val))} : prev);
+                        }}
                         className="w-16 bg-surface-container border border-outline-variant rounded px-2 py-1"
                         min="1"
                       />
                       <select 
                         value={billingInfo?.period}
-                        onChange={(e) => setBillingInfo(prev => prev ? {...prev, period: parseInt(e.target.value)} : prev)}
+                        onChange={(e) => {
+                          const newPeriod = parseInt(e.target.value);
+                          const maxVal = newPeriod === 0 ? 4 : 1;
+                          setBillingInfo(prev => prev ? {...prev, period: newPeriod, interval: Math.min(maxVal, prev.interval)} : prev);
+                        }}
                         className="bg-surface-container border border-outline-variant rounded px-2 py-1"
                       >
                         <option value={0}>주 단위</option>
