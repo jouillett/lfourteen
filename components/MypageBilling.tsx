@@ -256,18 +256,14 @@ export default function MypageBilling() {
                         className="w-16 bg-surface-container border border-outline-variant rounded px-2 py-1"
                         min="1"
                       />
-                      <select 
-                        value={billingInfo?.period}
-                        onChange={(e) => {
-                          const newPeriod = parseInt(e.target.value);
-                          const maxVal = newPeriod === 0 ? 4 : 1;
-                          setBillingInfo(prev => prev ? {...prev, period: newPeriod, interval: Math.min(maxVal, prev.interval)} : prev);
-                        }}
-                        className="bg-surface-container border border-outline-variant rounded px-2 py-1"
-                      >
-                        <option value={0}>주 단위</option>
-                        <option value={1}>월 단위</option>
-                      </select>
+                      <span className="text-on-surface-variant text-sm">
+                        {billingInfo?.period === 0 ? '주 단위' : '월 단위'}
+                      </span>
+                    </div>
+                    <div className="mt-1">
+                      <span className="text-xs text-outline">
+                        (최대 {billingInfo?.period === 0 ? '4주' : '1개월'}까지 조절 가능합니다)
+                      </span>
                     </div>
                   </div>
                 </div>

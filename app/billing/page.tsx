@@ -114,34 +114,8 @@ export default function BillingPage() {
           <section className="bg-surface-container rounded-2xl p-lg flex flex-col gap-md shadow-sm border border-surface-container-highest">
             <h2 className="font-headline-md text-headline-md text-primary">기간 선택</h2>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md">
-              {/* Segmented Control */}
-              <div className="flex bg-surface-container-high rounded-full p-xs w-full sm:w-auto">
-                <button 
-                  onClick={() => {
-                    setPeriod("weeks");
-                    setDuration(4);
-                  }}
-                  className={`flex-1 sm:px-lg py-sm rounded-full font-label-md transition-all ${
-                    period === "weeks" 
-                      ? "bg-primary text-on-primary shadow-sm" 
-                      : "text-on-surface-variant hover:text-primary"
-                  }`}
-                >
-                  주 단위
-                </button>
-                <button 
-                  onClick={() => {
-                    setPeriod("months");
-                    setDuration(1);
-                  }}
-                  className={`flex-1 sm:px-lg py-sm rounded-full font-label-md transition-all ${
-                    period === "months" 
-                      ? "bg-primary text-on-primary shadow-sm" 
-                      : "text-on-surface-variant hover:text-primary"
-                  }`}
-                >
-                  월 단위
-                </button>
+              {/* Segmented Control Removed as requested (Only weekly unit is allowed) */}
+              <div className="flex bg-surface-container-high rounded-full p-xs w-full sm:w-auto invisible hidden">
               </div>
 
               {/* Numeric Input */}
@@ -173,7 +147,10 @@ export default function BillingPage() {
                     {period === "weeks" ? "주" : "개월"}
                   </span>
                 </div>
-                <span className="font-caption text-caption text-outline">{period === "weeks" ? `${duration}주마다 결제됩니다.` : `${duration}개월마다 결제됩니다.`}</span>
+                <span className="font-caption text-caption text-outline">
+                  {period === "weeks" ? `${duration}주마다 결제됩니다.` : `${duration}개월마다 결제됩니다.`}<br />
+                  (최대 4주까지 조절 가능합니다)
+                </span>
               </div>
             </div>
           </section>
