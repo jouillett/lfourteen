@@ -43,17 +43,19 @@ export default function DesktopPaymentSuccess() {
       } catch(e) {}
     }
 
-    if (userId) {
-      fetch(`/api/profile?customerId=${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.success && data.data) {
-            setTotalPoints(Number(data.data.point) || 0);
-            setUserGrade(String(data.data.grade));
-          }
-        })
-        .catch(console.error);
-    }
+    const fetchProfile = () => {
+      if (userId) {
+        fetch(`/api/profile?customerId=${userId}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success && data.data) {
+              setTotalPoints(Number(data.data.point) || 0);
+              setUserGrade(String(data.data.grade));
+            }
+          })
+          .catch(console.error);
+      }
+    };
 
     let pendingAddressObj = null;
     const pendingAddressStr = sessionStorage.getItem("pendingAddress");
@@ -117,6 +119,9 @@ export default function DesktopPaymentSuccess() {
         console.error(err);
         alert("[DEBUG] 네트워크 오류: " + err.message);
         setPaymentMethod(fallbackMethod);
+      })
+      .finally(() => {
+        fetchProfile();
       });
     } else if (parsedOrderId && userId) {
       // Billing flow — fetch order details from DB
@@ -132,9 +137,13 @@ export default function DesktopPaymentSuccess() {
             setPaymentMethod(fallbackMethod);
           }
         })
-        .catch(() => setPaymentMethod(fallbackMethod));
+        .catch(() => setPaymentMethod(fallbackMethod))
+        .finally(() => {
+          fetchProfile();
+        });
     } else {
       setPaymentMethod(fallbackMethod);
+      fetchProfile();
     }
 
     if (pendingAddressStr) {
