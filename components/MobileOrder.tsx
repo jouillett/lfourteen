@@ -42,6 +42,8 @@ export default function MobileOrder() {
   const [memoType, setMemoType] = useState("배송 전에 미리 연락바랍니다.");
   const [memoCustom, setMemoCustom] = useState("");
   const [userGrade, setUserGrade] = useState<string | null>(null);
+  const [originalProfileAddress, setOriginalProfileAddress] = useState<any>(null);
+  const [hasAddressHistory, setHasAddressHistory] = useState<boolean>(true);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   
@@ -85,11 +87,13 @@ export default function MobileOrder() {
           } else {
             setActiveTab("manual");
             setSaveDefault(true);
+            setHasAddressHistory(false);
           }
         })
         .catch(() => {
           setActiveTab("manual");
           setSaveDefault(true);
+          setHasAddressHistory(false);
         });
     };
 
@@ -113,6 +117,13 @@ export default function MobileOrder() {
         setZipcode(prev => prev || d.zip_code || "");
         setAddress(prev => prev || d.address || "");
         setAddressDetail(prev => prev || d.detail_address || "");
+        setOriginalProfileAddress({
+          name: d.name || "",
+          mobile: d.mobile || "",
+          zip_code: d.zip_code || "",
+          address: d.address || "",
+          detail_address: d.detail_address || ""
+        });
       }
     });
 
@@ -259,6 +270,28 @@ export default function MobileOrder() {
 
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     
+    let updateCustomerProfileAddress = false;
+    let skipAddressInsert = false;
+
+    if (isManual && !hasAddressHistory && originalProfileAddress) {
+      const isModified = 
+        firstName !== (originalProfileAddress.name || "") ||
+        phone !== (originalProfileAddress.mobile || "") ||
+        zipcode !== (originalProfileAddress.zip_code || "") ||
+        address !== (originalProfileAddress.address || "") ||
+        addressDetail !== (originalProfileAddress.detail_address || "");
+
+      if (isModified) {
+        const confirmUpdate = window.confirm("수정된 주소를 회원정보에 반영하시겠습니까?");
+        if (confirmUpdate) {
+          updateCustomerProfileAddress = true;
+          skipAddressInsert = true;
+        } else {
+          skipAddressInsert = false;
+        }
+      }
+    }
+
     if (isManual) {
       sessionStorage.setItem('pendingAddress', JSON.stringify({
         userId,
@@ -267,7 +300,8 @@ export default function MobileOrder() {
         zipCode: zipcode,
         address,
         detailAddress: addressDetail,
-        isDefault: saveDefault ? 1 : 0
+        isDefault: saveDefault ? 1 : 0,
+        skipAddressInsert
       }));
     } else {
       sessionStorage.removeItem('pendingAddress');
@@ -309,7 +343,8 @@ export default function MobileOrder() {
       receiverMobile,
       receiverPhone,
       receiverAddress,
-      isDefault
+      isDefault,
+      updateCustomerProfileAddress
     }));
 
     if (tossPaymentsRef.current) {

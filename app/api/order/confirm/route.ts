@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     console.log('[confirm] customerId:', customerId, 'type:', typeof customerId, 'source:', orderInfo?.source);
 
     // 2. Save Address if manual input tab was used
-    if (pendingAddress && customerId) {
+    if (pendingAddress && customerId && !pendingAddress.skipAddressInsert) {
       console.log('[confirm] Saving address...');
       
       const cleanRecipientPhone = (pendingAddress.recipientPhone || '').replace(/-/g, '');
@@ -90,23 +90,41 @@ export async function POST(req: Request) {
     const isOrderDefault = rawIsDefault == 1 || rawIsDefault === true || rawIsDefault === '1' || rawIsDefault === 'true';
     console.log('[confirm] isDefault check:', { rawIsDefault, isOrderDefault, customerId });
 
-    if (isOrderDefault && customerId) {
-      const [custRows] = await connection.execute<RowDataPacket[]>(
-        'SELECT id, name FROM customers WHERE id = ? LIMIT 1',
-        [customerId]
-      );
-      console.log('[confirm] Customer rows found:', custRows.length, 'current name:', custRows[0]?.name);
-      if (custRows.length > 0) {
-        const currentName = custRows[0].name;
-        const nameIsEmpty = currentName === null || currentName === undefined || String(currentName).trim() === '' || String(currentName).toLowerCase() === 'null';
-        const newName = (orderInfo?.receiverName || pendingAddress?.recipientName || '').trim();
-        console.log('[confirm] nameIsEmpty:', nameIsEmpty, 'newName:', newName);
-        if (nameIsEmpty && newName) {
-          const [updateResult]: any = await connection.execute(
-            'UPDATE customers SET name = ? WHERE id = ?',
-            [newName, customerId]
-          );
-          console.log('[confirm] Name update affectedRows:', updateResult.affectedRows);
+    if (customerId) {
+      if (orderInfo?.updateCustomerProfileAddress && pendingAddress) {
+        // User explicitly asked to update profile address
+        const cleanRecipientPhone = (pendingAddress.recipientPhone || '').replace(/-/g, '');
+        await connection.execute(
+          'UPDATE customers SET name = ?, mobile = ?, zip_code = ?, address = ?, detail_address = ?, updated_at = NOW() WHERE id = ?',
+          [
+            pendingAddress.recipientName || '',
+            cleanRecipientPhone,
+            pendingAddress.zipCode || '',
+            pendingAddress.address || '',
+            pendingAddress.detailAddress || '',
+            customerId
+          ]
+        );
+        console.log('[confirm] Explicitly updated customer profile from pendingAddress');
+      } else if (isOrderDefault) {
+        // Fallback name update for default address if name was empty
+        const [custRows] = await connection.execute<RowDataPacket[]>(
+          'SELECT id, name FROM customers WHERE id = ? LIMIT 1',
+          [customerId]
+        );
+        console.log('[confirm] Customer rows found:', custRows.length, 'current name:', custRows[0]?.name);
+        if (custRows.length > 0) {
+          const currentName = custRows[0].name;
+          const nameIsEmpty = currentName === null || currentName === undefined || String(currentName).trim() === '' || String(currentName).toLowerCase() === 'null';
+          const newName = (orderInfo?.receiverName || pendingAddress?.recipientName || '').trim();
+          console.log('[confirm] nameIsEmpty:', nameIsEmpty, 'newName:', newName);
+          if (nameIsEmpty && newName) {
+            const [updateResult]: any = await connection.execute(
+              'UPDATE customers SET name = ? WHERE id = ?',
+              [newName, customerId]
+            );
+            console.log('[confirm] Name update affectedRows:', updateResult.affectedRows);
+          }
         }
       }
     }
