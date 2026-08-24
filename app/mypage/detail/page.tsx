@@ -451,7 +451,7 @@ function OrderDetailContent() {
               {items.map((item, idx) => (
                 <div key={idx} className="flex gap-4 items-center bg-[#F9F9F9] p-4 rounded-lg border border-outline-variant/30">
                   <div className="w-20 h-20 bg-surface-container rounded-md overflow-hidden flex-shrink-0">
-                    <img src={item.product_image || ''} alt={item.product_name} className="w-full h-full object-cover" />
+                    <img src={(order?.order_name && order.order_name.includes('정기구독') && item.product_bill_image) ? item.product_bill_image : (item.product_image || '')} alt={item.product_name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
                     <p className="font-bold text-[15px] text-on-surface">{item.product_name}</p>

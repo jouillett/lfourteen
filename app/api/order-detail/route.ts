@@ -37,6 +37,7 @@ export async function GET(req: Request) {
           oi.quantity as order_quantity,
           p.name as product_name,
           p.image as product_image,
+          p.bill_image as product_bill_image,
           pr.quantity as option_quantity_val,
           pr.price as unit_price
         FROM order_items oi

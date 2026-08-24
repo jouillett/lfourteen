@@ -72,7 +72,7 @@ export async function GET(req: Request) {
           const firstItem = orderItems[0];
           
           const [products]: any = await connection.execute(
-            `SELECT image, name, description FROM products WHERE id = ?`,
+            `SELECT image, bill_image, name, description FROM products WHERE id = ?`,
             [firstItem.product_id]
           );
           
@@ -86,6 +86,7 @@ export async function GET(req: Request) {
             };
 
             order.image = parseBuffer(product.image);
+            order.bill_image = parseBuffer(product.bill_image);
             
             if (orderItems.length === 1) {
               let title = parseBuffer(product.description);
