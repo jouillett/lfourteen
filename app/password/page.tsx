@@ -66,6 +66,7 @@ export default function PasswordPage() {
         if (mode !== "reset") {
           // Log the user in automatically
           if (data.userId) {
+            document.cookie = "session_active=1; path=/";
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("customerId", data.userId);
             localStorage.setItem("lastActivity", Date.now().toString());

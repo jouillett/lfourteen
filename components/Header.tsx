@@ -12,7 +12,25 @@ export default function Header() {
     setMounted(true);
 
     const checkLoginStatus = () => {
-      const loggedInFlag = localStorage.getItem("isLoggedIn") === "true";
+      const hasSessionCookie = document.cookie.includes("session_active=1");
+      let loggedInFlag = localStorage.getItem("isLoggedIn") === "true";
+      
+      // If localStorage says we're logged in, but the session cookie is gone (browser was restarted)
+      if (loggedInFlag && !hasSessionCookie) {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("customerId");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("lastActivity");
+        localStorage.removeItem("authPhone");
+        sessionStorage.removeItem("confidentialAuth");
+        loggedInFlag = false;
+      }
+      
+      // Keep session cookie alive if somehow logged in
+      if (loggedInFlag && !hasSessionCookie) {
+         document.cookie = "session_active=1; path=/";
+      }
+
       const hasId = !!(localStorage.getItem("customerId") || localStorage.getItem("userId"));
       const trulyLoggedIn = loggedInFlag && hasId;
       
@@ -35,6 +53,7 @@ export default function Header() {
     };
 
     const handleLogoutTimeout = () => {
+      document.cookie = "session_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("customerId");
       localStorage.removeItem("userId");
@@ -97,6 +116,7 @@ export default function Header() {
   }, []);
 
   const handleLogoutClick = () => {
+    document.cookie = "session_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("customerId");
     localStorage.removeItem("userId");

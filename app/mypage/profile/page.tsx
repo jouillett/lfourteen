@@ -159,6 +159,7 @@ export default function ProfilePage() {
         const result = await res.json();
         if (result.success) {
           alert("회원탈퇴가 완료되었습니다.");
+          document.cookie = "session_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
           localStorage.removeItem("customerId");
           localStorage.removeItem("userId");
           localStorage.removeItem("isLoggedIn");
