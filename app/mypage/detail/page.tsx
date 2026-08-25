@@ -454,7 +454,9 @@ function OrderDetailContent() {
                     <img src={(order?.order_name && order.order_name.includes('정기구독') && item.product_bill_image) ? item.product_bill_image : (item.product_image || '')} alt={item.product_name} className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-[15px] text-on-surface">{item.product_name}</p>
+                    <p className="font-bold text-[15px] text-on-surface">
+                      {(order?.order_name && order.order_name.includes('정기구독')) ? order.order_name : item.product_name}
+                    </p>
                     <p className="text-sm text-on-surface-variant mt-1">옵션: {item.option_quantity_val}개입 | 수량: {item.order_quantity}개</p>
                   </div>
                   <div className="font-bold text-lg text-on-surface flex-shrink-0">
