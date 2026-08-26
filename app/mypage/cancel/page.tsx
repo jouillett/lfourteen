@@ -43,12 +43,12 @@ export default function OrderPage() {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (customerId) {
       setIsLoading(true);
-      fetch(`/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=3`)
+      fetch(`/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=10`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
             setOrders(data.data || []);
-            setTotalPages(Math.ceil((data.total || 0) / 3) || 1);
+            setTotalPages(Math.ceil((data.total || 0) / 10) || 1);
           }
         })
         .catch(console.error)

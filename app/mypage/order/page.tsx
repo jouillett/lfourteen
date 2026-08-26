@@ -74,14 +74,14 @@ export default function OrderPage() {
       setIsLoading(true);
       const searchParam = searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : '';
       const url = currentTab === 'cancel'
-        ? `/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=3${searchParam}`
-        : `/api/orders?customerId=${customerId}&page=${page}&limit=3${searchParam}`;
+        ? `/api/orders?customerId=${customerId}&statusGreaterThan=2&page=${page}&limit=10${searchParam}`
+        : `/api/orders?customerId=${customerId}&page=${page}&limit=10${searchParam}`;
       fetch(url)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
             setOrders(data.data || []);
-            setTotalPages(Math.ceil((data.total || 0) / 3) || 1);
+            setTotalPages(Math.ceil((data.total || 0) / 10) || 1);
           }
         })
         .catch(console.error)
