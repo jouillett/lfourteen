@@ -539,10 +539,10 @@ export default function OrderPage() {
             {/* Status Tabs */}
             <div className="flex space-x-6 text-[15px]">
               <button className="font-bold text-on-surface border-b-2 border-on-surface pb-1 px-1 transition-colors">
-                전체 {totalOrderCount !== null && totalOrderCount > 0 ? totalOrderCount : ''}
+                전체{totalOrderCount ? ` ${totalOrderCount}` : ''}
               </button>
               <Link href="/mypage/cancel" className="text-on-surface-variant hover:text-on-surface pb-1 px-1 transition-colors">
-                취소/교환/반품 {missingCount !== null && missingCount > 0 ? missingCount : ''}
+                취소/교환/반품{missingCount ? ` ${missingCount}` : ''}
               </Link>
             </div>
             {/* Search Input */}
