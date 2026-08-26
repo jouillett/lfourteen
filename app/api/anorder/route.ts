@@ -267,13 +267,18 @@ export async function GET(req: Request) {
             const orderInfo = rows[0];
             
             const [imageRows]: any = await connection.execute(
-              `SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1`,
+              `SELECT p.image, p.bill_image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1`,
               [id]
             );
             
             let productImage = '';
             if (imageRows.length > 0) {
-              productImage = Buffer.isBuffer(imageRows[0].image) ? imageRows[0].image.toString('utf8') : imageRows[0].image;
+              const isSubscription = orderInfo.order_name && orderInfo.order_name.includes('정기구독');
+              if (isSubscription && imageRows[0].bill_image) {
+                productImage = Buffer.isBuffer(imageRows[0].bill_image) ? imageRows[0].bill_image.toString('utf8') : imageRows[0].bill_image;
+              } else {
+                productImage = Buffer.isBuffer(imageRows[0].image) ? imageRows[0].image.toString('utf8') : imageRows[0].image;
+              }
             }
 
             const formatReceiverName = (name: string) => {
@@ -340,13 +345,18 @@ export async function GET(req: Request) {
             const orderInfo = rows[0];
 
             const [imageRows]: any = await connection.execute(
-              `SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1`,
+              `SELECT p.image, p.bill_image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1`,
               [id]
             );
 
             let productImage = '';
             if (imageRows.length > 0) {
-              productImage = Buffer.isBuffer(imageRows[0].image) ? imageRows[0].image.toString('utf8') : imageRows[0].image;
+              const isSubscription = orderInfo.order_name && orderInfo.order_name.includes('정기구독');
+              if (isSubscription && imageRows[0].bill_image) {
+                productImage = Buffer.isBuffer(imageRows[0].bill_image) ? imageRows[0].bill_image.toString('utf8') : imageRows[0].bill_image;
+              } else {
+                productImage = Buffer.isBuffer(imageRows[0].image) ? imageRows[0].image.toString('utf8') : imageRows[0].image;
+              }
             }
 
             const createdStr = new Date(orderInfo.created_at).toISOString().split('T')[0];
@@ -381,13 +391,18 @@ export async function GET(req: Request) {
             const orderInfo = rows[0];
 
             const [imageRows]: any = await connection.execute(
-              `SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1`,
+              `SELECT p.image, p.bill_image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1`,
               [id]
             );
 
             let productImage = '';
             if (imageRows.length > 0) {
-              productImage = Buffer.isBuffer(imageRows[0].image) ? imageRows[0].image.toString('utf8') : imageRows[0].image;
+              const isSubscription = orderInfo.order_name && orderInfo.order_name.includes('정기구독');
+              if (isSubscription && imageRows[0].bill_image) {
+                productImage = Buffer.isBuffer(imageRows[0].bill_image) ? imageRows[0].bill_image.toString('utf8') : imageRows[0].bill_image;
+              } else {
+                productImage = Buffer.isBuffer(imageRows[0].image) ? imageRows[0].image.toString('utf8') : imageRows[0].image;
+              }
             }
 
             const createdStr = new Date(orderInfo.created_at).toISOString().split('T')[0];

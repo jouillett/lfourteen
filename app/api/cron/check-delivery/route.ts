@@ -166,10 +166,16 @@ export async function GET(req: Request) {
 
               // Send mail4.html
               if (order.email) {
-                const [imgRows]: any = await connection.execute('SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
+                const [imgRows]: any = await connection.execute('SELECT p.image, p.bill_image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
                 let productImage = '';
                 if (imgRows.length > 0) {
-                  productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
+                  const orderName = parseBuffer(order.order_name);
+                  const isSubscription = orderName && orderName.includes('정기구독');
+                  if (isSubscription && imgRows[0].bill_image) {
+                    productImage = Buffer.isBuffer(imgRows[0].bill_image) ? imgRows[0].bill_image.toString('utf8') : imgRows[0].bill_image;
+                  } else {
+                    productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
+                  }
                 }
                 try {
                   await sendExchangeEmail(order.email, {
@@ -319,10 +325,16 @@ export async function GET(req: Request) {
 
               // Send mail3.html
               if (order.email) {
-                const [imgRows]: any = await connection.execute('SELECT p.image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
+                const [imgRows]: any = await connection.execute('SELECT p.image, p.bill_image FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE oi.order_id = ? LIMIT 1', [order.id]);
                 let productImage = '';
                 if (imgRows.length > 0) {
-                  productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
+                  const orderName = parseBuffer(order.order_name);
+                  const isSubscription = orderName && orderName.includes('정기구독');
+                  if (isSubscription && imgRows[0].bill_image) {
+                    productImage = Buffer.isBuffer(imgRows[0].bill_image) ? imgRows[0].bill_image.toString('utf8') : imgRows[0].bill_image;
+                  } else {
+                    productImage = Buffer.isBuffer(imgRows[0].image) ? imgRows[0].image.toString('utf8') : imgRows[0].image;
+                  }
                 }
                 try {
                   await sendReturnEmail(order.email, {

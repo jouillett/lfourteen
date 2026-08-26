@@ -53,7 +53,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
       <!-- Product Image -->
       <div style="margin-bottom:32px;text-align:center;">
         <a href="https://lfourteen.life/mypage/order" style="text-decoration:none;">
-          <img src="https://capofcom.cafe24.com/l14_coordy/images/l14cordy.jpg" alt="엘포틴 코디 제품" width="300" style="max-width:100%;height:auto;display:inline-block;border-radius:8px;" />
+          <img src="https://capofcom.cafe24.com/l14_coordy/images/l14bill.jpg" alt="엘포틴 코디 제품" width="300" style="max-width:100%;height:auto;display:inline-block;border-radius:8px;" />
         </a>
       </div>
 
