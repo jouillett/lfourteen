@@ -10,6 +10,7 @@ export default function PasswordPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validatePassword = (pwd: string) => {
     if (pwd.length < 8 || pwd.length > 16) return "비밀번호는 8자 이상 16자 이하이어야 합니다.";
@@ -24,15 +25,19 @@ export default function PasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     
     const validationError = validatePassword(newPassword);
     if (validationError) {
       setErrorMsg(validationError);
+      setIsSubmitting(false);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setErrorMsg("새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -44,6 +49,7 @@ export default function PasswordPage() {
 
     if (!phoneVal) {
       setErrorMsg("인증된 휴대폰 번호 정보가 없습니다. 다시 인증을 진행해 주세요.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -85,10 +91,12 @@ export default function PasswordPage() {
         }
       } else {
         setErrorMsg(data.message || "처리 중 오류가 발생했습니다.");
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Register error:", error);
       setErrorMsg("서버와 통신하는 중 오류가 발생했습니다.");
+      setIsSubmitting(false);
     }
   };
 
@@ -179,10 +187,11 @@ export default function PasswordPage() {
 
             {/* Submit Button */}
             <button
-              className="mt-sm w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded-lg hover:bg-[#e6dfcd] transition-all duration-200 active:scale-95 flex justify-center items-center shadow-sm"
+              className="mt-sm w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded-lg hover:bg-[#e6dfcd] transition-all duration-200 active:scale-95 flex justify-center items-center shadow-sm disabled:opacity-50"
               type="submit"
+              disabled={isSubmitting}
             >
-              확인
+              {isSubmitting ? "처리 중..." : "확인"}
             </button>
           </form>
         </div>
