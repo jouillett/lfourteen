@@ -276,7 +276,7 @@ function OrderDetailContent() {
       case 6: return "교환완료";
       case 7: return "반품진행";
       case 8: return "반품";
-      case 99: return "입금대기";
+      case 99: return "결제대기";
       default: return "";
     }
   };

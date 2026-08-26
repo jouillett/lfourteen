@@ -3,12 +3,16 @@
 import { useState, useEffect } from "react";
 
 const STATUS_MAP: Record<number, string> = {
+  99: "결제대기",
   0: "결제완료",
   1: "배송중",
   2: "배송완료",
   3: "취소",
-  4: "교환",
-  5: "반품",
+  4: "교환시작",
+  5: "교환진행",
+  6: "교환완료",
+  7: "반품진행",
+  8: "반품완료",
 };
 
 export default function SelectProductPage1() {

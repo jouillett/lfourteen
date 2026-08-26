@@ -39,6 +39,7 @@ function OrderDetails() {
 
   const getStatusText = (status: any) => {
     switch(Number(status)) {
+      case 99: return "결제대기";
       case 0: return "결제완료";
       case 1: return "배송중";
       case 2: return "배송완료";
@@ -116,6 +117,7 @@ function OrderDetails() {
               onChange={(e) => setStatus(Number(e.target.value))}
               className="w-full bg-surface-container-lowest border border-outline rounded-md px-4 py-2 text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all font-bold text-primary"
             >
+              <option value={99}>결제대기</option>
               <option value={0}>결제완료</option>
               <option value={1}>배송중</option>
               <option value={2}>배송완료</option>

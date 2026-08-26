@@ -592,7 +592,7 @@ export default function OrderPage() {
                           6: '교환완료',
                           7: '반품진행',
                           8: '반품완료',
-                          99: '입금대기'
+                          99: '결제대기'
                         }[order.status as number] || ''}
                       </span>
                     </div>
