@@ -10,6 +10,7 @@ import TrackingModal from "../../../components/TrackingModal";
 export default function OrderPage() {
   const [reviewCount, setReviewCount] = useState<number | null>(null);
   const [missingCount, setMissingCount] = useState<number | null>(null);
+  const [totalOrderCount, setTotalOrderCount] = useState<number | null>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [currentTab, setCurrentTab] = useState<'all' | 'cancel'>('all');
   const [selectedTrackingNumber, setSelectedTrackingNumber] = useState<string | null>(null);
@@ -57,6 +58,15 @@ export default function OrderPage() {
         .then(data => {
           if (data.success) {
             setMissingCount(data.count || 0);
+          }
+        })
+        .catch(console.error);
+
+      fetch(`/api/check-order?customerId=${customerId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setTotalOrderCount(data.count || 0);
           }
         })
         .catch(console.error);
@@ -529,7 +539,7 @@ export default function OrderPage() {
             {/* Status Tabs */}
             <div className="flex space-x-6 text-[15px]">
               <button className="font-bold text-on-surface border-b-2 border-on-surface pb-1 px-1 transition-colors">
-                전체
+                전체 {totalOrderCount !== null && totalOrderCount > 0 ? totalOrderCount : ''}
               </button>
               <Link href="/mypage/cancel" className="text-on-surface-variant hover:text-on-surface pb-1 px-1 transition-colors">
                 취소/교환/반품 {missingCount !== null && missingCount > 0 ? missingCount : ''}
