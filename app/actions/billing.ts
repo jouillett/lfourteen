@@ -99,11 +99,11 @@ export async function issueBillingKeyAndSave(
 
     const billingId = billingResult.insertId;
 
-    // product_id is assumed to be 1 for now, priced_id = option
+    const productIdForBilling = [5, 6, 7, 8].includes(option) ? 2 : 1;
     await pool.query(
       `INSERT INTO billing_item (billing_id, product_id, priced_id, quantity)
        VALUES (?, ?, ?, ?)`,
-      [billingId, 1, option, 1]
+      [billingId, productIdForBilling, option, 1]
     );
 
     return { success: true, billingKey, customerKey, customerId };
@@ -187,9 +187,10 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     const insertedOrderId = orderResult.insertId;
 
+    const productIdForOrder = [5, 6, 7, 8].includes(priceId) ? 2 : 1;
     await pool.query(
-      `INSERT INTO order_items (order_id, product_id, price_id, quantity) VALUES (?, 1, ?, 1)`,
-      [insertedOrderId, priceId]
+      `INSERT INTO order_items (order_id, product_id, price_id, quantity) VALUES (?, ?, ?, 1)`,
+      [insertedOrderId, productIdForOrder, priceId]
     );
 
     if (customer.email) {

@@ -37,12 +37,20 @@ export async function GET(req: Request) {
         [billing.id]
       );
 
-      // Get available subscription options (product_id = 1)
+      const [customerRows] = await connection.execute<RowDataPacket[]>(
+        "SELECT grade FROM customers WHERE id = ?",
+        [userId]
+      );
+      const customerGrade = customerRows.length > 0 ? String(customerRows[0].grade) : null;
+      const targetProductId = customerGrade === "8" ? 2 : 1;
+
+      // Get available subscription options
       const [availableOptionRows] = await connection.execute<RowDataPacket[]>(
         `SELECT pp.id as priced_id, p.name as product_name, pp.quantity as option_quantity_val, pp.price
          FROM prices pp
          JOIN products p ON pp.product_id = p.id
-         WHERE pp.product_id = 1`
+         WHERE pp.product_id = ?`,
+        [targetProductId]
       );
 
       return NextResponse.json({
@@ -101,9 +109,10 @@ export async function PUT(req: Request) {
               [item.item_id, billingId]
             );
           } else if (item.action === "add") {
+            const productIdForUpdate = [5, 6, 7, 8].includes(Number(item.priced_id)) ? 2 : 1;
             await connection.execute(
-              "INSERT INTO billing_item (billing_id, product_id, priced_id, quantity) VALUES (?, 1, ?, ?)",
-              [billingId, item.priced_id, item.quantity]
+              "INSERT INTO billing_item (billing_id, product_id, priced_id, quantity) VALUES (?, ?, ?, ?)",
+              [billingId, productIdForUpdate, item.priced_id, item.quantity]
             );
           }
         }

@@ -10,6 +10,7 @@ export default function BillingPage() {
   const [period, setPeriod] = useState<"weeks" | "months">("weeks");
   const [duration, setDuration] = useState<number | "">(4);
   const [payment, setPayment] = useState<any>(null);
+  const [grade, setGrade] = useState<string | null>(null);
 
   useEffect(() => {
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
@@ -18,6 +19,9 @@ export default function BillingPage() {
       window.location.href = "/login?redirect=/billing";
       return;
     }
+    
+    const customerGrade = localStorage.getItem("customerGrade");
+    setGrade(customerGrade);
 
     async function fetchPayment() {
       try {
@@ -45,17 +49,29 @@ export default function BillingPage() {
       if (!isNaN(numOpt)) {
         setOption(numOpt);
       }
+    } else {
+      const customerGrade = localStorage.getItem("customerGrade");
+      if (customerGrade === "8") {
+        setOption(8);
+      }
     }
   }, []);
 
-  const optionPrices: Record<number, number> = {
+  const isGrade8 = grade === "8";
+
+  const optionPrices: Record<number, number> = isGrade8 ? {
+    5: 40000,
+    6: 80000,
+    7: 240000,
+    8: 480000,
+  } : {
     1: 65000,
     2: 110000,
     3: 270000,
     4: 480000,
   };
 
-  const basePrice = optionPrices[option] || 65000;
+  const basePrice = optionPrices[option] || (isGrade8 ? 40000 : 65000);
   const totalPrice = basePrice;
   const formattedPrice = totalPrice.toLocaleString() + "원";
 
@@ -172,10 +188,21 @@ export default function BillingPage() {
                   value={option}
                   onChange={(e) => setOption(Number(e.target.value))}
                 >
-                  <option value="1">1개: 65,000원</option>
-                  <option value="2">2개: 110,000원</option>
-                  <option value="3">6개: 270,000원</option>
-                  <option value="4">12개: 480,000원</option>
+                  {isGrade8 ? (
+                    <>
+                      <option value="5">1개: 40,000원</option>
+                      <option value="6">2개: 80,000원</option>
+                      <option value="7">6개: 240,000원</option>
+                      <option value="8">12개: 480,000원</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="1">1개: 65,000원</option>
+                      <option value="2">2개: 110,000원</option>
+                      <option value="3">6개: 270,000원</option>
+                      <option value="4">12개: 480,000원</option>
+                    </>
+                  )}
                 </select>
                 <span className="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" style={{fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24"}}>arrow_drop_down</span>
               </div>
