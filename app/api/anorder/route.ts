@@ -306,8 +306,11 @@ export async function GET(req: Request) {
 
             const parts = shipment.split('|');
             const now = new Date();
-            const nowStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-            const createdStr = new Date(orderInfo.created_at).toISOString().split('T')[0];
+            const kstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+            const nowStr = `${kstNow.getUTCFullYear()}-${String(kstNow.getUTCMonth()+1).padStart(2,'0')}-${String(kstNow.getUTCDate()).padStart(2,'0')} ${String(kstNow.getUTCHours()).padStart(2,'0')}:${String(kstNow.getUTCMinutes()).padStart(2,'0')}`;
+            const orderDate = new Date(orderInfo.created_at);
+            const kstOrderDate = new Date(orderDate.getTime() + 9 * 60 * 60 * 1000);
+            const createdStr = `${kstOrderDate.getUTCFullYear()}-${String(kstOrderDate.getUTCMonth()+1).padStart(2,'0')}-${String(kstOrderDate.getUTCDate()).padStart(2,'0')}`;
 
             try {
               await sendShippingEmail(orderInfo.email, {
@@ -359,7 +362,9 @@ export async function GET(req: Request) {
               }
             }
 
-            const createdStr = new Date(orderInfo.created_at).toISOString().split('T')[0];
+            const orderDate = new Date(orderInfo.created_at);
+            const kstOrderDate = new Date(orderDate.getTime() + 9 * 60 * 60 * 1000);
+            const createdStr = `${kstOrderDate.getUTCFullYear()}-${String(kstOrderDate.getUTCMonth()+1).padStart(2,'0')}-${String(kstOrderDate.getUTCDate()).padStart(2,'0')}`;
 
             try {
               await sendReturnEmail(orderInfo.email, {
@@ -405,7 +410,9 @@ export async function GET(req: Request) {
               }
             }
 
-            const createdStr = new Date(orderInfo.created_at).toISOString().split('T')[0];
+            const orderDate = new Date(orderInfo.created_at);
+            const kstOrderDate = new Date(orderDate.getTime() + 9 * 60 * 60 * 1000);
+            const createdStr = `${kstOrderDate.getUTCFullYear()}-${String(kstOrderDate.getUTCMonth()+1).padStart(2,'0')}-${String(kstOrderDate.getUTCDate()).padStart(2,'0')}`;
 
             try {
               await sendExchangeEmail(orderInfo.email, {

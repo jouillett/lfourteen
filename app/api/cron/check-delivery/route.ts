@@ -178,10 +178,14 @@ export async function GET(req: Request) {
                   }
                 }
                 try {
+                  const orderDate = new Date(order.created_at);
+                  const kstOrderDate = new Date(orderDate.getTime() + 9 * 60 * 60 * 1000);
+                  const createdStr = `${kstOrderDate.getUTCFullYear()}-${String(kstOrderDate.getUTCMonth()+1).padStart(2,'0')}-${String(kstOrderDate.getUTCDate()).padStart(2,'0')}`;
+                  
                   await sendExchangeEmail(order.email, {
                     customerName: parseBuffer(order.customer_name),
                     orderNumber: parseBuffer(order.order_number),
-                    createdAt: new Date(order.created_at).toISOString().split('T')[0],
+                    createdAt: createdStr,
                     productImage,
                     productName: parseBuffer(order.order_name),
                     price: order.total_price ? Number(parseBuffer(order.total_price)).toLocaleString() : '0',
@@ -337,10 +341,14 @@ export async function GET(req: Request) {
                   }
                 }
                 try {
+                  const orderDate = new Date(order.created_at);
+                  const kstOrderDate = new Date(orderDate.getTime() + 9 * 60 * 60 * 1000);
+                  const createdStr = `${kstOrderDate.getUTCFullYear()}-${String(kstOrderDate.getUTCMonth()+1).padStart(2,'0')}-${String(kstOrderDate.getUTCDate()).padStart(2,'0')}`;
+                  
                   await sendReturnEmail(order.email, {
                     customerName: parseBuffer(order.customer_name),
                     orderNumber: parseBuffer(order.order_number),
-                    createdAt: new Date(order.created_at).toISOString().split('T')[0],
+                    createdAt: createdStr,
                     productImage,
                     productName: parseBuffer(order.order_name),
                     price: order.total_price ? Number(parseBuffer(order.total_price)).toLocaleString() : '0',
