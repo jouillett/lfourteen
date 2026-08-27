@@ -50,9 +50,16 @@ export default function LoginPage() {
         document.cookie = "session_active=1; path=/";
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("customerId", data.userId);
+        if (data.grade !== undefined && data.grade !== null) {
+          localStorage.setItem("customerGrade", String(data.grade));
+        }
         localStorage.setItem("lastActivity", Date.now().toString());
         const params = new URLSearchParams(window.location.search);
         let redirect = params.get("redirect") || "/";
+
+        if (String(data.grade) === "8" && redirect === "/") {
+          redirect = "/confidential";
+        }
 
         const pendingAction = sessionStorage.getItem("pendingAction");
         if (pendingAction === "writeReview") {
