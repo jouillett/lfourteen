@@ -7,6 +7,7 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [logoHref, setLogoHref] = useState("/");
 
   useEffect(() => {
     setMounted(true);
@@ -22,6 +23,7 @@ export default function Header() {
         localStorage.removeItem("userId");
         localStorage.removeItem("lastActivity");
         localStorage.removeItem("authPhone");
+        localStorage.removeItem("customerGrade");
         sessionStorage.removeItem("confidentialAuth");
         loggedInFlag = false;
       }
@@ -38,9 +40,18 @@ export default function Header() {
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("lastActivity");
         localStorage.removeItem("authPhone");
+        localStorage.removeItem("customerGrade");
       }
       
       setIsLoggedIn(trulyLoggedIn);
+      
+      const grade = localStorage.getItem("customerGrade");
+      if (trulyLoggedIn && grade === "8") {
+        setLogoHref("/confidential");
+      } else {
+        setLogoHref("/");
+      }
+      
       return trulyLoggedIn;
     };
 
@@ -129,7 +140,7 @@ export default function Header() {
   return (
     <header className="bg-surface shadow-sm sticky top-0 z-50">
       <div className="flex justify-between items-center w-[90%] mx-auto py-md h-20">
-        <Link href="/" className="flex items-center gap-md hover:opacity-90 transition-opacity">
+        <Link href={logoHref} className="flex items-center gap-md hover:opacity-90 transition-opacity">
           <img
             src="/images/logo.png"
             className="h-6 w-auto"

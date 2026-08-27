@@ -2,6 +2,7 @@ import DesktopHome from "../components/DesktopHome";
 import MobileHome from "../components/MobileHome";
 import pool from "../lib/db";
 import { RowDataPacket } from '@/lib/db';
+import HomeRedirect from "../components/HomeRedirect";
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +46,7 @@ export default async function Home() {
 
   return (
     <>
+      <HomeRedirect />
       <style>{`
         @media (min-width: 768px) {
           .desktop-only-view { display: block !important; }
