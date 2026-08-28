@@ -282,13 +282,7 @@ export default function MobileOrder() {
         addressDetail !== (originalProfileAddress.detail_address || "");
 
       if (isModified) {
-        const confirmUpdate = window.confirm("수정된 주소를 회원정보에 반영하시겠습니까?");
-        if (confirmUpdate) {
-          updateCustomerProfileAddress = true;
-          skipAddressInsert = true;
-        } else {
-          skipAddressInsert = false;
-        }
+        skipAddressInsert = false;
       }
     }
 
