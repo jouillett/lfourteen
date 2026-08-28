@@ -133,6 +133,7 @@ export default function Header() {
     localStorage.removeItem("userId");
     localStorage.removeItem("lastActivity");
     localStorage.removeItem("authPhone");
+    localStorage.removeItem("customerGrade");
     sessionStorage.removeItem("confidentialAuth");
     window.location.href = "/";
   };

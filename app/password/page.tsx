@@ -75,6 +75,7 @@ export default function PasswordPage() {
             document.cookie = "session_active=1; path=/";
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("customerId", data.userId);
+            localStorage.setItem("customerGrade", "9");
             localStorage.setItem("lastActivity", Date.now().toString());
           }
 
