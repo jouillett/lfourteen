@@ -84,21 +84,6 @@ export default function ManagePage() {
     return `${year}.${month}.${day}`;
   };
 
-  const [isCheckingDelivery, setIsCheckingDelivery] = useState(false);
-
-  const handleCheckDelivery = async () => {
-    setIsCheckingDelivery(true);
-    try {
-      const res = await fetch('/api/cron/check-delivery');
-      const data = await res.json();
-      alert('Check Delivery 실행 결과:\n' + JSON.stringify(data, null, 2));
-    } catch (e: any) {
-      alert('실행 실패: ' + e.message);
-    } finally {
-      setIsCheckingDelivery(false);
-    }
-  };
-
   return (
     <div className="bg-background text-on-background antialiased min-h-screen flex flex-col">
       <Header />
@@ -107,8 +92,15 @@ export default function ManagePage() {
           <h1 className="text-[28px] font-bold text-on-surface">관리자 페이지</h1>
           <div className="flex gap-2">
             <button
-              onClick={handleCheckDelivery}
-              disabled={isCheckingDelivery}
+              onClick={async () => {
+                try {
+                  const res = await fetch('/api/cron/check-delivery');
+                  const data = await res.json();
+                  alert('Check Delivery 실행 결과:\n' + JSON.stringify(data, null, 2));
+                } catch (e: any) {
+                  alert('실행 실패: ' + e.message);
+                }
+              }}
               className="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-bold shadow hover:bg-primary/90 transition-colors"
             >
               Run Check Delivery
@@ -295,12 +287,6 @@ export default function ManagePage() {
         )}
       </main>
       <Footer />
-      {isCheckingDelivery && (
-        <div className="fixed inset-0 z-[9999] bg-black/50 flex flex-col items-center justify-center">
-          <img src="/images/apple.gif" alt="Loading..." className="w-16 h-16" />
-          <p className="text-white mt-4 font-bold text-lg">Check Delivery 실행 중...</p>
-        </div>
-      )}
     </div>
   );
 }

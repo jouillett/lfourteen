@@ -249,11 +249,13 @@ export default function TrackingModal({ isOpen, onClose, shipmentString }: Track
         <div style={{ flex: 1, overflowY: "auto" }}>
           {loading ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 20px", gap: 14 }}>
-              <img 
-                src="/images/apple.gif" 
-                alt="Loading..." 
-                style={{ width: 50, height: 50 }} 
-              />
+              <div style={{
+                width: 36, height: 36, borderRadius: "50%",
+                border: "3px solid #e8e1dc", borderTop: "3px solid #695d46",
+                animation: "spin 0.8s linear infinite",
+              }} />
+              <p style={{ fontSize: 13, color: "#9e9e9e" }}>배송 정보를 조회하고 있습니다...</p>
+              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
           ) : error ? (
             <div style={{ padding: "48px 24px", textAlign: "center" }}>

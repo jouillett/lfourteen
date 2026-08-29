@@ -53,10 +53,7 @@ function OrderDetails() {
     }
   };
 
-  const [isSaving, setIsSaving] = useState(false);
-
   const handleSave = async () => {
-    setIsSaving(true);
     try {
       const res = await fetch('/api/anorder', {
         method: 'PATCH',
@@ -73,8 +70,6 @@ function OrderDetails() {
     } catch (e) {
       console.error(e);
       alert("오류가 발생했습니다.");
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -177,20 +172,14 @@ function OrderDetails() {
         </div>
 
         <div className="pt-4 flex justify-end gap-4">
-          <button onClick={() => window.history.back()} className="px-6 py-2 border border-outline text-on-surface font-bold rounded-md hover:bg-surface-container-low transition-colors" disabled={isSaving}>
+          <button onClick={() => window.history.back()} className="px-6 py-2 border border-outline text-on-surface font-bold rounded-md hover:bg-surface-container-low transition-colors">
             뒤로가기
           </button>
-          <button onClick={handleSave} className="px-6 py-2 bg-primary text-on-primary font-bold rounded-md hover:bg-primary-fixed-dim transition-colors shadow-sm" disabled={isSaving}>
+          <button onClick={handleSave} className="px-6 py-2 bg-primary text-on-primary font-bold rounded-md hover:bg-primary-fixed-dim transition-colors shadow-sm">
             저장
           </button>
         </div>
       </div>
-      {isSaving && (
-        <div className="fixed inset-0 z-[9999] bg-black/50 flex flex-col items-center justify-center">
-          <img src="/images/apple.gif" alt="Saving..." className="w-16 h-16" />
-          <p className="text-white mt-4 font-bold text-lg">저장 중입니다...</p>
-        </div>
-      )}
     </div>
   );
 }
