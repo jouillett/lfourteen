@@ -52,7 +52,7 @@ export async function GET(req: Request) {
          parseBuffer(row.order_id),
          parseBuffer(row.product_name),
          Number(row.total_qty) || 0,
-         Number(row.total_price) || 0,
+         (Number(row.total_qty) || 0) * 30000,
          dateStr,
          "", // 송장번호
          "", // 반품송장번호
