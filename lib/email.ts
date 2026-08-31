@@ -119,7 +119,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
     const info = await transporter.sendMail({
       from: fromEmail,
       to: toEmail,
-      subject: '[기쁜하루] 엘포틴 코디 정기구매가 정상적으로 완료되었습니다.',
+      subject: '[기쁜하루] 엘포틴 코디 정기결제가 신청되었습니다.',
       html: htmlContent,
     });
     console.log('Subscription success email sent:', info.messageId);
