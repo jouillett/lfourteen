@@ -163,7 +163,17 @@ export default function ManagePage() {
             </section>
 
             <section>
-              <h2 className="text-[22px] font-bold text-on-surface mb-6">결제대기, 결제완료, 교환/반품 진행중 (Orders: Status 99, 0, 4, 5, 7)</h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-[22px] font-bold text-on-surface">결제대기, 결제완료, 교환/반품 진행중 (Orders: Status 99, 0, 4, 5, 7)</h2>
+                <button
+                  onClick={() => {
+                    window.location.href = '/api/manage/export-orders';
+                  }}
+                  className="px-6 py-2 border-2 border-primary text-primary font-bold rounded-md hover:bg-surface-container-low transition-colors"
+                >
+                  주문 저장
+                </button>
+              </div>
               {orders.length === 0 ? (
                 <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-8 text-center text-on-surface-variant">
                   진행중인 교환/반품 건이 없습니다.
