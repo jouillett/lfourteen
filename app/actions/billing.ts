@@ -142,9 +142,12 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
     const detailPart = customer.detail_address ? ` ${customer.detail_address}` : '';
     const fullAddress = `${zipCodePart}${customer.address || ''}${detailPart}`.trim();
 
-    // Get Product Name
-    const [productRows]: any = await pool.query("SELECT name FROM products WHERE id = 1");
-    const productName = productRows && productRows.length > 0 ? productRows[0].name : "L.4teen Coordi";
+    // Get Product Description
+    const [productRows]: any = await pool.query("SELECT description FROM products WHERE id = 1");
+    let productName = "엘포틴 코디 15ml X 15포";
+    if (productRows && productRows.length > 0 && productRows[0].description) {
+      productName = Buffer.isBuffer(productRows[0].description) ? productRows[0].description.toString('utf8') : productRows[0].description;
+    }
     
     // Set Order Name based on whether it is the first payment or a recurring payment
     const suffix = isFirstPayment ? "(정기구독 첫 결제)" : "(정기구독 결제)";

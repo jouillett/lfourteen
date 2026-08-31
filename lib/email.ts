@@ -24,7 +24,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
   const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
   
   const formattedAmount = new Intl.NumberFormat('ko-KR').format(data.amount);
-  const productNameStr = data.quantity && data.quantity > 1 ? `${data.productName} X ${data.quantity}` : data.productName || '엘포틴 코디';
+  const productNameStr = data.quantity && data.quantity > 1 ? `${data.productName} X ${data.quantity}개` : data.productName || '엘포틴 코디 15ml X 15포';
 
   const htmlContent = `
 <!DOCTYPE html>
