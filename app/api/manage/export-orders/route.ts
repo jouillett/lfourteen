@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
-import * as xlsx from 'xlsx';
+import ExcelJS from 'exceljs';
 import path from 'path';
+import fs from 'fs';
 
 export async function GET(req: Request) {
   const connection = await pool.getConnection();
@@ -26,14 +27,13 @@ export async function GET(req: Request) {
       ORDER BY o.created_at DESC
     `);
     
-    const fs = require('fs');
     const designDir = path.join(process.cwd(), 'design');
     const templateFileName = fs.readdirSync(designDir).find((f: string) => f.includes('.xlsx'));
-    const templatePath = path.join(designDir, templateFileName);
-    const fileBuffer = fs.readFileSync(templatePath);
-    const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
+    const templatePath = path.join(designDir, templateFileName!);
+    
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(templatePath);
+    const worksheet = workbook.worksheets[0];
 
     const parseBuffer = (val: any) => {
       if (val === null || val === undefined) return '';
@@ -42,17 +42,26 @@ export async function GET(req: Request) {
       return String(val);
     };
 
-    const dataToAdd = rows.map((row: any) => {
+    // Template's 2nd row has the styles (colors, fonts, etc.)
+    const styleRow = worksheet.getRow(2);
+
+    rows.forEach((row: any, index: number) => {
        const dt = new Date(row.created_at);
-       const dateStr = dt.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+       const formatter = new Intl.DateTimeFormat('ko-KR', {
+         timeZone: 'Asia/Seoul', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
+       });
+       let dateStr = formatter.format(dt);
+       dateStr = dateStr.replace('AM', '오전').replace('PM', '오후');
        
        const fullAddress = parseBuffer(row.receiver_address);
+       const priceVal = (Number(row.total_qty) || 0) * 30000;
+       const priceStr = priceVal.toLocaleString() + '원';
 
-       return [
+       const rowData = [
          parseBuffer(row.order_id),
          parseBuffer(row.product_name),
          Number(row.total_qty) || 0,
-         (Number(row.total_qty) || 0) * 30000,
+         priceStr,
          dateStr,
          "", // 송장번호
          "", // 반품송장번호
@@ -63,11 +72,23 @@ export async function GET(req: Request) {
          parseBuffer(row.delivery_message),
          "" // 메모
        ];
+
+       const newRow = worksheet.insertRow(2 + index, rowData);
+       
+       // Apply style from the template's first data row
+       newRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+         const styleCell = styleRow.getCell(colNumber);
+         cell.style = styleCell.style;
+       });
+       newRow.commit();
     });
 
-    xlsx.utils.sheet_add_aoa(worksheet, dataToAdd, { origin: "A2" });
+    // Remove the original blank styled template row which was shifted down
+    if (rows.length > 0) {
+      worksheet.spliceRows(2 + rows.length, 1);
+    }
 
-    const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    const buffer = await workbook.xlsx.writeBuffer();
 
     return new NextResponse(buffer, {
       status: 200,
