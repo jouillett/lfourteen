@@ -116,7 +116,7 @@ export async function issueBillingKeyAndSave(
 export async function executeBillingPayment(customerId: number, billingKey: string, customerKey: string, priceId: number, isFirstPayment: boolean = false) {
   try {
     // 1. Get product price from DB
-    const [priceRows]: any = await pool.query("SELECT price FROM prices WHERE id = ?", [priceId]);
+    const [priceRows]: any = await pool.query("SELECT price, quantity FROM prices WHERE id = ?", [priceId]);
     if (!priceRows || priceRows.length === 0) throw new Error("Price not found");
     const amount = Number(priceRows[0].price);
 
@@ -207,10 +207,14 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
           nextPaymentDateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
         }
 
+        const itemQuantity = priceRows[0].quantity ? Number(priceRows[0].quantity) : 1;
+
         await sendSubscriptionSuccessEmail(customer.email, {
           paymentDate: paymentDateStr,
           amount: amount,
-          nextPaymentDate: nextPaymentDateStr
+          nextPaymentDate: nextPaymentDateStr,
+          productName: productName,
+          quantity: itemQuantity
         });
       } catch (emailErr) {
         console.error("Failed to send subscription success email:", emailErr);

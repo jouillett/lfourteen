@@ -16,12 +16,15 @@ export interface SubscriptionSuccessData {
   paymentDate: string;
   amount: number;
   nextPaymentDate: string;
+  productName?: string;
+  quantity?: number;
 }
 
 export async function sendSubscriptionSuccessEmail(toEmail: string, data: SubscriptionSuccessData) {
   const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
   
   const formattedAmount = new Intl.NumberFormat('ko-KR').format(data.amount);
+  const productNameStr = data.quantity && data.quantity > 1 ? `${data.productName} X ${data.quantity}` : data.productName || '엘포틴 코디';
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -46,7 +49,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 
       <!-- Header Text -->
       <div style="margin-bottom:32px;">
-        <h2 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#941F32;line-height:1.4;">기쁜하루 정기결제가<br/>완료되었습니다.</h2>
+        <h2 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#941F32;line-height:1.4;">엘포틴 코디 정기결제가 시작됩니다.</h2>
         <p style="margin:0;font-size:15px;color:#666666;">결제 정보를 확인해주세요.</p>
       </div>
 
@@ -62,6 +65,10 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
         <h3 style="margin:0 0 16px 0;font-size:15px;font-weight:700;color:#333333;">결제 정보</h3>
         <!-- Data Table -->
         <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-top:2px solid #333333;">
+          <tr>
+            <td width="34%" style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">결제상품</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${productNameStr}</td>
+          </tr>
           <tr>
             <td width="34%" style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">결제일</td>
             <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${data.paymentDate}</td>
