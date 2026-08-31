@@ -130,17 +130,25 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
       throw new Error("사용자 정보를 찾을 수 없습니다.");
     }
 
+    const parseBuffer = (val: any) => {
+      if (val === null || val === undefined) return '';
+      if (Buffer.isBuffer(val)) return val.toString('utf8');
+      if (val && val.type === 'Buffer') return Buffer.from(val.data).toString('utf8');
+      return String(val);
+    };
+
     const customer = customerRows[0];
     if (!customer.address) {
       return { success: false, requireAddress: true, message: "등록된 주소가 없어 진행할 수 없습니다." };
     }
 
-    const receiverName = customer.name || '';
-    const receiverMobile = customer.mobile || '';
-    const receiverPhone = customer.phone || '';
-    const zipCodePart = customer.zip_code ? `[${customer.zip_code}] ` : '';
-    const detailPart = customer.detail_address ? ` ${customer.detail_address}` : '';
-    const fullAddress = `${zipCodePart}${customer.address || ''}${detailPart}`.trim();
+    const receiverName = parseBuffer(customer.name);
+    const receiverMobile = parseBuffer(customer.mobile);
+    const receiverPhone = parseBuffer(customer.phone);
+    const zipCodePart = customer.zip_code ? `[${parseBuffer(customer.zip_code)}] ` : '';
+    const detailPart = customer.detail_address ? ` ${parseBuffer(customer.detail_address)}` : '';
+    const fullAddress = `${zipCodePart}${parseBuffer(customer.address)}${detailPart}`.trim();
+    customer.email = parseBuffer(customer.email);
 
     // Get Product Description
     const [productRows]: any = await pool.query("SELECT description FROM products WHERE id = 1");
@@ -198,7 +206,7 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     if (customer.email) {
       try {
-        const [billingRows]: any = await pool.query("SELECT next_billing_at FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
+        const [billingRows]: any = await pool.query("SELECT next_billing_at, `interval`, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
         const nextBillingAt = billingRows && billingRows.length > 0 ? billingRows[0].next_billing_at : null;
         
         const today = new Date();
@@ -207,7 +215,11 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
         let nextPaymentDateStr = '-';
         if (nextBillingAt) {
           const nextDate = new Date(nextBillingAt);
-          nextPaymentDateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+          const dateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+          const intervalVal = billingRows[0].interval;
+          const periodVal = billingRows[0].period;
+          const periodStr = periodVal === 0 ? '주' : '달';
+          nextPaymentDateStr = `${dateStr} (${intervalVal}${periodStr} 마다)`;
         }
 
         const itemQuantity = priceRows[0].quantity ? Number(priceRows[0].quantity) : 1;
