@@ -99,7 +99,7 @@ export async function issueBillingKeyAndSave(
 
     const billingId = billingResult.insertId;
 
-    const productIdForBilling = [5, 6, 7, 8].includes(option) ? 2 : 1;
+    const productIdForBilling = 1;
     await pool.query(
       `INSERT INTO billing_item (billing_id, product_id, priced_id, quantity)
        VALUES (?, ?, ?, ?)`,
@@ -187,7 +187,7 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     const insertedOrderId = orderResult.insertId;
 
-    const productIdForOrder = [5, 6, 7, 8].includes(priceId) ? 2 : 1;
+    const productIdForOrder = 1;
     await pool.query(
       `INSERT INTO order_items (order_id, product_id, price_id, quantity) VALUES (?, ?, ?, 1)`,
       [insertedOrderId, productIdForOrder, priceId]

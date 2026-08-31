@@ -109,7 +109,7 @@ export async function PUT(req: Request) {
               [item.item_id, billingId]
             );
           } else if (item.action === "add") {
-            const productIdForUpdate = [5, 6, 7, 8].includes(Number(item.priced_id)) ? 2 : 1;
+            const productIdForUpdate = 1;
             await connection.execute(
               "INSERT INTO billing_item (billing_id, product_id, priced_id, quantity) VALUES (?, ?, ?, ?)",
               [billingId, productIdForUpdate, item.priced_id, item.quantity]
