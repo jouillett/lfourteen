@@ -41,14 +41,13 @@ export async function sendShipmentAlimtalk(toPhone: string, data: { name: string
   // Parse phone number (e.g. remove hyphens)
   const phone = toPhone.replace(/[^0-9]/g, '');
 
-  const content = `${data.name} 고객님, 안녕하세요.
+  const content = `[기쁜하루 배송 시작]
+
+${data.name} 고객님, 안녕하세요.
 고객님께서 주문하신 상품을 택배사에 전달하기 위한 발송 준비가 완료되었습니다.
 
 택배사명 ${data.delivery}
 송장번호 ${data.invoice}`;
-
-  const shipmentString = `${data.delivery}|${data.invoice}`;
-  const trackingUrl = `https://lfourteen.life/tracking?shipment=${encodeURIComponent(shipmentString)}`;
 
   const body = {
     plusFriendId,
@@ -59,10 +58,8 @@ export async function sendShipmentAlimtalk(toPhone: string, data: { name: string
         content: content,
         buttons: [
           {
-            type: 'WL',
-            name: '배송조회',
-            linkMobile: trackingUrl,
-            linkPc: trackingUrl
+            type: 'DS',
+            name: '배송조회'
           }
         ]
       }

@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^5.4.0",
     "@tosspayments/tosspayments-sdk": "^2.7.1",
     "blowfish": "^1.0.1",
+    "crypto-js": "^4.2.0",
     "exceljs": "^4.4.0",
     "javascript-blowfish": "^1.0.4",
     "lucide-react": "^1.23.0",
