@@ -107,6 +107,73 @@ export async function issueBillingKeyAndSave(
       [billingId, productIdForBilling, option, 1]
     );
 
+    try {
+      const [priceRows]: any = await pool.query("SELECT price, quantity FROM prices WHERE id = ?", [option]);
+      const amount = priceRows && priceRows.length > 0 ? Number(priceRows[0].price) : 0;
+      const itemQuantity = priceRows && priceRows.length > 0 && priceRows[0].quantity ? Number(priceRows[0].quantity) : 1;
+
+      const [customerRows]: any = await pool.query("SELECT email, mobile FROM customers WHERE id = ?", [customerId]);
+      const customer = customerRows && customerRows.length > 0 ? customerRows[0] : null;
+
+      const parseBuffer = (val: any) => {
+        if (val === null || val === undefined) return '';
+        if (Buffer.isBuffer(val)) return val.toString('utf8');
+        if (val && val.type === 'Buffer') return Buffer.from(val.data).toString('utf8');
+        return String(val);
+      };
+
+      const [productRows]: any = await pool.query("SELECT description FROM products WHERE id = 1");
+      let productName = "엘포틴 코디 15ml X 15포";
+      if (productRows && productRows.length > 0 && productRows[0].description) {
+        productName = Buffer.isBuffer(productRows[0].description) ? productRows[0].description.toString('utf8') : productRows[0].description;
+      }
+
+      if (customer) {
+        const emailStr = parseBuffer(customer.email);
+        const mobileStr = parseBuffer(customer.mobile);
+
+        const today = new Date();
+        const paymentDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        
+        let nextPaymentDateStr = '-';
+        const [billingRows]: any = await pool.query("SELECT next_billing_at, billing.interval, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
+        if (billingRows && billingRows.length > 0 && billingRows[0].next_billing_at) {
+          const nextDate = new Date(billingRows[0].next_billing_at);
+          const dateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+          const intervalVal = billingRows[0].interval;
+          const periodVal = billingRows[0].period;
+          const periodStr = periodVal === 0 ? '주' : '달';
+          nextPaymentDateStr = `${dateStr} (${intervalVal}${periodStr} 마다)`;
+        }
+
+        if (emailStr) {
+          try {
+            await sendSubscriptionSuccessEmail(emailStr, {
+              paymentDate: paymentDateStr,
+              amount: amount,
+              nextPaymentDate: nextPaymentDateStr,
+              productName: productName,
+              quantity: itemQuantity
+            });
+          } catch (e) { console.error("Email send failed in issueBillingKeyAndSave:", e); }
+        }
+
+        if (mobileStr) {
+          try {
+            const productStr = `${productName}  ${itemQuantity}개`;
+            await sendSubscriptionAlimtalk(mobileStr, {
+              product: productStr,
+              date: paymentDateStr,
+              amount: amount.toLocaleString() + '원',
+              next: nextPaymentDateStr
+            });
+          } catch (e) { console.error("Alimtalk send failed in issueBillingKeyAndSave:", e); }
+        }
+      }
+    } catch (notifyErr) {
+      console.error("Failed to send notification on billing issue:", notifyErr);
+    }
+
     return { success: true, billingKey, customerKey, customerId };
   } catch (dbError: any) {
     console.error("DB Error:", dbError?.message || dbError);
@@ -204,73 +271,6 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
       `INSERT INTO order_items (order_id, product_id, price_id, quantity) VALUES (?, ?, ?, 1)`,
       [insertedOrderId, productIdForOrder, priceId]
     );
-
-    if (customer.email) {
-      try {
-        const [billingRows]: any = await pool.query("SELECT next_billing_at, billing.interval, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
-        const nextBillingAt = billingRows && billingRows.length > 0 ? billingRows[0].next_billing_at : null;
-        
-        const today = new Date();
-        const paymentDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        
-        let nextPaymentDateStr = '-';
-        if (nextBillingAt) {
-          const nextDate = new Date(nextBillingAt);
-          const dateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
-          const intervalVal = billingRows[0].interval;
-          const periodVal = billingRows[0].period;
-          const periodStr = periodVal === 0 ? '주' : '달';
-          nextPaymentDateStr = `${dateStr} (${intervalVal}${periodStr} 마다)`;
-        }
-
-        const itemQuantity = priceRows[0].quantity ? Number(priceRows[0].quantity) : 1;
-
-        await sendSubscriptionSuccessEmail(customer.email, {
-          paymentDate: paymentDateStr,
-          amount: amount,
-          nextPaymentDate: nextPaymentDateStr,
-          productName: productName,
-          quantity: itemQuantity
-        });
-      } catch (emailErr) {
-        console.error("Failed to send subscription success email:", emailErr);
-      }
-    }
-
-    if (customer.mobile) {
-      try {
-        const [billingRows]: any = await pool.query("SELECT next_billing_at, billing.interval, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
-        const nextBillingAt = billingRows && billingRows.length > 0 ? billingRows[0].next_billing_at : null;
-        
-        const today = new Date();
-        const paymentDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        
-        let nextPaymentDateStr = '-';
-        if (nextBillingAt) {
-          const nextDate = new Date(nextBillingAt);
-          const dateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
-          const intervalVal = billingRows[0].interval;
-          const periodVal = billingRows[0].period;
-          const periodStr = periodVal === 0 ? '주' : '달';
-          nextPaymentDateStr = `${dateStr} (${intervalVal}${periodStr} 마다)`;
-        }
-
-        const itemQuantity = priceRows[0].quantity ? Number(priceRows[0].quantity) : 1;
-        // 엘포틴 코디 15ml X 15포  6개
-        const productStr = `${productName}  ${itemQuantity}개`;
-        
-        const mobileStr = Buffer.isBuffer(customer.mobile) ? customer.mobile.toString('utf8') : String(customer.mobile);
-
-        await sendSubscriptionAlimtalk(mobileStr, {
-          product: productStr,
-          date: paymentDateStr,
-          amount: Number(amount).toLocaleString() + '원',
-          next: nextPaymentDateStr
-        });
-      } catch (alimErr) {
-        console.error("Failed to send subscription alimtalk:", alimErr);
-      }
-    }
 
     return { success: true, orderId: insertedOrderId };
   } catch (error: any) {
