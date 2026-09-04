@@ -2,6 +2,7 @@
 
 import pool from "@/lib/db";
 import { sendSubscriptionSuccessEmail } from "@/lib/email";
+import { sendSubscriptionAlimtalk } from "@/lib/alimtalk";
 
 export async function issueBillingKeyAndSave(
   customerKey: string,
@@ -233,6 +234,41 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
         });
       } catch (emailErr) {
         console.error("Failed to send subscription success email:", emailErr);
+      }
+    }
+
+    if (customer.mobile) {
+      try {
+        const [billingRows]: any = await pool.query("SELECT next_billing_at, `interval`, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
+        const nextBillingAt = billingRows && billingRows.length > 0 ? billingRows[0].next_billing_at : null;
+        
+        const today = new Date();
+        const paymentDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        
+        let nextPaymentDateStr = '-';
+        if (nextBillingAt) {
+          const nextDate = new Date(nextBillingAt);
+          const dateStr = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`;
+          const intervalVal = billingRows[0].interval;
+          const periodVal = billingRows[0].period;
+          const periodStr = periodVal === 0 ? '주' : '달';
+          nextPaymentDateStr = `${dateStr} (${intervalVal}${periodStr} 마다)`;
+        }
+
+        const itemQuantity = priceRows[0].quantity ? Number(priceRows[0].quantity) : 1;
+        // 엘포틴 코디 15ml X 15포  6개
+        const productStr = `${productName}  ${itemQuantity}개`;
+        
+        const mobileStr = Buffer.isBuffer(customer.mobile) ? customer.mobile.toString('utf8') : String(customer.mobile);
+
+        await sendSubscriptionAlimtalk(mobileStr, {
+          product: productStr,
+          date: paymentDateStr,
+          amount: Number(amount).toLocaleString() + '원',
+          next: nextPaymentDateStr
+        });
+      } catch (alimErr) {
+        console.error("Failed to send subscription alimtalk:", alimErr);
       }
     }
 
