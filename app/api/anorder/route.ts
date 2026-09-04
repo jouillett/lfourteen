@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 import { sendShippingEmail, sendReturnEmail, sendExchangeEmail } from '../../../lib/email';
-import { sendShipmentAlimtalk } from '../../../lib/alimtalk';
+import { sendShipmentAlimtalk, sendReturnAlimtalk } from '../../../lib/alimtalk';
 
 export async function GET(req: Request) {
   try {
@@ -351,7 +351,7 @@ export async function GET(req: Request) {
         // Return completion email: status 8 (반품완료)
         if (finalStatus === 8) {
           const query = `
-            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at,
+            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at, o.mobile,
                    c.name as customer_name, c.email
             FROM orders o
             LEFT JOIN customers c ON o.customer_id = c.id
@@ -392,6 +392,34 @@ export async function GET(req: Request) {
               console.log(`Return email sent to: ${orderInfo.email}`);
             } catch (emailErr) {
               console.error('Failed to send return email:', emailErr);
+            }
+
+            try {
+              if (orderInfo.mobile) {
+                const formatMobile = (m: any) => {
+                  if (!m) return '';
+                  let str = Buffer.isBuffer(m) ? m.toString('utf8') : String(m);
+                  return str.replace(/[^0-9]/g, '');
+                };
+                const formatReceiverName = (n: any) => {
+                  if (!n) return '';
+                  return Buffer.isBuffer(n) ? n.toString('utf8') : String(n);
+                };
+                
+                const rawPrice = orderInfo.total_price ? Number(orderInfo.total_price) : 0;
+                const chargeAmt = 3300;
+                const refundAmt = Math.max(0, rawPrice - chargeAmt);
+
+                await sendReturnAlimtalk(formatMobile(orderInfo.mobile), {
+                  name: formatReceiverName(orderInfo.customer_name),
+                  amount: rawPrice.toLocaleString(),
+                  charge: chargeAmt.toLocaleString(),
+                  refund: refundAmt.toLocaleString()
+                }, 'cancel'); // using 'cancel' as default templateCode, user must match it
+                console.log(`Return alimtalk sent to: ${orderInfo.mobile}`);
+              }
+            } catch (alimErr) {
+              console.error('Failed to send return alimtalk:', alimErr);
             }
           }
         }

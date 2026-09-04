@@ -85,3 +85,70 @@ ${data.name} 고객님, 안녕하세요.
     console.error('Error sending alimtalk:', error);
   }
 }
+
+export async function sendReturnAlimtalk(toPhone: string, data: { name: string, amount: string, charge: string, refund: string }, customTemplateCode: string = 'return') {
+  const serviceId = 'ncp:kkobizmsg:kr:375127873584:lfourteen';
+  const plusFriendId = '@엘포틴코디';
+  const templateCode = customTemplateCode;
+
+  const accessKey = process.env.SMS_ACCESS_KEY || '';
+  const secretKey = process.env.SMS_SECRET_KEY || '';
+
+  if (!accessKey || !secretKey) {
+    console.error('Missing SMS_ACCESS_KEY or SMS_SECRET_KEY');
+    return;
+  }
+
+  const method = 'POST';
+  const uri = `/alimtalk/v2/services/${encodeURIComponent(serviceId)}/messages`;
+  const url = `https://sens.apigw.ntruss.com${uri}`;
+  const timestamp = Date.now().toString();
+
+  const signature = makeSignature(method, uri, timestamp, accessKey, secretKey);
+  const phone = toPhone.replace(/[^0-9]/g, '');
+
+  const content = `[기쁜하루 배송 시작]
+
+${data.name} 고객님, 안녕하세요.
+고객님께서 주문하신 상품의 반품이 완료되었습니다.
+
+환불 금액 ${data.amount}원에서 반품 금액 ${data.charge}원을 차감한 ${data.refund}원이 결제 수단에 따라 영업일 기준 3~5일 내 처리될 예정입니다.`;
+
+  const body = {
+    plusFriendId,
+    templateCode,
+    messages: [
+      {
+        to: phone,
+        content: content,
+        buttons: [
+          {
+            type: 'WL',
+            name: '반품확인',
+            linkMobile: 'https://lfourteen.life/mypage/cancel',
+            linkPc: 'https://lfourteen.life/mypage/cancel'
+          }
+        ]
+      }
+    ]
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-ncp-apigw-timestamp': timestamp,
+        'x-ncp-iam-access-key': accessKey,
+        'x-ncp-apigw-signature-v2': signature,
+      },
+      body: JSON.stringify(body)
+    });
+
+    const result = await response.json();
+    console.log('Return Alimtalk send result:', result);
+    return result;
+  } catch (error) {
+    console.error('Error sending return alimtalk:', error);
+  }
+}

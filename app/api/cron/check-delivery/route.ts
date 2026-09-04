@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
 import { sendShippingEmail, sendReturnEmail, sendExchangeEmail } from '../../../../lib/email';
+import { sendReturnAlimtalk } from '../../../../lib/alimtalk';
 
 export const dynamic = 'force-dynamic';
 
@@ -354,6 +355,32 @@ export async function GET(req: Request) {
                     price: order.total_price ? Number(parseBuffer(order.total_price)).toLocaleString() : '0',
                   });
                 } catch (e) { console.error('Failed to send return email in cron:', e); }
+              }
+              
+              if (order.mobile) {
+                try {
+                  const formatMobile = (m: any) => {
+                    if (!m) return '';
+                    let str = Buffer.isBuffer(m) ? m.toString('utf8') : String(m);
+                    return str.replace(/[^0-9]/g, '');
+                  };
+                  const formatReceiverName = (n: any) => {
+                    if (!n) return '';
+                    return Buffer.isBuffer(n) ? n.toString('utf8') : String(n);
+                  };
+                  
+                  const rawPrice = order.total_price ? Number(parseBuffer(order.total_price)) : 0;
+                  const chargeAmt = 3300;
+                  const refundAmt = Math.max(0, rawPrice - chargeAmt);
+
+                  await sendReturnAlimtalk(formatMobile(order.mobile), {
+                    name: formatReceiverName(order.customer_name),
+                    amount: rawPrice.toLocaleString(),
+                    charge: chargeAmt.toLocaleString(),
+                    refund: refundAmt.toLocaleString()
+                  }, 'cancel'); // user needs to match this template code
+                  console.log(`Return alimtalk sent to: ${order.mobile}`);
+                } catch (alimErr) { console.error('Failed to send return alimtalk in cron:', alimErr); }
               }
 
             } catch (dbErr) {
