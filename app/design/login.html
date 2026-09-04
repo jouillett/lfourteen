@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>로그인 - 기쁜하루</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#5d5f4c",
+                        "on-primary-fixed-variant": "#504530",
+                        "primary-fixed": "#f2e0c3",
+                        "on-secondary-fixed-variant": "#4a4739",
+                        "surface-bright": "#fff8f3",
+                        "tertiary-fixed": "#e4e4cc",
+                        "on-secondary-container": "#676354",
+                        "secondary-container": "#e6dfcd",
+                        "error-container": "#ffdad6",
+                        "background": "#fff8f3",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#fbf2e8",
+                        "primary": "#695d46",
+                        "secondary-fixed-dim": "#ccc6b4",
+                        "surface-container": "#f6ece3",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#c8c8b0",
+                        "surface-variant": "#eae1d7",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-surface": "#1f1b15",
+                        "inverse-on-surface": "#f8efe5",
+                        "tertiary": "#5e604d",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#eae1d7",
+                        "on-surface-variant": "#4c463d",
+                        "outline-variant": "#cec5b9",
+                        "tertiary-container": "#d8d9c1",
+                        "on-tertiary-fixed-variant": "#474836",
+                        "secondary-fixed": "#e9e2d0",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#d5c5a8",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "on-secondary-fixed": "#1e1c10",
+                        "on-background": "#1f1b15",
+                        "inverse-surface": "#343029",
+                        "secondary": "#625e50",
+                        "surface-dim": "#e1d9cf",
+                        "on-primary-fixed": "#231a08",
+                        "surface-container-high": "#f0e7dd",
+                        "primary-container": "#e6d5b8",
+                        "surface": "#fff8f3",
+                        "surface-tint": "#695d46",
+                        "outline": "#7d766c",
+                        "on-primary-container": "#685c45"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "lg": "40px",
+                        "base": "8px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "xl": "64px",
+                        "container-max": "440px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col items-center justify-center p-lg">
+<!-- Top Section -->
+<header class="w-full max-w-[440px] flex items-center gap-sm mb-lg">
+<img src="https://capofcom.cafe24.com/l14_coordy/images/l14.jpeg" style="width: 24px; height: 24px; border-radius: 50%;margin-right: -5px; vertical-align: middle;">
+<a class="text-headline-md font-headline-md font-bold text-primary" href="#">L14 Cordy</a>
+</header>
+<!-- Main Section (Login Card) -->
+<main class="w-full max-w-[440px] bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-surface-variant flex flex-col gap-md">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-sm">로그인</h2>
+<form class="flex flex-col gap-md">
+<!-- Email Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="phone">휴대폰 번호</label>
+<input class="w-full px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50" id="phone" placeholder="휴대폰 번호를 입력해주세요." type="tel"/>
+<div id="phone-error" class="text-error font-caption text-caption mt-xs hidden"></div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface" for="password">비밀번호</label>
+<input class="w-full px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50" id="password" placeholder="비밀번호를 입력해주세요." type="password"/>
+<div id="password-error" class="text-error font-caption text-caption mt-xs hidden"></div>
+</div>
+<!-- Action Area -->
+<div class="flex items-center justify-between mt-sm">
+<div class="flex items-center gap-xs font-label-md text-label-md text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">회원가입</a>
+<span>|</span>
+<a class="hover:text-primary transition-colors" href="#">비밀번호 찾기</a>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-lg py-sm rounded-lg hover:bg-primary/90 transition-colors shadow-sm active:scale-95" type="submit">로그인</button>
+</div>
+</form>
+</main><footer class="w-full max-w-[440px] mt-lg text-center font-caption text-caption text-on-surface-variant">
+<p>© 2026 L14 Cordy. All rights reserved.</p>
+</footer>
+<!-- Footer -->
+<script type="module">
+    import { FormApi, FieldApi } from 'https://cdn.jsdelivr.net/npm/@tanstack/form-core@1.31.0/+esm';
+    import { z } from 'https://esm.sh/zod@3.23.8';
+
+    const formEl = document.querySelector('form');
+    const phoneInput = document.getElementById('phone');
+    const passwordInput = document.getElementById('password');
+
+    if (formEl && phoneInput && passwordInput) {
+        // Custom formatting helper
+        function formatPhoneNumber(value) {
+            let digits = value.replace(/\D/g, '');
+            if (digits.startsWith('010010')) {
+                digits = '010' + digits.substring(6);
+            } else if (digits.length > 3 && !digits.startsWith('010')) {
+                digits = '010' + digits;
+            }
+            const truncated = digits.substring(0, 11);
+            if (truncated.length <= 3) {
+                return truncated;
+            } else if (truncated.length <= 7) {
+                return `${truncated.substring(0, 3)}-${truncated.substring(3)}`;
+            } else {
+                return `${truncated.substring(0, 3)}-${truncated.substring(3, 7)}-${truncated.substring(7)}`;
+            }
+        }
+
+        // Initialize TanStack Form
+        const form = new FormApi({
+            defaultValues: {
+                phone: '',
+                password: ''
+            },
+            onSubmit: async ({ value }) => {
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            mobile: value.phone,
+                            password: value.password,
+                        }),
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('userId', result.userId);
+                        const loginRedirect = localStorage.getItem('loginRedirect');
+                        if (loginRedirect) {
+                            localStorage.removeItem('loginRedirect');
+                            window.location.href = loginRedirect;
+                        } else {
+                            const pendingAction = localStorage.getItem('pendingCartAction');
+                            if (pendingAction) {
+                                window.location.href = 'mall.html';
+                            } else {
+                                window.location.href = 'cart.html';
+                            }
+                        }
+                    } else {
+                        if (result.code === 'INCORRECT_PASSWORD') {
+                            if (confirm("잘못된 비밀번호입니다. 새비밀번호 설정을 할까요?")) {
+                                window.location.href = 'password_auth.html';
+                            }
+                        } else {
+                            if (confirm("아직 등록되지 않은 회원입니다.\n가입하시겠습니까?")) {
+                                window.location.href = 'join_auth.html?phone=' + encodeURIComponent(value.phone);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Backend not reachable. Mocking login for static HTML.', error);
+                    let mockUserId = 1;
+                    if (value.phone.includes('7337')) mockUserId = 2;
+                    else if (value.phone.includes('1111')) mockUserId = 3;
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userId', mockUserId.toString());
+                    const loginRedirect = localStorage.getItem('loginRedirect');
+                    if (loginRedirect) {
+                        localStorage.removeItem('loginRedirect');
+                        window.location.href = loginRedirect;
+                    } else {
+                        const pendingAction = localStorage.getItem('pendingCartAction');
+                        if (pendingAction) {
+                            window.location.href = 'mall.html';
+                        } else {
+                            window.location.href = 'cart.html';
+                        }
+                    }
+                    return;
+                    console.error('Error during login:', error);
+                    alert('로그인 처리 중 오류가 발생했습니다.');
+                }
+            }
+        });
+
+        // Initialize TanStack Form Fields
+        const phoneField = new FieldApi({
+            form,
+            name: 'phone',
+            validators: {
+                onChange: ({ value }) => {
+                    const result = z.string()
+                        .min(1, "휴대폰 번호를 입력해주세요.")
+                        .regex(/^010-\d{4}-\d{4}$/, "휴대폰 번호는 010-****-**** 형식이어야 합니다.")
+                        .safeParse(value);
+                    return result.success ? undefined : result.error.errors[0].message;
+                },
+                onBlur: ({ value }) => {
+                    const result = z.string()
+                        .min(1, "휴대폰 번호를 입력해주세요.")
+                        .regex(/^010-\d{4}-\d{4}$/, "휴대폰 번호는 010-****-**** 형식이어야 합니다.")
+                        .safeParse(value);
+                    return result.success ? undefined : result.error.errors[0].message;
+                }
+            }
+        });
+
+        const passwordField = new FieldApi({
+            form,
+            name: 'password',
+            validators: {
+                onChange: ({ value }) => {
+                    const result = z.string()
+                        .min(1, "비밀번호를 입력해주세요.")
+                        .regex(/^[\x21-\x7E]+$/, "비밀번호는 영문, 숫자, 특수문자만 입력 가능합니다.")
+                        .safeParse(value);
+                    return result.success ? undefined : result.error.errors[0].message;
+                },
+                onBlur: ({ value }) => {
+                    const result = z.string()
+                        .min(1, "비밀번호를 입력해주세요.")
+                        .regex(/^[\x21-\x7E]+$/, "비밀번호는 영문, 숫자, 특수문자만 입력 가능합니다.")
+                        .safeParse(value);
+                    return result.success ? undefined : result.error.errors[0].message;
+                }
+            }
+        });
+
+        // Mount the fields to the FormApi instance
+        phoneField.mount();
+        passwordField.mount();
+
+        // Subscribe to form state to dynamically update UI errors
+        form.store.subscribe(() => {
+            const phoneMeta = form.getFieldMeta('phone');
+            const phoneErrorEl = document.getElementById('phone-error');
+            if (phoneMeta && phoneMeta.isTouched && phoneMeta.errors && phoneMeta.errors.length > 0) {
+                phoneErrorEl.textContent = phoneMeta.errors[0];
+                phoneErrorEl.classList.remove('hidden');
+            } else {
+                phoneErrorEl.textContent = '';
+                phoneErrorEl.classList.add('hidden');
+            }
+
+            const passwordMeta = form.getFieldMeta('password');
+            const passwordErrorEl = document.getElementById('password-error');
+            if (passwordMeta && passwordMeta.isTouched && passwordMeta.errors && passwordMeta.errors.length > 0) {
+                passwordErrorEl.textContent = passwordMeta.errors[0];
+                passwordErrorEl.classList.remove('hidden');
+            } else {
+                passwordErrorEl.textContent = '';
+                passwordErrorEl.classList.add('hidden');
+            }
+        });
+
+        // Event Listeners for Phone Input UI
+        phoneInput.addEventListener('focus', () => {
+            let val = phoneInput.value;
+            if (!val.startsWith('010-')) {
+                const digits = val.replace(/\D/g, '');
+                const suffix = digits.startsWith('010') ? digits.substring(3) : digits;
+                phoneInput.value = '010-' + suffix;
+                phoneInput.value = formatPhoneNumber(phoneInput.value);
+            }
+            phoneField.handleChange(phoneInput.value);
+
+            setTimeout(() => {
+                const len = phoneInput.value.length;
+                phoneInput.setSelectionRange(len, len);
+            }, 0);
+        });
+
+        phoneInput.addEventListener('input', (e) => {
+            let val = phoneInput.value;
+            if (val === '') {
+                phoneField.handleChange('');
+                return;
+            }
+            if (!val.startsWith('010-')) {
+                const digits = val.replace(/\D/g, '');
+                const suffix = digits.startsWith('010') ? digits.substring(3) : digits;
+                val = '010-' + suffix;
+            }
+            const prefix = '010-';
+            const suffix = val.substring(4).replace(/\D/g, '');
+            const formatted = formatPhoneNumber(prefix + suffix);
+            phoneInput.value = formatted;
+
+            phoneField.handleChange(formatted);
+        });
+
+        phoneInput.addEventListener('blur', () => {
+            phoneField.handleBlur();
+        });
+
+        phoneInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                if (phoneInput.selectionStart === 0 && phoneInput.selectionEnd === phoneInput.value.length) {
+                    return;
+                }
+                if (phoneInput.selectionStart <= 4) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        const enforceCursor = () => {
+            if (phoneInput.value.length >= 4 && phoneInput.selectionStart < 4) {
+                if (phoneInput.selectionStart === 0 && phoneInput.selectionEnd === phoneInput.value.length) {
+                    return;
+                }
+                phoneInput.setSelectionRange(4, 4);
+            }
+        };
+
+        phoneInput.addEventListener('click', enforceCursor);
+        phoneInput.addEventListener('keyup', enforceCursor);
+        phoneInput.addEventListener('select', enforceCursor);
+
+        // Event Listeners for Password Input UI
+        passwordInput.addEventListener('input', () => {
+            const sanitized = passwordInput.value.replace(/[^\x21-\x7E]/g, '');
+            passwordInput.value = sanitized;
+            passwordField.handleChange(sanitized);
+        });
+
+        passwordInput.addEventListener('blur', () => {
+            passwordField.handleBlur();
+        });
+
+        // Form Submit
+        formEl.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+        });
+    }
+</script>
+</body></html>

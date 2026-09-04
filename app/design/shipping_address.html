@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="light" lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>배송지 목록 - 기쁜하루</title>
+    <link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#e8e1dc",
+                        "surface": "#FFF8F3",
+                        "on-secondary-fixed-variant": "#4a473a",
+                        "on-primary-fixed-variant": "#504530",
+                        "tertiary-container": "#5e604d",
+                        "surface-container-low": "#f9f2ed",
+                        "inverse-primary": "#d5c5a8",
+                        "tertiary": "#464837",
+                        "primary": "#504530",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#E1D9CF",
+                        "surface-container-highest": "#e8e1dc",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "error": "#BA1A1A",
+                        "background": "#fff8f3",
+                        "tertiary-fixed": "#e3e4cc",
+                        "secondary-fixed": "#e9e2d0",
+                        "on-secondary-container": "#686456",
+                        "surface-bright": "#fff8f3",
+                        "outline-variant": "#cec5b9",
+                        "surface-tint": "#695d46",
+                        "primary-fixed": "#f2e0c3",
+                        "outline": "#7D766C",
+                        "secondary-container": "#e9e2d0",
+                        "surface-container-high": "#eee7e2",
+                        "on-tertiary-container": "#d9dac3",
+                        "secondary": "#625e50",
+                        "surface-container": "#F6ECE3",
+                        "on-background": "#1d1b18",
+                        "on-surface": "#1d1b18",
+                        "on-primary-fixed": "#231a08",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#4b463d",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#33302d",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "on-primary-container": "#e7d7ba",
+                        "tertiary-fixed-dim": "#c7c8b1",
+                        "on-secondary-fixed": "#1e1c11",
+                        "on-tertiary-fixed-variant": "#464836",
+                        "primary-container": "#695d46",
+                        "secondary-fixed-dim": "#ccc6b5",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#f6efeb",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "24px",
+                        "sm": "12px",
+                        "xl": "64px",
+                        "container-max": "440px",
+                        "lg": "40px",
+                        "base": "8px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "caption": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FFF8F3; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for minimalist feel */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cec5b9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7D766C; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col p-md">
+    <div class="max-w-2xl mx-auto w-full flex flex-col gap-md">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-sm">
+            <h2 class="font-headline-md text-headline-md font-bold text-on-surface">배송지 목록</h2>
+        </div>
+
+        <!-- Add New Address Button -->
+        <button type="button" class="w-full bg-surface border border-outline-variant text-on-surface font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container transition-colors flex items-center justify-center gap-xs">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            배송지 신규 입력
+        </button>
+
+        <!-- Address List -->
+        <div class="flex flex-col gap-sm" id="address-list">
+        </div>
+    </div>
+    
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        console.warn('No userId found in localStorage');
+    }
+
+    const loadAddresses = () => {
+        const fetchId = userId || 'test_user';
+        fetch('/api/address/list?customer_id=' + fetchId)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.addresses) {
+                    const addressList = document.getElementById('address-list');
+                    if (!addressList) return;
+                    addressList.innerHTML = '';
+                    data.addresses.forEach(addr => {
+                        const isDefault = (addr.is_default == 1 || addr.is_default === true || addr.is_default === '1' || addr.is_default === '\x01');
+                        const defaultBadge = isDefault ? '<span class="bg-surface-container-highest text-on-surface-variant text-[11px] px-2 py-0.5 rounded-sm">기본배송지</span>' : '';
+                        
+                        const actionHtml = isDefault 
+                            ? `<button type="button" class="bg-surface-container border border-primary text-primary font-label-md text-label-md px-3 py-1 rounded select-none cursor-default">현재 선택</button>`
+                            : `<button type="button" class="bg-surface-container border border-outline-variant text-on-surface font-label-md text-label-md px-3 py-1 rounded hover:bg-surface-container-high transition-colors" onclick="selectAddress(${addr.id}, event)">선택</button>`;
+                            
+                        const cardHtml = `
+                            <div class="bg-surface border ${isDefault ? 'border-2 border-primary' : 'border-outline-variant hover:border-primary hover:shadow-md transition-all'} rounded-lg p-md flex flex-col gap-sm relative shadow-sm cursor-pointer" onclick="selectAddress(${addr.id}, event)">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex items-center gap-xs">
+                                        <span class="font-label-md text-label-md font-bold text-on-surface">${addr.recipient_name}</span>
+                                        ${defaultBadge}
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        ${actionHtml}
+                                    </div>
+                                </div>
+                                <div class="font-body-md text-body-md text-on-surface-variant">${[addr.recipient_mobile, addr.recipient_phone].filter(Boolean).join(" / ")}</div>
+                                <div class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                                    [${addr.zip_code}] ${addr.address}<br>
+                                    ${addr.detail_address || ''}
+                                </div>
+                                <div class="flex justify-end gap-xs mt-xs pt-xs border-t border-outline-variant/30">
+                                    <button type="button" class="text-on-surface-variant hover:text-primary font-label-md text-label-md border border-outline-variant rounded px-3 py-1 hover:bg-surface-container transition-colors" onclick="event.stopPropagation(); window.location.href='address_edit.html?id=${addr.id}'">수정</button>
+                                    <button type="button" class="text-on-surface-variant hover:text-error font-label-md text-label-md border border-outline-variant rounded px-3 py-1 hover:bg-surface-container transition-colors" onclick="event.stopPropagation(); deleteAddress(${addr.id})">삭제</button>
+                                </div>
+                            </div>
+                        `;
+                        addressList.innerHTML += cardHtml;
+                    });
+                }
+            })
+            .catch(err => console.error('Error fetching addresses:', err));
+    };
+
+    window.selectAddress = (id, event) => {
+        if(event) event.stopPropagation();
+        const fetchId = userId || 'test_user';
+        fetch('/api/address/' + id + '/default', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customer_id: fetchId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                if (document.referrer && (document.referrer.includes('order.html') || document.referrer.includes('morder.html'))) {
+                    window.location.href = document.referrer;
+                } else {
+                    window.location.href = 'order.html'; // fallback
+                }
+            } else {
+                alert('배송지 선택에 실패했습니다.');
+            }
+        })
+        .catch(err => console.error('Error selecting address:', err));
+    };
+
+    window.deleteAddress = (id) => {
+        if(confirm('정말 삭제하시겠습니까?')) {
+            const fetchId = userId || 'test_user';
+            fetch('/api/address/' + id, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customer_id: fetchId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    loadAddresses();
+                } else {
+                    alert('삭제에 실패했습니다.');
+                }
+            })
+            .catch(err => console.error('Error deleting address:', err));
+        }
+    };
+
+    loadAddresses();
+});
+
+</script>
+</body>
+</html>

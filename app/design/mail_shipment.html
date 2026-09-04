@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>발송준비 완료</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#E50020', // 11st Red
+            gray: {
+              100: '#f5f5f5',
+              200: '#e5e5e5',
+              300: '#d4d4d4',
+              400: '#a3a3a3',
+              500: '#737373',
+              600: '#525252',
+              700: '#404040',
+              800: '#262626',
+              900: '#171717',
+            }
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-fonts">
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 antialiased max-w-md mx-auto min-h-screen">
+<div class="bg-white min-h-screen shadow-sm pb-8 border-x border-gray-200">
+<!-- BEGIN: Header -->
+<header class="p-6 border-b border-gray-200">
+<h1 class="text-3xl font-bold text-brand tracking-tighter italic">11<span class="text-pink-500">D</span></h1>
+</header>
+<!-- END: Header -->
+<main>
+<!-- BEGIN: Status Message -->
+<section class="px-6 py-8">
+<h2 class="text-2xl font-medium leading-tight mb-4">
+          주문하신 상품의<br/>
+<strong class="text-brand font-bold">발송준비</strong>가 완료되었습니다.
+        </h2>
+<p class="text-gray-600 text-sm leading-relaxed">
+          한영란 고객님, 안녕하세요.<br/>
+          판매자가 주문하신 상품을 택배사에게 전달하기 위한 발송준비를 완료하였습니다.<br/>
+          자세한 배송상태는 <span class="text-blue-600 underline">나의 11번가&gt;주문/배송조회</span>에서 확인하시기 바랍니다. (단, 상품이 택배사로 전달된 이후부터 배송조회가 가능합니다)
+        </p>
+</section>
+<!-- END: Status Message -->
+<!-- BEGIN: Order Details -->
+<section class="px-6 py-6 border-t-[6px] border-gray-100">
+<h3 class="font-bold text-lg mb-4">주문 상품</h3>
+<p class="text-sm text-gray-500 mb-4 text-center">2026-07-09 <span class="text-gray-400 mx-1">|</span> 주문번호 20260709083246499</p>
+<div class="flex items-center gap-4 bg-gray-50 p-4 rounded-lg">
+<div class="w-16 h-16 bg-white rounded border border-gray-200 flex-shrink-0 flex items-center justify-center overflow-hidden">
+<!-- Placeholder for Product Image -->
+<img alt="한국야쿠르트HY 헬리코박터 프로젝트 윌 오리지널 500ml 6개" class="object-contain w-full h-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2oyp3ooNA5hOjr7vshTAMQIIDBXCrZVOmFCf1V7K6XjnRvMolLZvzNcOqJkyjluLoSYQ50CYE6ZQAJ5hS-4J2Xrj_Pjy-zYbePoo3KzAhsFNxU2hR_ld7QuC6f8ZxKof_wrVRWVHROM5Sx09Pr91Le7po8aZFH890OQEUF0hw6XUpj2Zr4S07_dISwoQZyvOierHnh6lIuzfMnHfHuWrGAp0aBFYt7E19pxoEFuebkzrZddIuxj25"/>
+</div>
+<div class="flex-1">
+<p class="text-sm text-gray-800 font-medium mb-1 line-clamp-2">한국야쿠르트HY 헬리코박터 프로젝트 윌 오리지널 500ml 6개/냉장무배</p>
+<p class="text-base font-bold">22,930<span class="text-sm font-normal text-gray-500">원 (1개)</span></p>
+</div>
+</div>
+</section>
+<!-- END: Order Details -->
+<!-- BEGIN: Shipping Information -->
+<section class="px-6 py-6 border-t-[6px] border-gray-100">
+<h3 class="font-bold text-lg mb-4">배송 정보</h3>
+<ul class="space-y-3">
+<li class="flex items-start text-sm py-2 border-b border-gray-100">
+<span class="w-24 text-gray-500 flex-shrink-0">택배사명</span>
+<span class="font-medium">CJ대한통운</span>
+</li>
+<li class="flex items-start text-sm py-2 border-b border-gray-100">
+<span class="w-24 text-gray-500 flex-shrink-0">송장번호</span>
+<span class="font-medium">699031372604</span>
+</li>
+<li class="flex items-start text-sm py-2 border-b border-gray-100">
+<span class="w-24 text-gray-500 flex-shrink-0">발송일시</span>
+<span class="font-medium">2026-07-10 10:07:00</span>
+</li>
+<li class="flex items-start text-sm py-2 border-b border-gray-100">
+<span class="w-24 text-gray-500 flex-shrink-0">받는 사람</span>
+<span class="font-medium">한*란</span>
+</li>
+<li class="flex items-start text-sm py-2 border-b border-gray-100">
+<span class="w-24 text-gray-500 flex-shrink-0">연락처</span>
+<span class="font-medium">010-****-6740</span>
+</li>
+<li class="flex items-start text-sm py-2">
+<span class="w-24 text-gray-500 flex-shrink-0">받는주소</span>
+<span class="font-medium break-all">경기도 성남시 *** ******* ** ***********</span>
+</li>
+</ul>
+</section>
+<!-- END: Shipping Information -->
+<!-- BEGIN: Action Button -->
+<div class="px-6 mt-6 mb-10">
+<button class="w-full bg-brand text-white font-bold py-4 rounded-lg shadow-sm active:bg-red-700 transition-colors">
+          배송조회 바로가기
+        </button>
+</div>
+<!-- END: Action Button -->
+</main>
+<!-- BEGIN: Footer -->
+<footer class="bg-gray-50 px-6 py-8 border-t border-gray-200 text-xs text-gray-500 leading-relaxed">
+<p class="mb-4">본 메일은 발신 전용으로 회신되지 않습니다. 문의사항은 <strong class="text-gray-700">고객센터</strong>를 이용해주세요.<br/>주문 관련 정보, 주요 공지사항등은 수신 동의 여부에 관계없이 발송됩니다.</p>
+<div class="pt-4 border-t border-gray-200">
+<h4 class="font-bold text-gray-700 mb-2 text-lg italic tracking-tighter">11<span class="text-pink-500">D</span></h4>
+<p>11번가(주) | 대표이사: 하형일, 안정은 | 사업자등록번호: 815-81-01244</p>
+<p>통신판매업신고: 2018-서울중구-1445</p>
+<p class="mt-2 text-gray-400">© 11Street Co., Ltd.</p>
+</div>
+</footer>
+<!-- END: Footer -->
+</div>
+</body></html>

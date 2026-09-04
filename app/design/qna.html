@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html class="light" lang="ko" style="">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>기쁜하루 Q&A</title>
+<link rel="apple-touch-icon" sizes="76x76" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#FFF8F3",
+                        "secondary-fixed": "#e9e2d0",
+                        "tertiary-container": "#5e604d",
+                        "on-surface": "#1d1b18",
+                        "on-surface-variant": "#4b463d",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#e7d7ba",
+                        "tertiary-fixed": "#e3e4cc",
+                        "primary": "#504530",
+                        "on-tertiary-fixed-variant": "#464836",
+                        "tertiary": "#464837",
+                        "surface-container-high": "#eee7e2",
+                        "outline-variant": "#cec5b9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fff8f3",
+                        "background": "#fff8f3",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#695d46",
+                        "secondary-container": "#e9e2d0",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#1b1d0e",
+                        "on-secondary-fixed-variant": "#4a473a",
+                        "on-primary-fixed-variant": "#504530",
+                        "surface-container": "#F6ECE3",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#ccc6b5",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dfd9d4",
+                        "primary-fixed-dim": "#d5c5a8",
+                        "surface-container-low": "#f9f2ed",
+                        "error": "#BA1A1A",
+                        "primary-fixed": "#f2e0c3",
+                        "inverse-surface": "#33302d",
+                        "surface-tint": "#695d46",
+                        "inverse-primary": "#d5c5a8",
+                        "secondary": "#625e50",
+                        "surface-container-highest": "#e8e1dc",
+                        "on-primary-fixed": "#231a08",
+                        "outline": "#7D766C",
+                        "inverse-on-surface": "#f6efeb",
+                        "on-secondary-fixed": "#1e1c11",
+                        "tertiary-fixed-dim": "#c7c8b1",
+                        "on-background": "#1d1b18",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e8e1dc",
+                        "on-tertiary-container": "#d9dac3",
+                        "on-secondary-container": "#686456"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "container-max": "800px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "xl": "64px",
+                        "md": "24px",
+                        "lg": "40px",
+                        "xs": "4px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "caption": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        body.is-modal {
+            display: block !important;
+        }
+        body.is-modal main {
+            max-width: 100% !important;
+            width: 100% !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+        body.is-modal section.mt-md {
+            margin-top: 0 !important;
+        }
+        body.is-modal .atm-bg {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md m-0 p-0 overflow-x-hidden">
+
+<script>
+    function resizeMainContainer() {
+        const main = document.getElementById('main-container');
+        if (main) {
+            main.style.width = window.innerWidth + 'px';
+            main.style.minHeight = window.innerHeight + 'px';
+        }
+    }
+    window.addEventListener('resize', resizeMainContainer);
+    window.addEventListener('load', resizeMainContainer);
+    resizeMainContainer();
+</script>
+
+<!-- Main Content Canvas -->
+<main id="main-container" class="flex flex-col relative m-0 p-0 box-border">
+    <!-- Subtle Atmospheric Header Background -->
+    <div class="atm-bg absolute top-0 left-0 w-full h-[250px] -z-10 rounded-b-xl overflow-hidden opacity-30 pointer-events-none" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQgLtalTO02WQf25Rgv-qK5XdZXFdaMEqR1ZWjGYmbUotgcdU609H-Lh_U7wQ1jU4_V6VfWjMJ5EMaOt_Vg63s1uRohbnRocNCa1kgUs-efntI0sHD6thXz4yJ6VokzOI4XdqaltH9ATl4qBgcWaNU57aQxjPCP5O1OnFISeEWCRk6SfczPM9GUdkXrma3Xig_UdpDOFK_YZPBHXrUx4P33c5v57i1NuxKJQBKozbjbpzgmUuqOlVxExeLXu2KbLFmyIV28y06pQ'); background-size: cover; background-position: center; mask-image: linear-gradient(to bottom, black 0%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);">
+    </div>
+
+    <!-- Page Header -->
+    <section class="p-md">
+        <div class="flex justify-between items-center mb-xs">
+            <h1 class="font-headline-lg text-headline-lg text-primary text-center flex-1">Q&amp;A Board</h1>
+            <div class="absolute right-md">
+                <button onclick="document.referrer ? window.location.href = document.referrer : window.location.href = 'mall.html'" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer flex items-center justify-center p-2 rounded-full hover:bg-surface-container">
+                    <span class="material-symbols-outlined text-[28px]">close</span>
+                </button>
+            </div>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant text-center">상품이나 서비스에 대해 궁금한 점을 자유롭게 남겨주세요.</p>
+    </section>
+
+    <!-- Actions & Search Bar -->
+    <section class="flex flex-col gap-sm p-md">
+        <div class="flex gap-sm w-full mb-xs">
+            <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input id="search-input" lang="ko" style="ime-mode:active;" class="w-full bg-surface-container border-outline-variant border rounded-full py-2.5 pl-12 pr-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors bg-opacity-50 backdrop-blur-sm" placeholder="검색어를 입력하세요" type="text">
+            </div>
+            <button id="search-btn" class="bg-primary text-on-primary font-label-md text-label-md px-8 py-2.5 rounded-full hover:bg-inverse-surface transition-colors shadow-[0_4px_12px_rgba(80,69,48,0.08)] flex items-center whitespace-nowrap">검색</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex justify-between items-center w-full">
+            <div id="filter-buttons" class="flex gap-sm">
+                <button class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-5 py-1.5 rounded-full whitespace-nowrap border border-transparent transition-colors">전체</button>
+                <button class="bg-surface border border-outline-variant text-on-surface-variant font-label-md text-label-md px-5 py-1.5 rounded-full whitespace-nowrap hover:bg-surface-container-low transition-colors">답변대기</button>
+                <button class="bg-surface border border-outline-variant text-on-surface-variant font-label-md text-label-md px-5 py-1.5 rounded-full whitespace-nowrap hover:bg-surface-container-low transition-colors">답변완료</button>
+            </div>
+            
+            <div class="flex items-center gap-md">
+                <div class="flex items-center gap-xs">
+                    <input class="w-4 h-4 rounded-sm border-outline-variant text-primary focus:ring-primary bg-surface cursor-pointer" id="exclude-private" type="checkbox">
+                    <label class="font-label-md text-label-md text-on-surface-variant cursor-pointer" for="exclude-private">비밀글 제외</label>
+                </div>
+                <button id="my-qna-btn" class="flex items-center gap-1 px-4 py-1.5 rounded-full border border-outline-variant text-primary hover:bg-surface-container-high transition-colors font-label-md text-label-md whitespace-nowrap">
+                    <span class="material-symbols-outlined text-[18px]">person</span>
+                    나의 Q&amp;A
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Q&A List (Adapted for wide view) -->
+    <section id="qna-list" class="flex flex-col gap-sm px-md"></section>
+
+    <!-- Pagination -->
+    <nav id="pagination" class="flex justify-center items-center gap-2 mt-lg mb-md"></nav>
+
+    <!-- Bottom Actions -->
+    <div class="flex justify-end p-md mt-auto">
+        <button id="write-qna-btn" class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2.5 rounded-lg hover:bg-inverse-surface transition-colors shadow-[0_4px_12px_rgba(80,69,48,0.08)] flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">edit</span>
+            문의하기
+        </button>
+    </div>
+</main>
+
+
+
+<script>
+    let qnaData = [];
+    async function loadQnaData() {
+        try {
+            const res = await fetch('/api/qna?productId=1', { cache: 'no-store' });
+            const data = await res.json();
+            if (data.success) {
+                qnaData = data.data;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        render();
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const loggedInUserId = parseInt(urlParams.get('userId')) || parseInt(localStorage.getItem('userId')) || 1;
+
+    let currentFilter = 'all';
+    let excludeSecret = false;
+    let myQnaOnly = false;
+    let searchTerm = '';
+    let currentPage = 1;
+    const itemsPerPage = 5;
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function highlight(text) {
+        if (!searchTerm) return escapeHtml(text).replace(/\n/g, '<br/>');
+        const escapedTerm = escapeHtml(searchTerm);
+        const escapedText = escapeHtml(text);
+        const regex = new RegExp(escapedTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+        return escapedText.replace(regex, match => `<b>${match}</b>`).replace(/\n/g, '<br/>');
+    }
+
+    function toggleExpanded(element, id) {
+        const item = qnaData.find(d => d.id === id);
+        if (item.is_secret && item.customer_id !== loggedInUserId) {
+            alert('비밀글입니다.');
+            return;
+        }
+        element.classList.toggle('expanded');
+    }
+
+    function render() {
+        let filtered = qnaData.filter(item => {
+            if (currentFilter === 'waiting' && item.is_answer !== 0) return false;
+            if (currentFilter === 'completed' && item.is_answer !== 1) return false;
+            if (excludeSecret && item.is_secret === 1) return false;
+            if (myQnaOnly && item.customer_id !== loggedInUserId) return false;
+            
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                const contentMatch = item.content && item.content.toLowerCase().includes(term);
+                const answerMatch = item.answer_content && item.answer_content.toLowerCase().includes(term);
+                if (!contentMatch && !answerMatch) return false;
+            }
+            return true;
+        });
+
+        const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+        if (currentPage > totalPages) currentPage = totalPages;
+        
+        const startIdx = (currentPage - 1) * itemsPerPage;
+        const pageData = filtered.slice(startIdx, startIdx + itemsPerPage);
+
+        const listContainer = document.getElementById('qna-list');
+        const isMobile = window.location.pathname.includes('mqna.html');
+
+        listContainer.innerHTML = '';
+
+        if (pageData.length === 0) {
+            listContainer.innerHTML = '<div class="text-center py-12 text-on-surface-variant">등록된 게시글이 없습니다.</div>';
+        } else {
+            pageData.forEach(item => {
+                const titleLine = escapeHtml(item.content.split('\n')[0]);
+                const titleHTML = searchTerm ? highlight(item.content.split('\n')[0]) : titleLine;
+
+                let articleHTML = '';
+                if (!isMobile) {
+                    articleHTML = `
+                        <article onclick="toggleExpanded(this, ${item.id})" class="bg-surface-container-low rounded-lg p-md cursor-pointer hover:bg-surface-container transition-colors group flex flex-col gap-0 border border-transparent hover:border-outline-variant">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div class="flex items-center gap-md flex-grow min-w-0">
+                                    ${item.is_answer ? `<span class="bg-primary-container text-on-primary-container font-caption text-caption px-3 py-1.5 rounded-sm tracking-wide shrink-0">답변완료</span>` : `<span class="bg-surface-variant text-on-surface-variant font-caption text-caption px-3 py-1.5 rounded-sm tracking-wide shrink-0">답변대기</span>`}
+                                    <h3 class="font-body-md text-body-md text-on-surface font-semibold flex items-center gap-xs group-hover:text-primary transition-colors m-0 min-w-0 group-[.expanded]:hidden">
+                                        ${item.is_secret ? `<span class="material-symbols-outlined text-[18px] text-outline">lock</span>` : ''}
+                                        <span class="truncate">${titleHTML}</span>
+                                    </h3>
+                                </div>
+                                <div class="flex items-center text-on-surface-variant font-caption text-caption gap-md shrink-0">
+                                    <div class="flex items-center gap-xs">
+                                        <span class="material-symbols-outlined text-[16px]">person</span>
+                                        <span>${item.author_name}</span>
+                                    </div>
+                                    <span class="text-secondary">${formatDate(item.wrtten_at)}</span>
+                                </div>
+                            </div>
+                            <div class="hidden group-[.expanded]:block mt-4 pt-4 border-t border-outline-variant flex flex-col gap-md">
+                                <div class="text-on-surface font-body-md whitespace-pre-wrap">${highlight(item.content)}</div>
+                                ${item.is_answer ? `
+                                <div class="bg-surface rounded-lg p-4 text-on-surface-variant font-body-md mt-4 border border-outline-variant border-opacity-30">
+                                    <span class="font-semibold text-primary mb-2 block flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[18px]">support_agent</span>
+                                        기쁜하루
+                                    </span>
+                                    ${highlight(item.answer_content)}
+                                </div>` : ''}
+                            </div>
+                        </article>
+                    `;
+                } else {
+                    articleHTML = `
+                        <article onclick="toggleExpanded(this, ${item.id})" class="bg-surface-container-low rounded-lg p-md cursor-pointer hover:bg-surface-container transition-colors group min-w-0">
+                            <div class="flex justify-between items-start mb-sm">
+                                ${item.is_answer ? `<span class="bg-primary-container text-on-primary-container font-caption text-caption px-2 py-1 rounded-sm tracking-wide">답변완료</span>` : `<span class="bg-surface-variant text-on-surface-variant font-caption text-caption px-2 py-1 rounded-sm tracking-wide">답변대기</span>`}
+                                <span class="font-caption text-caption text-secondary">${formatDate(item.wrtten_at)}</span>
+                            </div>
+                            <h3 class="font-label-md text-label-md text-on-surface font-semibold mb-xs flex items-center gap-xs group-hover:text-primary transition-colors group-[.expanded]:hidden truncate min-w-0">
+                                ${item.is_secret ? `<span class="material-symbols-outlined text-[16px] text-outline">lock</span>` : ''}
+                                <span class="truncate">${titleHTML}</span>
+                            </h3>
+                            <div class="flex items-center text-on-surface-variant font-caption text-caption gap-xs group-[.expanded]:hidden">
+                                <span class="material-symbols-outlined text-[14px]">person</span>
+                                <span>${item.author_name}</span>
+                            </div>
+                            <div class="hidden group-[.expanded]:block mt-4 pt-4 border-t border-outline-variant">
+                                <div class="mb-4 text-on-surface font-label-md whitespace-pre-wrap">${highlight(item.content)}</div>
+                                ${item.is_answer ? `
+                                <div class="bg-surface rounded-lg p-3 text-on-surface-variant font-label-md mb-4">
+                                    <span class="font-bold text-primary mb-1 block flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[16px]">support_agent</span>
+                                        기쁜하루
+                                    </span>
+                                    ${highlight(item.answer_content)}
+                                </div>` : ''}
+                                <div class="flex items-center text-on-surface-variant font-caption text-caption gap-xs">
+                                    <span class="material-symbols-outlined text-[14px]">person</span>
+                                    <span>${item.author_name}</span>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }
+                listContainer.insertAdjacentHTML('beforeend', articleHTML);
+            });
+        }
+
+        const nav = document.getElementById('pagination');
+        if (!nav) return;
+        nav.innerHTML = '';
+        
+        let navHTML = '';
+        const btnClass = isMobile ? 'w-8 h-8' : 'w-10 h-10';
+        
+        navHTML += `
+            <button onclick="prevPage()" class="${btnClass} flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" ${currentPage === 1 ? 'disabled' : ''}>
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+        `;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const activeClass = i === currentPage ? 'bg-secondary-container text-on-secondary-container' : 'text-on-surface hover:bg-surface-container transition-colors';
+            navHTML += `<button onclick="changePage(${i})" class="page-btn ${btnClass} flex items-center justify-center rounded-full ${activeClass} font-label-md text-label-md">${i}</button>`;
+        }
+
+        navHTML += `
+            <button onclick="nextPage()" class="${btnClass} flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}>
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+        `;
+        
+        nav.innerHTML = navHTML;
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            changePage(currentPage - 1);
+        }
+    }
+
+    function nextPage() {
+        changePage(currentPage + 1);
+    }
+
+    function setupEventListeners() {
+        const filterBtns = document.querySelectorAll('#filter-buttons button');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-secondary-container', 'text-on-secondary-container', 'border-transparent');
+                    b.classList.add('bg-surface', 'border-outline-variant', 'text-on-surface-variant');
+                });
+                e.target.classList.remove('bg-surface', 'border-outline-variant', 'text-on-surface-variant');
+                e.target.classList.add('bg-secondary-container', 'text-on-secondary-container', 'border-transparent');
+                
+                const filterText = e.target.innerText.trim();
+                if (filterText === '전체') {
+                    currentFilter = 'all';
+                    if (myQnaOnly) {
+                        myQnaOnly = false;
+                        const myQnaBtn = document.getElementById('my-qna-btn');
+                        if (myQnaBtn) {
+                            myQnaBtn.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+                            if (window.location.pathname.includes('mqna.html')) {
+                                myQnaBtn.classList.add('border-outline-variant', 'text-on-surface-variant');
+                            } else {
+                                myQnaBtn.classList.add('border-outline-variant', 'text-primary');
+                            }
+                        }
+                    }
+                    if (excludeSecret) {
+                        excludeSecret = false;
+                        const excludeCheckbox = document.getElementById('exclude-private');
+                        if (excludeCheckbox) excludeCheckbox.checked = false;
+                    }
+                    if (searchTerm) {
+                        searchTerm = '';
+                        const searchInputEl = document.getElementById('search-input');
+                        if (searchInputEl) searchInputEl.value = '';
+                    }
+                }
+                else if (filterText === '답변대기') currentFilter = 'waiting';
+                else if (filterText === '답변완료') currentFilter = 'completed';
+                
+                currentPage = 1;
+                render();
+            });
+        });
+
+        const excludeCheckbox = document.getElementById('exclude-private');
+        if (excludeCheckbox) {
+            excludeCheckbox.addEventListener('change', (e) => {
+                excludeSecret = e.target.checked;
+                currentPage = 1;
+                render();
+            });
+        }
+
+        const myQnaBtn = document.getElementById('my-qna-btn');
+        if (myQnaBtn) {
+            myQnaBtn.addEventListener('click', (e) => {
+                myQnaOnly = !myQnaOnly;
+                if (myQnaOnly) {
+                    myQnaBtn.classList.remove('border-outline-variant', 'text-primary', 'text-on-surface-variant');
+                    myQnaBtn.classList.add('bg-primary', 'text-on-primary', 'border-primary');
+                } else {
+                    myQnaBtn.classList.remove('bg-primary', 'text-on-primary', 'border-primary');
+                    const isMobile = window.location.pathname.includes('mqna.html');
+                    if (isMobile) {
+                        myQnaBtn.classList.add('border-outline-variant', 'text-on-surface-variant');
+                    } else {
+                        myQnaBtn.classList.add('border-outline-variant', 'text-primary');
+                    }
+                }
+                currentPage = 1;
+                render();
+            });
+        }
+
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        
+        const doSearch = () => {
+            searchTerm = searchInput.value.trim();
+            currentPage = 1;
+            render();
+        };
+
+        if (searchBtn) searchBtn.addEventListener('click', doSearch);
+        if (searchInput) {
+            searchInput.addEventListener('focus', function() {
+                this.setAttribute('lang', 'ko');
+            });
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') doSearch();
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        loadQnaData();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const writeQnaBtn = document.getElementById('write-qna-btn');
+        if(writeQnaBtn) {
+            writeQnaBtn.addEventListener('click', () => {
+                if (localStorage.getItem('isLoggedIn') === 'true' && localStorage.getItem('userId')) {
+                    window.location.href = 'writeqna.html';
+                } else {
+                    localStorage.setItem('loginRedirect', 'writeqna.html');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
