@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 import { sendShippingEmail, sendReturnEmail, sendExchangeEmail } from '../../../lib/email';
+import { sendShipmentAlimtalk } from '../../../lib/alimtalk';
 
 export async function GET(req: Request) {
   try {
@@ -330,6 +331,19 @@ export async function GET(req: Request) {
               console.log(`Shipping email sent to: ${orderInfo.email}`);
             } catch (emailErr) {
               console.error('Failed to send shipping email:', emailErr);
+            }
+
+            try {
+              if (orderInfo.mobile) {
+                await sendShipmentAlimtalk(formatMobile(orderInfo.mobile), {
+                  name: formatReceiverName(orderInfo.receiver_name),
+                  delivery: parts[0] || '',
+                  invoice: parts[1] || ''
+                });
+                console.log(`Shipping alimtalk sent to: ${orderInfo.mobile}`);
+              }
+            } catch (alimErr) {
+              console.error('Failed to send shipping alimtalk:', alimErr);
             }
           }
         }
