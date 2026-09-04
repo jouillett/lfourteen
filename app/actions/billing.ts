@@ -207,7 +207,7 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     if (customer.email) {
       try {
-        const [billingRows]: any = await pool.query("SELECT next_billing_at, `interval`, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
+        const [billingRows]: any = await pool.query("SELECT next_billing_at, billing.interval, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
         const nextBillingAt = billingRows && billingRows.length > 0 ? billingRows[0].next_billing_at : null;
         
         const today = new Date();
@@ -239,7 +239,7 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     if (customer.mobile) {
       try {
-        const [billingRows]: any = await pool.query("SELECT next_billing_at, `interval`, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
+        const [billingRows]: any = await pool.query("SELECT next_billing_at, billing.interval, period FROM billing WHERE customer_id = ? ORDER BY id DESC LIMIT 1", [customerId]);
         const nextBillingAt = billingRows && billingRows.length > 0 ? billingRows[0].next_billing_at : null;
         
         const today = new Date();
