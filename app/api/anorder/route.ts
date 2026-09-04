@@ -351,8 +351,8 @@ export async function GET(req: Request) {
         // Return completion email: status 8 (반품완료)
         if (finalStatus === 8) {
           const query = `
-            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at, o.mobile,
-                   c.name as customer_name, c.email
+            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at,
+                   c.name as customer_name, c.email, c.mobile
             FROM orders o
             LEFT JOIN customers c ON o.customer_id = c.id
             WHERE o.id = ?
