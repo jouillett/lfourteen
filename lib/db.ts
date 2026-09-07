@@ -27,7 +27,7 @@ interface DBPool {
 
 let pool: DBPool;
 if (isVercel) {
-  const PHP_API_URL = "http://capofcom.cafe24.com/l14_coordy/db_api.php";
+  const PHP_API_URL = process.env.PHP_API_URL || "http://capofcom.mycafe24.com/l14_coordy/db_api.php";
   const SECRET_KEY = process.env.PHP_API_SECRET_KEY || "v9kP2xM5nL8jQ4wR7tY1bC6fH3zD0gS8mN5vX2kP9jL4cR7wT1bY6fH3zM0gS8";
 
   const bridgePool = {
@@ -106,7 +106,7 @@ if (isVercel) {
 
   if (!globalForMysql.mysqlPool) {
     globalForMysql.mysqlPool = mysql.createPool({
-      host: process.env.MYSQL_HOST || "capofcom.cafe24.com",
+      host: process.env.MYSQL_HOST || "capofcom.mycafe24.com",
       user: process.env.MYSQL_USER || "capofcom",
       password: process.env.MYSQL_PASSWORD || "daffodil65!!",
       database: process.env.MYSQL_DATABASE || "capofcom",

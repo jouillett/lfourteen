@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   }
 
   // Only allow specific trusted domains
-  const allowed = ['welcomekunde.com', 'capofcom.cafe24.com', 'lh3.googleusercontent.com'];
+  const allowed = ['welcomekunde.com', 'capofcom.mycafe24.com', 'lh3.googleusercontent.com'];
   let isAllowed = false;
   try {
     const parsed = new URL(url);

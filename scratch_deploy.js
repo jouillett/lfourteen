@@ -8,7 +8,7 @@ async function deploy() {
     
     try {
         await client.access({
-            host: "capofcom.cafe24.com",
+            host: "capofcom.mycafe24.com",
             user: "capofcom",
             password: "rs686749**",
             secure: false

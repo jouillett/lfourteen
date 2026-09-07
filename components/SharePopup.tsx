@@ -56,7 +56,7 @@ export default function SharePopup({ reviewId, onClose }: SharePopupProps) {
         content: {
           title: '엘포틴 코디',
           description: '#유산균 L14 #편안한 장 #숙면',
-          imageUrl: 'https://capofcom.cafe24.com/l14_coordy/images/l14coordy.png',
+          imageUrl: 'https://capofcom.mycafe24.com/l14_coordy/images/l14coordy.png',
           link: {
             mobileWebUrl: `http://172.30.1.73:3000/review?id=${reviewId}`,
             webUrl: `http://172.30.1.73:3000/review?id=${reviewId}`,

@@ -69,8 +69,8 @@ export async function GET(req: Request) {
         processedItems.push({
           order_quantity: 1,
           product_name: order.order_name || 'L14 Cordy',
-          product_image: 'https://capofcom.cafe24.com/l14_coordy/images/l14cordy.jpg?v=3',
-          product_bill_image: 'https://capofcom.cafe24.com/l14_coordy/images/l14bill.jpg?v=3',
+          product_image: 'https://capofcom.mycafe24.com/l14_coordy/images/l14cordy.jpg?v=3',
+          product_bill_image: 'https://capofcom.mycafe24.com/l14_coordy/images/l14bill.jpg?v=3',
           option_quantity_val: 1,
           unit_price: Number(order.total_price) || 0
         });

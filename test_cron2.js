@@ -2,7 +2,7 @@ const mysql = require('mysql2/promise');
 
 async function run() {
   const pool = mysql.createPool({
-    host: 'capofcom.cafe24.com',
+    host: 'capofcom.mycafe24.com',
     port: 3306,
     user: 'capofcom',
     password: 'daffodil65!!',

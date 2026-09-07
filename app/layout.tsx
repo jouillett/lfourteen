@@ -13,12 +13,12 @@ export const metadata: Metadata = {
   description: "특허 종균 엘포틴 유산균과 차세대 원료 발효 동충하초를 균형있게 담은 프리미엄 듀얼 포뮬러. 서울대학교 바이오 연구진의 독자적 유산균 발효 기술과 20년 이상의 동충하초 연구ㆍ개발ㆍ가공 기술이 만나 완성된 프리미엄 건강 솔루션",
   icons: {
     icon: [
-      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png", sizes: "76x76", type: "image/png" },
+      { url: "https://capofcom.mycafe24.com/l14_coordy/images/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "https://capofcom.mycafe24.com/l14_coordy/images/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "https://capofcom.mycafe24.com/l14_coordy/images/favicon-76x76.png", sizes: "76x76", type: "image/png" },
     ],
     apple: [
-      { url: "https://capofcom.cafe24.com/l14_coordy/images/favicon-76x76.png", sizes: "76x76", type: "image/png" },
+      { url: "https://capofcom.mycafe24.com/l14_coordy/images/favicon-76x76.png", sizes: "76x76", type: "image/png" },
     ],
   },
   openGraph: {
