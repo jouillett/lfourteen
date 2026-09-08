@@ -378,7 +378,7 @@ export async function GET(req: Request) {
                     amount: rawPrice.toLocaleString(),
                     charge: chargeAmt.toLocaleString(),
                     refund: refundAmt.toLocaleString()
-                  }, 'refund');
+                  });
                   console.log(`Return alimtalk sent to: ${order.mobile}`);
                 } catch (alimErr) { console.error('Failed to send return alimtalk in cron:', alimErr); }
               }
