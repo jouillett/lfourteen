@@ -4,7 +4,7 @@ function makeSignature(method: string, uri: string, timestamp: string, accessKey
   const space = " ";
   const newLine = "\n";
   const message = [];
-  
+
   message.push(method);
   message.push(space);
   message.push(uri);
@@ -12,10 +12,12 @@ function makeSignature(method: string, uri: string, timestamp: string, accessKey
   message.push(timestamp);
   message.push(newLine);
   message.push(accessKey);
-  
-  const hmac = crypto.createHmac('sha256', secretKey);
-  hmac.update(message.join(''));
-  return hmac.digest('base64');
+
+  const signature = crypto.createHmac('sha256', secretKey)
+    .update(message.join(''))
+    .digest('base64');
+
+  return signature;
 }
 
 export async function sendShipmentAlimtalk(toPhone: string, data: { name: string, delivery: string, invoice: string }) {
@@ -79,10 +81,10 @@ ${data.name} 고객님, 안녕하세요.
     });
 
     const result = await response.json();
-    console.log('Alimtalk send result:', result);
+    console.log('Shipment Alimtalk send result:', result);
     return result;
   } catch (error) {
-    console.error('Error sending alimtalk:', error);
+    console.error('Error sending shipment alimtalk:', error);
   }
 }
 
@@ -174,7 +176,7 @@ export async function sendSubscriptionAlimtalk(toPhone: string, data: { product:
   const signature = makeSignature(method, uri, timestamp, accessKey, secretKey);
   const phone = toPhone.replace(/[^0-9]/g, '');
 
-  const content = `[ 기쁜하루 정기 결제 ]
+  const content = `[ 정기 결제 ]
 
 엘포틴 코디 정기결제가 신청되었습니다.
 

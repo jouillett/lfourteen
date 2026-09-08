@@ -285,7 +285,7 @@ export async function sendSubscriptionCancelEmail(toEmail: string, data: { produ
   </div>
 </body>
 </html>
-  `;
+`;
 
   try {
     const info = await transporter.sendMail({
