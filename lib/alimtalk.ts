@@ -21,7 +21,7 @@ function makeSignature(method: string, uri: string, timestamp: string, accessKey
 export async function sendShipmentAlimtalk(toPhone: string, data: { name: string, delivery: string, invoice: string }) {
   const serviceId = 'ncp:kkobizmsg:kr:375127873584:lfourteen';
   const plusFriendId = '@엘포틴코디';
-  const templateCode = 'shipment';
+  const templateCode = 'delivery';
 
   const accessKey = process.env.SMS_ACCESS_KEY || '';
   const secretKey = process.env.SMS_SECRET_KEY || '';
@@ -41,7 +41,7 @@ export async function sendShipmentAlimtalk(toPhone: string, data: { name: string
   // Parse phone number (e.g. remove hyphens)
   const phone = toPhone.replace(/[^0-9]/g, '');
 
-  const content = `[기쁜하루 배송 시작]
+  const content = `[ 배송 시작 ]
 
 ${data.name} 고객님, 안녕하세요.
 고객님께서 주문하신 상품을 택배사에 전달하기 위한 발송 준비가 완료되었습니다.
@@ -86,7 +86,7 @@ ${data.name} 고객님, 안녕하세요.
   }
 }
 
-export async function sendReturnAlimtalk(toPhone: string, data: { name: string, amount: string, charge: string, refund: string }, customTemplateCode: string = 'return') {
+export async function sendReturnAlimtalk(toPhone: string, data: { name: string, amount: string, charge: string, refund: string }, customTemplateCode: string = 'cancel') {
   const serviceId = 'ncp:kkobizmsg:kr:375127873584:lfourteen';
   const plusFriendId = '@엘포틴코디';
   const templateCode = customTemplateCode;
@@ -107,7 +107,7 @@ export async function sendReturnAlimtalk(toPhone: string, data: { name: string, 
   const signature = makeSignature(method, uri, timestamp, accessKey, secretKey);
   const phone = toPhone.replace(/[^0-9]/g, '');
 
-  const content = `[기쁜하루 배송 시작]
+  const content = `[기쁜하루 반품 완료]
 
 ${data.name} 고객님, 안녕하세요.
 고객님께서 주문하신 상품의 반품이 완료되었습니다.
@@ -156,7 +156,7 @@ ${data.name} 고객님, 안녕하세요.
 export async function sendSubscriptionAlimtalk(toPhone: string, data: { product: string, date: string, amount: string, next: string }) {
   const serviceId = 'ncp:kkobizmsg:kr:375127873584:lfourteen';
   const plusFriendId = '@엘포틴코디';
-  const templateCode = 'billing';
+  const templateCode = 'subscription';
 
   const accessKey = process.env.SMS_ACCESS_KEY || '';
   const secretKey = process.env.SMS_SECRET_KEY || '';
@@ -219,5 +219,73 @@ export async function sendSubscriptionAlimtalk(toPhone: string, data: { product:
     return result;
   } catch (error) {
     console.error('Error sending subscription alimtalk:', error);
+  }
+}
+
+export async function sendSubscriptionCancelAlimtalk(toPhone: string, data: { product: string, date: string, amount: string }) {
+  const serviceId = 'ncp:kkobizmsg:kr:375127873584:lfourteen';
+  const plusFriendId = '@엘포틴코디';
+  const templateCode = 'stop';
+
+  const accessKey = process.env.SMS_ACCESS_KEY || '';
+  const secretKey = process.env.SMS_SECRET_KEY || '';
+
+  if (!accessKey || !secretKey) {
+    console.error('Missing SMS_ACCESS_KEY or SMS_SECRET_KEY');
+    return;
+  }
+
+  const method = 'POST';
+  const uri = `/alimtalk/v2/services/${encodeURIComponent(serviceId)}/messages`;
+  const url = `https://sens.apigw.ntruss.com${uri}`;
+  const timestamp = Date.now().toString();
+
+  const signature = makeSignature(method, uri, timestamp, accessKey, secretKey);
+  const phone = toPhone.replace(/[^0-9]/g, '');
+
+  const content = `[ 정기 결제 취소 ]
+
+엘포틴 코디 정기결제가 취소되었습니다.
+
+취소상품: ${data.product}
+결제일: ${data.date}
+결제금액: ${data.amount}`;
+
+  const body = {
+    plusFriendId,
+    templateCode,
+    messages: [
+      {
+        to: phone,
+        content: content,
+        buttons: [
+          {
+            type: 'WL',
+            name: '정기결제취소',
+            linkMobile: 'https://lfourteen.life/mypage/billing',
+            linkPc: 'https://lfourteen.life/mypage/billing'
+          }
+        ]
+      }
+    ]
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-ncp-apigw-timestamp': timestamp,
+        'x-ncp-iam-access-key': accessKey,
+        'x-ncp-apigw-signature-v2': signature,
+      },
+      body: JSON.stringify(body)
+    });
+
+    const result = await response.json();
+    console.log('Subscription Cancel Alimtalk send result:', result);
+    return result;
+  } catch (error) {
+    console.error('Error sending subscription cancel alimtalk:', error);
   }
 }

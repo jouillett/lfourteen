@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { RowDataPacket } from "@/lib/db";
+import { sendSubscriptionCancelEmail } from "@/lib/email";
+import { sendSubscriptionCancelAlimtalk } from "@/lib/alimtalk";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

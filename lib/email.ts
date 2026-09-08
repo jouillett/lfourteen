@@ -235,3 +235,68 @@ export async function sendExchangeEmail(toEmail: string, data: any) {
     throw error;
   }
 }
+
+export async function sendSubscriptionCancelEmail(toEmail: string, data: { productName: string, paymentDate: string, amount: number }) {
+  const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
+  
+  const formattedAmount = new Intl.NumberFormat('ko-KR').format(data.amount);
+  const productNameStr = data.productName || '엘포틴 코디';
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>기쁜하루 정기 결제 취소</title>
+</head>
+<body style="margin:0;padding:0;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans KR',sans-serif;color:#333333;">
+  <div style="max-width:480px;margin:0 auto;background-color:#ffffff;border:1px solid #e5e5e5;">
+    <div style="padding:40px 24px 48px 24px;">
+      <div style="margin-bottom:24px;">
+        <a href="https://lfourteen.life" style="text-decoration:none;">
+          <h1 style="margin:0;font-size:36px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:#941F32;">기쁜하루</h1>
+        </a>
+      </div>
+      <div style="margin-bottom:32px;">
+        <h2 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#941F32;line-height:1.4;">엘포틴 코디 정기결제가 취소되었습니다.</h2>
+        <p style="margin:0;font-size:15px;color:#666666;">취소된 결제 정보를 확인해주세요.</p>
+      </div>
+      <div style="margin-bottom:40px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-top:2px solid #333333;">
+          <tr>
+            <td width="34%" style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">취소상품</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${productNameStr}</td>
+          </tr>
+          <tr>
+            <td width="34%" style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">결제일</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${data.paymentDate}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">결제금액</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${formattedAmount}원</td>
+          </tr>
+        </table>
+      </div>
+      <div style="text-align:center;">
+        <a href="https://lfourteen.life/mypage/billing" style="display:inline-block;background-color:#941F32;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:16px 32px;border-radius:6px;min-width:260px;text-align:center;">기쁜하루 정기결제 정보 확인하기</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+
+  try {
+    const info = await transporter.sendMail({
+      from: fromEmail,
+      to: toEmail,
+      subject: '[기쁜하루] 엘포틴 코디 정기결제가 취소되었습니다.',
+      html: htmlContent,
+    });
+    console.log('Subscription cancel email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('Error sending subscription cancel email:', error);
+  }
+}
