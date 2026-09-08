@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
-import { RowDataPacket } from "@/lib/db";
+import { RowDataPacket } from "mysql2";
 import { sendSubscriptionCancelEmail } from "@/lib/email";
 import { sendSubscriptionCancelAlimtalk } from "@/lib/alimtalk";
 
@@ -147,9 +147,16 @@ export async function DELETE(req: Request) {
     try {
       await connection.beginTransaction();
 
+            // Get customer info for notifications
+      const [customerRows] = await connection.execute<RowDataPacket[]>(
+        "SELECT email, mobile, name FROM customers WHERE id = ?",
+        [userId]
+      );
+      const customerInfo = customerRows.length > 0 ? customerRows[0] : null;
+
       // Get billing info
       const [billingRows] = await connection.execute<RowDataPacket[]>(
-        "SELECT id, billing_key FROM billing WHERE customer_id = ?",
+        "SELECT id, billing_key, created_at FROM billing WHERE customer_id = ?",
         [userId]
       );
 
@@ -176,6 +183,42 @@ export async function DELETE(req: Request) {
               }
             } catch (tossErr) {
               console.error("Toss billing cancellation error:", tossErr);
+            }
+          }
+
+          
+          // Send notification
+          if (customerInfo) {
+            try {
+              // Get product name
+              const [itemRows] = await connection.execute<RowDataPacket[]>(
+                "SELECT p.name as product_name, pp.price FROM billing_item bi JOIN products p ON bi.product_id = p.id JOIN prices pp ON bi.priced_id = pp.id WHERE bi.billing_id = ? LIMIT 1",
+                [row.id]
+              );
+              
+              const productName = itemRows.length > 0 ? Buffer.isBuffer(itemRows[0].product_name) ? itemRows[0].product_name.toString('utf8') : itemRows[0].product_name : '엘포틴 코디';
+              const price = itemRows.length > 0 ? Number(itemRows[0].price) : 480000;
+              const paymentDate = new Date(row.created_at || Date.now()).toISOString().split('T')[0];
+
+              if (customerInfo.email) {
+                const emailStr = Buffer.isBuffer(customerInfo.email) ? customerInfo.email.toString('utf8') : customerInfo.email;
+                await sendSubscriptionCancelEmail(emailStr, {
+                  productName: productName,
+                  paymentDate: paymentDate,
+                  amount: price
+                });
+              }
+
+              if (customerInfo.mobile) {
+                const mobileStr = Buffer.isBuffer(customerInfo.mobile) ? customerInfo.mobile.toString('utf8') : customerInfo.mobile;
+                await sendSubscriptionCancelAlimtalk(mobileStr, {
+                  product: productName,
+                  date: paymentDate,
+                  amount: new Intl.NumberFormat('ko-KR').format(price) + '원'
+                });
+              }
+            } catch (notifyErr) {
+              console.error("Failed to send cancel notifications:", notifyErr);
             }
           }
 
