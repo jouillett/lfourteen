@@ -106,7 +106,7 @@ if (isVercel) {
 
   if (!globalForMysql.mysqlPool) {
     globalForMysql.mysqlPool = mysql.createPool({
-      host: "capofcom.mycafe24.com",
+      host: process.env.MYSQL_HOST || "capofcom.mycafe24.com",
       user: process.env.MYSQL_USER || "capofcom",
       password: process.env.MYSQL_PASSWORD || "daffodil65!!",
       database: process.env.MYSQL_DATABASE || "capofcom",
