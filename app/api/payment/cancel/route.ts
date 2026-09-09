@@ -28,14 +28,17 @@ export async function POST(req: Request) {
 
     let tossRes = await attemptCancel(secretKey1);
     let payment = await tossRes.json();
+    console.log('[cancel] Try 1 with', secretKey1.substring(0,10), 'res:', payment.code, payment.message);
 
-    if (!tossRes.ok && payment.code === 'UNAUTHORIZED_KEY') {
+    if (!tossRes.ok && (payment.code === 'UNAUTHORIZED_KEY' || payment.code === 'FORBIDDEN_REQUEST')) {
       tossRes = await attemptCancel(secretKey2);
       payment = await tossRes.json();
+      console.log('[cancel] Try 2 with', secretKey2.substring(0,10), 'res:', payment.code, payment.message);
     }
 
     if (!tossRes.ok) {
-      if (payment.code === 'NOT_FOUND_PAYMENT' || payment.code === 'ALREADY_CANCELED_PAYMENT') {
+      console.log('[cancel] Failed both. Final code:', payment.code, payment.message);
+      if (payment.code === 'NOT_FOUND_PAYMENT' || payment.code === 'ALREADY_CANCELED_PAYMENT' || payment.code === 'NOT_CANCELABLE_PAYMENT') {
         return NextResponse.json({ success: true, message: 'Payment already cancelled or not found, continuing with DB update.', payment });
       }
       return NextResponse.json({ success: false, message: payment.message || payment.code, error: payment }, { status: 400 });
