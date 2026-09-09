@@ -8,32 +8,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Missing paymentKey' }, { status: 400 });
     }
 
-    const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
-    const authHeader = 'Basic ' + Buffer.from(secretKey + ':').toString('base64');
-
-    // Build cancel body — virtual account/bank transfer refunds require refundReceiveAccount
+    const secretKey1 = process.env.TOSS_API_SECRET_KEY || 'test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ';
+    const secretKey2 = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+    
     const cancelBody: Record<string, any> = {
-      cancelReason: cancelReason || '고객 요청',
+      cancelReason: cancelReason || '고객 취소',
     };
-    if (cancelAmount !== undefined) {
-      cancelBody.cancelAmount = cancelAmount;
-    }
-    if (refundReceiveAccount) {
-      cancelBody.refundReceiveAccount = refundReceiveAccount;
-    }
+    if (cancelAmount !== undefined) cancelBody.cancelAmount = cancelAmount;
+    if (refundReceiveAccount) cancelBody.refundReceiveAccount = refundReceiveAccount;
 
-    const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
-      method: 'POST',
-      headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cancelBody)
-    });
+    const attemptCancel = async (key: string) => {
+      const authHeader = 'Basic ' + Buffer.from(key + ':').toString('base64');
+      return fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}/cancel`, {
+        method: 'POST',
+        headers: { 'Authorization': authHeader, 'Content-Type': 'application/json' },
+        body: JSON.stringify(cancelBody)
+      });
+    };
 
-    const payment = await tossRes.json();
+    let tossRes = await attemptCancel(secretKey1);
+    let payment = await tossRes.json();
+
+    if (!tossRes.ok && payment.code === 'UNAUTHORIZED_KEY') {
+      tossRes = await attemptCancel(secretKey2);
+      payment = await tossRes.json();
+    }
 
     if (!tossRes.ok) {
+      if (payment.code === 'NOT_FOUND_PAYMENT' || payment.code === 'ALREADY_CANCELED_PAYMENT') {
+        return NextResponse.json({ success: true, message: 'Payment already cancelled or not found, continuing with DB update.', payment });
+      }
       return NextResponse.json({ success: false, message: payment.message || payment.code, error: payment }, { status: 400 });
     }
 
