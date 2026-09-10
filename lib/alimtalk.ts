@@ -45,11 +45,11 @@ export async function sendShipmentAlimtalk(toPhone: string, data: { name: string
 
   const content = `[ 배송 시작 ]
 
-${data.name} 고객님, 안녕하세요.
+${data.name.trim()} 고객님, 안녕하세요.
 고객님께서 주문하신 상품을 택배사에 전달하기 위한 발송 준비가 완료되었습니다.
 
-택배사명 ${data.delivery}
-송장번호 ${data.invoice}`;
+택배사명 ${data.delivery.trim()}
+송장번호 ${data.invoice.trim()}`;
 
   const body = {
     plusFriendId,
