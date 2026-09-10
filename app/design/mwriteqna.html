@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>1:1 문의하기 - L14 Cordy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed": "#1e1c11",
+                      "tertiary-fixed-dim": "#c7c8b1",
+                      "primary-fixed-dim": "#d5c5a8",
+                      "surface": "#FFF8F3",
+                      "surface-container": "#F6ECE3",
+                      "surface-container-low": "#f9f2ed",
+                      "on-surface": "#1F1B15",
+                      "primary": "#504530",
+                      "on-primary": "#ffffff",
+                      "primary-container": "#695d46",
+                      "on-primary-fixed": "#231a08",
+                      "tertiary-container": "#5e604d",
+                      "secondary-container": "#e9e2d0",
+                      "inverse-primary": "#d5c5a8",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-dim": "#E1D9CF",
+                      "outline-variant": "#cec5b9",
+                      "on-tertiary-fixed": "#1b1d0e",
+                      "inverse-surface": "#33302d",
+                      "on-primary-container": "#e7d7ba",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#504530",
+                      "secondary-fixed-dim": "#ccc6b5",
+                      "on-tertiary-fixed-variant": "#464836",
+                      "primary-fixed": "#f2e0c3",
+                      "inverse-on-surface": "#f6efeb",
+                      "tertiary-fixed": "#e3e4cc",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#695d46",
+                      "surface-container-highest": "#e8e1dc",
+                      "error": "#BA1A1A",
+                      "secondary-fixed": "#e9e2d0",
+                      "secondary": "#625e50",
+                      "outline": "#7D766C",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eee7e2",
+                      "on-tertiary-container": "#d9dac3",
+                      "on-secondary-container": "#686456",
+                      "on-surface-variant": "#4b463d",
+                      "surface-variant": "#e8e1dc",
+                      "tertiary": "#464837",
+                      "surface-bright": "#fff8f3",
+                      "on-secondary-fixed-variant": "#4a473a",
+                      "on-background": "#1d1b18",
+                      "error-container": "#ffdad6",
+                      "background": "#fff8f3"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "md": "24px",
+                      "lg": "40px",
+                      "container-max": "440px",
+                      "xl": "64px",
+                      "sm": "12px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "caption": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "30px",
+                              {
+                                      "lineHeight": "38px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom scrollbar for textareas */
+        textarea::-webkit-scrollbar {
+            width: 6px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: theme('colors.surface-container'); 
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: theme('colors.outline-variant'); 
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline'); 
+        }
+        
+        /* Smooth transitions */
+        .input-transition {
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col items-center">
+<!-- TopAppBar -->
+<header class="w-full top-0 bg-surface dark:bg-surface sticky z-50">
+<div class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto h-[64px]">
+<!-- Navigation Action (Back) -->
+<button aria-label="Go back" class="p-2 -ml-2 rounded-full hover:bg-surface-container transition-colors text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<!-- Title -->
+<h1 class="font-headline-md text-headline-md text-on-surface absolute left-1/2 -translate-x-1/2">
+                1:1 문의하기
+            </h1>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-xs text-primary dark:text-primary-fixed-dim">
+<!-- Using generic empty div to balance the flex layout if no trailing icons on this specific sub-page, but keeping structure -->
+<div class="w-10 h-10"></div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-container-max flex-grow px-md py-lg flex flex-col gap-lg">
+<!-- Header Text -->
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">무엇을 도와드릴까요?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">상품, 배송, 교환/반품 등 궁금하신 점을 남겨주시면 정성껏 답변해 드리겠습니다.</p>
+</section>
+<!-- Inquiry Form -->
+<form class="flex flex-col gap-md" onsubmit="event.preventDefault();">
+<!-- Inquiry Category Combo Box -->
+<!-- Product Selection (Optional depending on category, but requested) -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="product-select">문의 상품</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-container border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary input-transition" id="product-select"><option disabled="" value="">선택해주세요 (선택사항)</option><option selected="" value="p1">엘포틴 코디 15ml X 15포</option><option value="p2">[L14] 릴렉스 핏 트라우저 - 올리브</option></select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Content Textarea -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant ml-1" for="inquiry-content">내용</label>
+<textarea class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary input-transition resize-y min-h-[120px]" id="inquiry-content" placeholder="문의하실 내용을 자세히 적어주세요." rows="6"></textarea>
+</div>
+<!-- Secret Post Checkbox -->
+<div class="flex items-center mt-2">
+<div class="relative flex items-start">
+<div class="flex h-6 items-center">
+<input class="h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container transition-colors cursor-pointer" id="secret-post" name="secret-post" type="checkbox"/>
+</div>
+<div class="ml-3 text-sm leading-6">
+<label class="font-body-md text-body-md text-on-surface cursor-pointer select-none" for="secret-post">비밀글로 문의하기</label>
+</div>
+</div>
+</div>
+<!-- Image Upload Placeholder (often seen in inquiry forms, adding for realism in UI) -->
+<!-- Submit Button -->
+<div class="mt-xl pb-lg">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md font-semibold py-4 rounded-full shadow-sm hover:bg-on-surface transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary active:scale-[0.98] transform flex items-center justify-center gap-2" type="submit">문의 등록</button>
+</div>
+</form>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto bg-surface-container dark:bg-surface-container flex flex-col items-center gap-base py-lg px-md w-full">
+<!-- Brand Logo / Name in Footer -->
+<div class="font-headline-md text-headline-md text-primary font-bold mb-2">
+            L14 Cordy
+        </div>
+<!-- Links -->
+<div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-2">
+<a class="font-caption text-caption text-on-surface-variant hover:underline decoration-outline-variant transition-opacity duration-150" href="#">Privacy Policy</a>
+<a class="font-caption text-caption text-on-surface-variant hover:underline decoration-outline-variant transition-opacity duration-150" href="#">Terms of Service</a>
+<a class="font-caption text-caption text-on-surface-variant hover:underline decoration-outline-variant transition-opacity duration-150" href="#">Contact Us</a>
+</div>
+<!-- Copyright -->
+<div class="font-caption text-caption text-on-surface-variant opacity-80 mt-2 text-center">
+            © 2024 L14 Cordy. All rights reserved.
+        </div>
+</footer>
+</body></html>

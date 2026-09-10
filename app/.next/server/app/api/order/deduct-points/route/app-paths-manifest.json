@@ -1,0 +1,3 @@
+{
+  "/api/order/deduct-points/route": "app/api/order/deduct-points/route.js"
+}

@@ -1,0 +1,261 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Payment Completed - OrganicLiving App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#e9e2d0",
+                      "primary-fixed": "#f2e0c3",
+                      "primary-fixed-dim": "#d5c5a8",
+                      "on-secondary-fixed-variant": "#4a473a",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#e7d7ba",
+                      "on-background": "#1d1b18",
+                      "outline": "#7D766C",
+                      "tertiary-fixed-dim": "#c7c8b1",
+                      "surface-tint": "#695d46",
+                      "on-secondary-container": "#686456",
+                      "surface-dim": "#dfd9d4",
+                      "secondary-container": "#e9e2d0",
+                      "on-surface-variant": "#4b463d",
+                      "inverse-primary": "#d5c5a8",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "tertiary": "#464837",
+                      "on-primary-fixed": "#231a08",
+                      "on-tertiary-fixed-variant": "#464836",
+                      "error": "#BA1A1A",
+                      "tertiary-fixed": "#e3e4cc",
+                      "primary": "#504530",
+                      "on-tertiary-fixed": "#1b1d0e",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#1e1c11",
+                      "surface-container-low": "#f9f2ed",
+                      "on-surface": "#1F1B15",
+                      "secondary": "#625e50",
+                      "on-tertiary-container": "#d9dac3",
+                      "surface-bright": "#fff8f3",
+                      "surface-container": "#f3ede8",
+                      "surface-container-high": "#eee7e2",
+                      "secondary-fixed-dim": "#ccc6b5",
+                      "tertiary-container": "#5e604d",
+                      "on-error": "#ffffff",
+                      "background": "#fff8f3",
+                      "on-primary": "#ffffff",
+                      "inverse-surface": "#33302d",
+                      "primary-container": "#695d46",
+                      "error-container": "#ffdad6",
+                      "surface": "#FFF8F3",
+                      "inverse-on-surface": "#f6efeb",
+                      "on-primary-fixed-variant": "#504530",
+                      "outline-variant": "#cec5b9",
+                      "surface-variant": "#e8e1dc",
+                      "surface-container-highest": "#e8e1dc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px",
+                      "2xl": "16px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "sm": "12px",
+                      "lg": "40px",
+                      "xl": "64px",
+                      "base": "8px",
+                      "md": "24px",
+                      "container-max": "440px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "caption": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Subtle entrance animation */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-[100dvh] flex flex-col">
+
+<!-- Main content taking up available space, centered vertically -->
+<main class="flex-1 flex flex-col items-center justify-center px-md pb-md">
+    
+    <!-- Animated Container -->
+    <div class="w-full max-w-sm flex flex-col items-center">
+        <!-- Success Icon -->
+        <div class="w-24 h-24 rounded-full bg-primary-fixed flex items-center justify-center mb-md shadow-sm opacity-0 animate-fade-up">
+            <span class="material-symbols-outlined fill text-primary" style="font-size: 48px;">check_circle</span>
+        </div>
+        
+        <!-- Headlines -->
+        <h1 class="font-headline-lg text-headline-lg text-primary mb-sm text-center opacity-0 animate-fade-up">결제가 완료되었습니다</h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl text-center opacity-0 animate-fade-up delay-100">주문해주셔서 감사합니다</p>
+        
+        <!-- Order Summary Card -->
+        <div class="w-full bg-surface-container rounded-2xl p-md text-left opacity-0 animate-fade-up delay-200 border border-outline-variant/30">
+            <div class="flex flex-col gap-sm">
+                <div class="flex justify-between items-center py-sm border-b border-outline-variant/20">
+                    <span class="font-label-md text-label-md text-on-surface-variant">주문 번호</span>
+                    <span class="font-body-md text-body-md text-on-surface font-medium" id="display-order-id">20240520-000123</span>
+                </div>
+                <div class="flex justify-between items-center py-sm border-b border-outline-variant/20">
+                    <span class="font-label-md text-label-md text-on-surface-variant">결제 수단</span>
+                    <span class="font-body-md text-body-md text-on-surface" id="display-payment-method">신용카드</span>
+                </div>
+                <div class="flex justify-between items-center pt-sm">
+                    <span class="font-label-md text-label-md text-on-surface-variant">총 결제 금액</span>
+                    <span class="font-headline-md text-headline-md text-primary font-semibold" id="display-amount">₩46,000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Action Buttons anchored to bottom -->
+<div class="w-full flex flex-col gap-sm px-md pb-xl pt-md bg-surface opacity-0 animate-fade-up delay-300">
+    <button onclick="window.location.href='/mmall.html'" class="w-full py-md bg-primary text-on-primary rounded-full font-label-md text-label-md hover:bg-primary/90 transition-colors duration-200 active:scale-[0.98]">
+        쇼핑 계속하기
+    </button>
+    <button class="w-full py-md bg-transparent text-primary border border-outline-variant rounded-full font-label-md text-label-md hover:bg-surface-container-low transition-colors duration-200 active:scale-[0.98]">
+        주문 내역 보기
+    </button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const usedPoints = urlParams.get('usedPoints');
+    const userId = urlParams.get('userId');
+    const orderIdRaw = urlParams.get('orderId');
+    const orderId = orderIdRaw ? orderIdRaw.replace(/^order_/, '') : null;
+    const amount = urlParams.get('amount');
+    const paymentKey = urlParams.get('paymentKey');
+    const fallbackMethod = sessionStorage.getItem('selectedPaymentMethod') || '결제수단';
+
+    if (orderId) {
+        const elOrderId = document.getElementById('display-order-id');
+        if (elOrderId) elOrderId.textContent = orderId;
+    }
+    if (amount) {
+        const elAmount = document.getElementById('display-amount');
+        if (elAmount) elAmount.textContent = '\u20a9' + Number(amount).toLocaleString();
+    }
+
+    const elMethod = document.getElementById('display-payment-method');
+    if (elMethod) elMethod.textContent = '';
+
+    // Read sessionStorage data BEFORE any removal
+    let pendingOrderObj = null;
+    let pendingAddressObj = null;
+
+    const pendingOrderStr = sessionStorage.getItem('pendingOrderInfo');
+    if (pendingOrderStr) {
+        try { pendingOrderObj = JSON.parse(pendingOrderStr); } catch(e) {}
+    }
+    const pendingAddressStr = sessionStorage.getItem('pendingAddress');
+    if (pendingAddressStr) {
+        try { pendingAddressObj = JSON.parse(pendingAddressStr); } catch(e) {}
+    }
+
+    // Always ensure userId is set - use URL param as fallback if sessionStorage missing
+    if (!pendingOrderObj) pendingOrderObj = {};
+    if (!pendingOrderObj.userId && userId) pendingOrderObj.userId = userId;
+    if (!pendingOrderObj.source) pendingOrderObj.source = urlParams.get('source') || null;
+    if (!pendingOrderObj.priceId) pendingOrderObj.priceId = urlParams.get('priceId') || null;
+
+    if (paymentKey && orderIdRaw && amount) {
+        fetch('/api/order/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                paymentKey,
+                orderId: orderIdRaw,
+                amount,
+                pendingAddress: pendingAddressObj,
+                orderInfo: pendingOrderObj
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // Clean up sessionStorage after API call
+            sessionStorage.removeItem('pendingOrderInfo');
+            sessionStorage.removeItem('pendingAddress');
+
+            if (data.success && data.payment) {
+                let realMethod = data.payment.method || data.payment.type || '';
+                if (data.payment.easyPay && data.payment.easyPay.provider) realMethod = data.payment.easyPay.provider;
+                if (data.payment.card) realMethod = '카드';
+                if (data.payment.transfer) realMethod = '계좌이체';
+                if (data.payment.virtualAccount) realMethod = '가상계좌';
+                if (data.payment.mobilePhone) realMethod = '휴대폰';
+                if (realMethod === 'QUICK_TRANSFER') realMethod = '퀵계좌이체';
+                if (elMethod) elMethod.textContent = realMethod || fallbackMethod;
+                sessionStorage.setItem('selectedPaymentMethod', realMethod);
+
+                // Deduct points after successful payment
+                if (usedPoints && userId && Number(usedPoints) > 0) {
+                    fetch('/api/order/deduct-points', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: userId, usedPoints: Number(usedPoints) })
+                    }).catch(err => console.error(err));
+                }
+            } else {
+                console.error('[mpayment_done] confirm failed:', data);
+                alert('[DEBUG] 주문 저장 실패: ' + (data.message || JSON.stringify(data)));
+                if (elMethod) elMethod.textContent = fallbackMethod;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('[DEBUG] 네트워크 오류: ' + err.message);
+            if (elMethod) elMethod.textContent = fallbackMethod;
+        });
+    } else {
+        if (elMethod) elMethod.textContent = fallbackMethod;
+    }
+});
+</script>
+</body></html>
