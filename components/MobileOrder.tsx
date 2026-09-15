@@ -50,7 +50,9 @@ export default function MobileOrder() {
   const [isPointFocused, setIsPointFocused] = useState(false);
   const pointInputRef = useRef<HTMLInputElement>(null);
   
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("카드");
+  const widgetsRef = useRef<any>(null);
+  const paymentWidgetRef = useRef<any>(null);
+  const agreementWidgetRef = useRef<any>(null);
   
   const tossPaymentsRef = useRef<any>(null);
   const tossInitializedRef = useRef(false);
@@ -159,29 +161,50 @@ export default function MobileOrder() {
     }
   }, []);
 
-  // ── Toss: initialise Core SDK ──
+  // ── Toss: initialise widget ONCE when productTotal first becomes > 0 ──
   useEffect(() => {
+    if (productTotal <= 0) return;
     if (tossInitializedRef.current) return;
 
     const initToss = async () => {
       try {
         tossInitializedRef.current = true;
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_NORMAL_API_CLIENT_KEY || "test_ck_DnyRpQWGrNLgQyvOYvbe3Kwv1M9E";
-        const toss = (window as any).TossPayments(clientKey);
-        tossPaymentsRef.current = toss.payment({ customerKey: "customer_" + Date.now() });
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+        const customerKey = "customer_" + Date.now();
+        const tossPayments = (window as any).TossPayments(clientKey);
+        const widgets = tossPayments.widgets({ customerKey });
+        widgetsRef.current = widgets;
+
+        const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
+        await widgets.setAmount({ currency: "KRW", value: total });
+
+        paymentWidgetRef.current = await widgets.renderPaymentMethods({
+          selector: "#payment-method",
+          variantKey: "DEFAULT",
+        });
+
+        agreementWidgetRef.current = await widgets.renderAgreement({
+          selector: "#payment-agreement",
+          variantKey: "DEFAULT",
+        });
+
+        paymentWidgetRef.current.on('paymentMethodSelect', (methodInfo: any) => {
+          let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
+          if (methodInfo.easyPay?.provider) pName = methodInfo.easyPay.provider;
+          if (methodInfo.easypay?.provider) pName = methodInfo.easypay.provider;
+          if (methodInfo.transfer?.provider) pName = methodInfo.transfer.provider;
+          if (pName === 'QUICK_TRANSFER') pName = '퀵계좌이체';
+          if (pName === 'CUSTOM') pName = methodInfo.paymentMethodKey || '퀵계좌이체';
+          sessionStorage.setItem('selectedPaymentMethod', pName);
+        });
       } catch (err) {
-        console.error("Toss SDK Init Error (Mobile):", err);
+        console.error("Toss SDK Init Error:", err);
       }
     };
 
     if ((window as any).TossPayments) {
       initToss();
     } else {
-      if (!document.querySelector('script[src*="v2/standard"]')) {
-        const script = document.createElement('script');
-        script.src = 'https://js.tosspayments.com/v2/standard';
-        document.head.appendChild(script);
-      }
       const interval = setInterval(() => {
         if ((window as any).TossPayments) {
           clearInterval(interval);
@@ -190,7 +213,14 @@ export default function MobileOrder() {
       }, 100);
       return () => clearInterval(interval);
     }
-  }, []);
+  }, [productTotal]);
+
+  // ── Toss: update amount only (widget already rendered) ──
+  useEffect(() => {
+    if (!widgetsRef.current) return;
+    const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
+    widgetsRef.current.setAmount({ currency: "KRW", value: total });
+  }, [productTotal, shippingCost, usePoints, pointAmount]);
 
 
   const handlePointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -300,8 +330,8 @@ export default function MobileOrder() {
       sessionStorage.removeItem('pendingAddress');
     }
 
-    let paymentMethodName = selectedPaymentMethod;
-    sessionStorage.setItem('selectedPaymentMethod', paymentMethodName);
+    // Let widget handle selected payment method
+    // (sessionStorage is set in the widget on change)
 
     const deliveryMessage = memoType === '직접 입력' || memoType === 'direct' ? memoCustom : memoType;
 
@@ -582,30 +612,9 @@ export default function MobileOrder() {
             </section>
           )}
 
-          <section className="bg-surface-container-high border border-outline-variant/20 mb-6 p-4 md:p-6" style={{ transform: 'translateZ(0)' }}>
-            <h2 className="font-title-lg text-title-lg text-on-surface mb-4">결제 수단</h2>
-            <div className="grid grid-cols-2 gap-2">
-              {['카드', '가상계좌', '계좌이체', '휴대폰'].map(method => (
-                <button
-                  key={method}
-                  type="button"
-                  onClick={() => setSelectedPaymentMethod(method)}
-                  className={`px-4 py-2 border rounded-full text-sm font-medium transition-colors ${
-                    selectedPaymentMethod === method 
-                      ? 'bg-primary text-white border-primary' 
-                      : 'bg-surface border-outline-variant text-on-surface'
-                  }`}
-                >
-                  {method}
-                </button>
-              ))}
-            </div>
-            
-            {selectedPaymentMethod === '카드' && (
-              <p className="text-sm text-outline mt-4">
-                결제하기 버튼을 누르시면 카드사 및 할부 개월 수를 선택하는 창이 나타납니다.
-              </p>
-            )}
+          <section className="bg-surface-container-high border border-outline-variant/20 rounded-lg p-0 mb-6 overflow-hidden">
+            <div id="payment-method" className="w-full"></div>
+            <div id="payment-agreement" className="w-full"></div>
           </section>
 
           {/* Checkout Summary + Button (inline, not fixed) */}
