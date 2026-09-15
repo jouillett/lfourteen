@@ -166,8 +166,7 @@ export default function MobileOrder() {
     const initToss = async () => {
       try {
         tossInitializedRef.current = true;
-        // API 개별 연동 키 (Core SDK용)는 반드시 'test_ck_' 또는 'live_ck_' 로 시작해야 합니다. 'test_gck_'는 위젯 전용입니다.
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_API_CLIENT_KEY || "test_ck_DnyRpQWGrNLgQyvOYvbe3Kwv1M9E";
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
         const toss = (window as any).TossPayments(clientKey);
         tossPaymentsRef.current = toss.payment({ customerKey: "customer_" + Date.now() });
       } catch (err) {

@@ -164,7 +164,7 @@ export async function DELETE(req: Request) {
         for (const row of billingRows) {
           // Delete from Toss Payments
           if (row.billing_key) {
-            const secretKey = process.env.TOSS_SECRET_KEY || "test_sk_XjExPeJWYVQR12P55agr49R5gvNL";
+            const secretKey = process.env.TOSS_API_SECRET_KEY || "test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ";
             const encodedSecretKey = Buffer.from(secretKey + ":").toString("base64");
             
             try {
