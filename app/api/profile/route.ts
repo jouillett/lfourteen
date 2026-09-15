@@ -21,6 +21,18 @@ export async function GET(req: Request) {
         return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
       }
 
+      // Clean up expired points and sync total for this user
+      await connection.execute('DELETE FROM points WHERE customer_id = ? AND expired_at < NOW()', [customerId]);
+      const [pointSumRow]: any = await connection.execute(
+        'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+        [customerId]
+      );
+      const syncedPoint = Number(pointSumRow[0].total) || 0;
+      if (Number(rows[0].point) !== syncedPoint) {
+        await connection.execute('UPDATE customers SET point = ? WHERE id = ?', [syncedPoint, customerId]);
+        rows[0].point = syncedPoint;
+      }
+
       const user = rows[0];
       for (const key in user) {
         if (Buffer.isBuffer(user[key])) {

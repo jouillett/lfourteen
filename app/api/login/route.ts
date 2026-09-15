@@ -43,9 +43,20 @@ export async function POST(req: Request) {
 
       const userId = userRows[0].id;
       const userName = userRows[0].name;
-      const point = userRows[0].point || 0;
       const grade = userRows[0].grade || null;
-      return NextResponse.json({ success: true, message: 'Login successful', userId, name: userName, point, grade });
+
+      // Clean up expired points and sync total for this user
+      await connection.execute('DELETE FROM points WHERE customer_id = ? AND expired_at < NOW()', [userId]);
+      const [pointSumRow]: any = await connection.execute(
+        'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+        [userId]
+      );
+      const syncedPoint = Number(pointSumRow[0].total) || 0;
+      if (Number(userRows[0].point) !== syncedPoint) {
+        await connection.execute('UPDATE customers SET point = ? WHERE id = ?', [syncedPoint, userId]);
+      }
+
+      return NextResponse.json({ success: true, message: 'Login successful', userId, name: userName, point: syncedPoint, grade });
     } finally {
       connection.release();
     }

@@ -18,7 +18,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Customer not found' }, { status: 404 });
     }
 
-    const point = Number(rows[0].point) || 0;
+    // Clean up expired points and sync total for this user
+    await pool.query('DELETE FROM points WHERE customer_id = ? AND expired_at < NOW()', [userId]);
+    const [pointSumRow]: any = await pool.query(
+      'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+      [userId]
+    );
+    const syncedPoint = Number(pointSumRow[0].total) || 0;
+    if (Number(rows[0].point) !== syncedPoint) {
+      await pool.query('UPDATE customers SET point = ? WHERE id = ?', [syncedPoint, userId]);
+    }
+
+    const point = syncedPoint;
     const name = rows[0].name || '';
     const mobile = rows[0].mobile || '';
     const zip_code = rows[0].zip_code || '';
