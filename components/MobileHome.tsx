@@ -188,7 +188,6 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
   };
 
   const handleSubscribeClick = async () => {
-    alert("현대카드는 현재 결제 서비스 준비중입니다.\n다른 카드사를 선택해주세요.");
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (customerId) {
       try {
