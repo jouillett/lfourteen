@@ -110,7 +110,7 @@ export default function MobilePaymentSuccess() {
             console.error("[MobilePaymentSuccess] confirm failed:", data);
             let msg = data.message || JSON.stringify(data);
             if (msg.includes("업체 사정으로 결제가 중지되었습니다")) {
-              msg = "죄송합니다.\n결제 서비스 준비중입니다. 다른 카드사를 선택해주세요.";
+              msg = "죄송합니다.\n현대카드는 현재 결제 서비스 준비중입니다. 다른 카드사를 선택해주세요.";
             } else {
               msg = "주문 저장 실패: " + msg;
             }
