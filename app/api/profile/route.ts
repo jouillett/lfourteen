@@ -155,6 +155,9 @@ export async function DELETE(req: Request) {
       // 3. Delete all customer_id=login-id from the my_qna
       await connection.execute('DELETE FROM my_qna WHERE customer_id = ?', [customerId]);
       
+      // 3.5 Delete all customer_id=login-id from the points table FIRST to avoid foreign key constraint with orders table
+      await connection.execute('DELETE FROM points WHERE customer_id = ?', [customerId]);
+
       // 4. Find all the records from the orders table where customer_id=login-id
       // repeat Delete all order_id=found_id from the order_items table
       // then Delete all customer_id=login-id from the orders table
@@ -163,9 +166,6 @@ export async function DELETE(req: Request) {
         await connection.execute('DELETE FROM order_items WHERE order_id = ?', [row.id]);
       }
       await connection.execute('DELETE FROM orders WHERE customer_id = ?', [customerId]);
-      
-      // 5. Delete all customer_id=login-id from the points table
-      await connection.execute('DELETE FROM points WHERE customer_id = ?', [customerId]);
       
       // 6. Delete all customer_id=login-id from the qna table
       await connection.execute('DELETE FROM qna WHERE customer_id = ?', [customerId]);
