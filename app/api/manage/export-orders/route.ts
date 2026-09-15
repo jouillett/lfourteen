@@ -54,7 +54,7 @@ export async function GET(req: Request) {
        dateStr = dateStr.replace('AM', '오전').replace('PM', '오후');
        
        const fullAddress = parseBuffer(row.receiver_address);
-       const priceVal = (Number(row.total_qty) || 0) * 30000;
+       const priceVal = (Number(row.total_qty) || 0) * 25000;
        const priceStr = priceVal.toLocaleString() + '원';
 
        const rowData = [
