@@ -90,11 +90,17 @@ export async function GET(req: Request) {
 
     const buffer = await workbook.xlsx.writeBuffer();
 
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const filename = `orders_${yyyy}${mm}${dd}.xlsx`;
+
     return new NextResponse(buffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        'Content-Disposition': 'attachment; filename="orders.xlsx"'
+        'Content-Disposition': `attachment; filename="${filename}"`
       }
     });
 
