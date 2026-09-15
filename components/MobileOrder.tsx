@@ -170,7 +170,8 @@ export default function MobileOrder() {
       try {
         tossInitializedRef.current = true;
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-        const customerKey = "customer_" + Date.now();
+        const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+        const customerKey = userId ? "user_" + userId : "customer_" + Date.now();
         const tossPayments = (window as any).TossPayments(clientKey);
         const widgets = tossPayments.widgets({ customerKey });
         widgetsRef.current = widgets;
