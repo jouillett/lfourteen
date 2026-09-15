@@ -287,8 +287,7 @@ export default function OrderPage() {
   const handleDeleteOrder = async (orderId: number, status: number | string) => {
     const numStatus = Number(status);
     if (numStatus === 0) {
-      alert("배송 준비중이어서 삭제할 수 없습니다.");
-      return;
+      if (!confirm("현재 결제완료(배송준비중) 상태입니다. 내역을 강제로 삭제하시겠습니까? (실제 결제 취소는 별도로 진행해야 합니다)")) return;
     }
     if (numStatus === 99) {
       if (confirm("아직 입금 전 상태입니다. 주문을 취소하고 삭제하시겠습니까?")) {
