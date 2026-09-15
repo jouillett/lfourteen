@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -11,9 +11,13 @@ export default function BillingPage() {
   const [duration, setDuration] = useState<number | "">(4);
   const [payment, setPayment] = useState<any>(null);
   const [grade, setGrade] = useState<string | null>(null);
+  const hasAlerted = useRef(false);
 
   useEffect(() => {
-    alert("현대카드는 현재 결제 서비스 준비중입니다.\n다른 카드사를 선택해주세요.");
+    if (!hasAlerted.current) {
+      alert("현대카드는 현재 결제 서비스 준비중입니다.\n다른 카드사를 선택해주세요.");
+      hasAlerted.current = true;
+    }
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
       alert("로그인이 필요합니다.");
