@@ -40,7 +40,6 @@ export default function MypageBilling() {
   const [reviewCount, setReviewCount] = useState<number | null>(null);
 
   useEffect(() => {
-    alert("현대카드는 현재 결제 서비스 준비중입니다.\n다른 카드사를 선택해주세요.");
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!customerId) {
       window.location.href = "/login?redirect=/mypage/billing";
