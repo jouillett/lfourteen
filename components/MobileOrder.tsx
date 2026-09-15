@@ -166,7 +166,7 @@ export default function MobileOrder() {
     const initToss = async () => {
       try {
         tossInitializedRef.current = true;
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_NORMAL_API_CLIENT_KEY || "test_ck_DnyRpQWGrNLgQyvOYvbe3Kwv1M9E";
         const toss = (window as any).TossPayments(clientKey);
         tossPaymentsRef.current = toss.payment({ customerKey: "customer_" + Date.now() });
       } catch (err) {
