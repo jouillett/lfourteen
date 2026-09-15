@@ -370,27 +370,14 @@ export default function MobileOrder() {
       updateCustomerProfileAddress
     }));
 
-    if (tossPaymentsRef.current) {
+    if (widgetsRef.current) {
       try {
-        const total = Math.max(0, productTotal + shippingCost - (usePoints ? pointAmount : 0));
-        
-        let methodType = "CARD";
-        if (selectedPaymentMethod === "가상계좌") methodType = "VIRTUAL_ACCOUNT";
-        else if (selectedPaymentMethod === "계좌이체") methodType = "TRANSFER";
-        else if (selectedPaymentMethod === "휴대폰") methodType = "MOBILE_PHONE";
-
-        await tossPaymentsRef.current.requestPayment({
-          method: methodType,
-          amount: {
-            currency: "KRW",
-            value: total
-          },
+        await widgetsRef.current.requestPayment({
           orderId: "order_" + Date.now(),
           orderName: cartItems.length > 1 ? `${cartItems[0].product_name} 외 ${cartItems.length - 1}건` : (cartItems[0]?.product_name || '상품 결제'),
           successUrl: window.location.origin + "/payment/success",
           failUrl: window.location.origin + "/payment/fail",
-          customerName: receiverName || "고객",
-          customerEmail: phone ? phone.replace(/-/g, '') + "@temp.com" : undefined // V2 requires email to be valid format if provided
+          customerName: receiverName || "고객"
         });
       } catch (err: any) {
         if (err.message) {
