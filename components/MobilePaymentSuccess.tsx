@@ -108,8 +108,31 @@ export default function MobilePaymentSuccess() {
             }
           } else {
             console.error("[MobilePaymentSuccess] confirm failed:", data);
-            alert("[DEBUG] 주문 저장 실패: " + (data.message || JSON.stringify(data)));
-            setPaymentMethod(fallbackMethod);
+            let msg = data.message || JSON.stringify(data);
+            if (msg.includes("업체 사정으로 결제가 중지되었습니다")) {
+              msg = "죄송합니다.\n결제 서비스 준비중입니다. 다른 카드사를 선택해주세요.";
+            } else {
+              msg = "주문 저장 실패: " + msg;
+            }
+            alert(msg);
+            
+            let returnUrl = "/cart";
+            if (typeof window !== 'undefined') {
+              const pendingOrderStr = sessionStorage.getItem('pendingOrderInfo');
+              if (pendingOrderStr) {
+                try {
+                  const pendingOrderObj = JSON.parse(pendingOrderStr);
+                  if (pendingOrderObj.source === "buy" && pendingOrderObj.priceId) {
+                    returnUrl = "/order?source=buy&priceId=" + pendingOrderObj.priceId;
+                  } else if (pendingOrderObj.source === "reorder" && pendingOrderObj.reorderId) {
+                    returnUrl = "/order?source=reorder&orderId=" + pendingOrderObj.reorderId;
+                  } else if (pendingOrderObj.source === "cart") {
+                    returnUrl = "/order?source=cart";
+                  }
+                } catch(e) {}
+              }
+              window.location.replace(returnUrl);
+            }
           }
         })
         .catch((err) => {
