@@ -13,6 +13,7 @@ export default function BillingPage() {
   const [grade, setGrade] = useState<string | null>(null);
 
   useEffect(() => {
+    alert("현대카드, 우리카드, 하나카드는 현재 결제 서비스 준비중입니다. 다른 카드사를 선택해주세요.");
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
       alert("로그인이 필요합니다.");
