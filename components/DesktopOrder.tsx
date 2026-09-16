@@ -171,7 +171,7 @@ export default function DesktopOrder() {
     const initToss = async () => {
       try {
         tossInitializedRef.current = true;
-        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+        const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || process.env.NEXT_PUBLIC_TOSS_CLIENT || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
         console.log("[DesktopOrder] loadTossPayments clientKey:", clientKey);
         const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
         const customerKey = userId ? "user_" + userId : "customer_" + Date.now();
