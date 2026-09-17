@@ -44,6 +44,7 @@ export async function GET(req: Request) {
 
     // Template's 2nd row has the styles (colors, fonts, etc.)
     const styleRow = worksheet.getRow(2);
+    let totalSum = 0;
 
     rows.forEach((row: any, index: number) => {
        const dt = new Date(row.created_at);
@@ -55,6 +56,7 @@ export async function GET(req: Request) {
        
        const fullAddress = parseBuffer(row.receiver_address);
        const priceVal = (Number(row.total_qty) || 0) * 25000;
+       totalSum += priceVal;
        const priceStr = priceVal.toLocaleString() + '원';
 
        const rowData = [
@@ -86,6 +88,20 @@ export async function GET(req: Request) {
     // Remove the original blank styled template row which was shifted down
     if (rows.length > 0) {
       worksheet.spliceRows(2 + rows.length, 1);
+      
+      const totalRowData = [
+         "합계",
+         "",
+         "",
+         totalSum.toLocaleString() + '원',
+         "", "", "", "", "", "", "", "", ""
+      ];
+      const totalRow = worksheet.insertRow(2 + rows.length, totalRowData);
+      totalRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+         const styleCell = styleRow.getCell(colNumber);
+         cell.style = styleCell.style;
+      });
+      totalRow.commit();
     }
 
     const buffer = await workbook.xlsx.writeBuffer();

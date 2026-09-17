@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     // 1. Confirm with Toss Payments
     // Desktop (Payment Widget) and Mobile (Core SDK) both use TOSS_SECRET_KEY for normal payments.
     // Billing/subscriptions use TOSS_API_SECRET_KEY.
-    const secretKey = process.env.TOSS_SECRET_KEY || 'test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6';
+    const secretKey = process.env.TOSS_SECRET_KEY || 'live_gsk_LkKEypNArWgYLO7GKMWerlmeaxYG';
     const encodedSecretKey = Buffer.from(secretKey + ':').toString('base64');
     const authHeader = 'Basic ' + encodedSecretKey;
 
