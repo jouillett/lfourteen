@@ -104,7 +104,8 @@ export default function BillingPage() {
       successUrl: window.location.origin + "/billing/success?" + params.toString(),
       failUrl: window.location.origin + "/billing/fail",
       customerEmail: "customer123@gmail.com",
-      customerName: "김토스",
+      customerName: "김토스", 
+      windowTarget: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? "self" : "iframe",
     });
   }
 
