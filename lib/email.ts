@@ -21,7 +21,7 @@ export interface SubscriptionSuccessData {
 }
 
 export async function sendSubscriptionSuccessEmail(toEmail: string, data: SubscriptionSuccessData) {
-  const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
+  const fromEmail = `"기쁜하루" <beluga.in.the.forest@gmail.com>`;
   
   const formattedAmount = new Intl.NumberFormat('ko-KR').format(data.amount);
   const productNameStr = data.quantity && data.quantity > 1 ? `${data.productName}  ${data.quantity}개` : data.productName || '엘포틴 코디 15ml X 15포';
@@ -137,7 +137,7 @@ export async function sendSubscriptionSuccessEmail(toEmail: string, data: Subscr
 }
 
 export async function sendShippingEmail(toEmail: string, data: any) {
-  const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
+  const fromEmail = `"기쁜하루" <beluga.in.the.forest@gmail.com>`;
   const templatePath = path.join(process.cwd(), 'design', 'mail2.html');
   let htmlContent = await fs.promises.readFile(templatePath, 'utf8');
 
@@ -180,7 +180,7 @@ export async function sendShippingEmail(toEmail: string, data: any) {
 }
 
 export async function sendReturnEmail(toEmail: string, data: any) {
-  const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
+  const fromEmail = `"기쁜하루" <beluga.in.the.forest@gmail.com>`;
   const templatePath = path.join(process.cwd(), 'design', 'mail3.html');
   let htmlContent = await fs.promises.readFile(templatePath, 'utf8');
 
@@ -210,7 +210,7 @@ export async function sendReturnEmail(toEmail: string, data: any) {
 }
 
 export async function sendExchangeEmail(toEmail: string, data: any) {
-  const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
+  const fromEmail = `"기쁜하루" <beluga.in.the.forest@gmail.com>`;
   const templatePath = path.join(process.cwd(), 'design', 'mail4.html');
   let htmlContent = await fs.promises.readFile(templatePath, 'utf8');
 
@@ -237,7 +237,7 @@ export async function sendExchangeEmail(toEmail: string, data: any) {
 }
 
 export async function sendSubscriptionCancelEmail(toEmail: string, data: { productName: string, paymentDate: string, amount: number }) {
-  const fromEmail = process.env.SMTP_FROM || '"L14 Cordy" <noreply@l14cordy.com>';
+  const fromEmail = `"기쁜하루" <beluga.in.the.forest@gmail.com>`;
   
   const formattedAmount = new Intl.NumberFormat('ko-KR').format(data.amount);
   const productNameStr = data.productName || '엘포틴 코디';
