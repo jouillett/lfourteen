@@ -1,0 +1,7 @@
+{
+  "name": "airspace-runner",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "cd app && node server.js"
+  }
+}
