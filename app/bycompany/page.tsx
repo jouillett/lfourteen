@@ -81,24 +81,13 @@ function CompanyOrderDetails() {
     <div className="max-w-3xl mx-auto bg-surface-container-lowest border border-outline-variant rounded-xl p-8 shadow-sm">
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label className="block text-sm font-bold text-on-surface-variant mb-1">Order Number</label>
-          <input type="text" readOnly value={order.order_number || order.id} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
-        </div>
-        
-        <div>
           <label className="block text-sm font-bold text-on-surface-variant mb-1">Order Name</label>
           <input type="text" readOnly value={order.order_name || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-bold text-on-surface-variant mb-1">Customer ID</label>
-            <input type="text" readOnly value={order.customer_id || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
-          </div>
-          <div>
-            <label className="block text-sm font-bold text-on-surface-variant mb-1">Customer Name</label>
-            <input type="text" readOnly value={order.customer_name || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
-          </div>
+        <div>
+          <label className="block text-sm font-bold text-on-surface-variant mb-1">Customer Name</label>
+          <input type="text" readOnly value={order.customer_name || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
