@@ -74,8 +74,10 @@ export default function OrderedPage() {
             </table>
             
             {orders.length > 0 && (
-              <div className="p-6 text-right text-lg font-bold text-on-surface">
-                총 합계금액은 {totalPriceSum.toLocaleString()}원입니다.
+              <div className="p-6 flex flex-col sm:flex-row justify-between items-end sm:items-center gap-4 text-lg font-bold text-on-surface">
+                <button onClick={() => window.open('/api/ordered/export', '_blank')} className="px-6 py-2 bg-primary text-on-primary text-base font-bold rounded-md hover:bg-primary-fixed-dim transition-colors shadow-sm order-2 sm:order-1">저장 (엑셀 다운로드)</button>
+                <span className="order-1 sm:order-2">
+                총 합계금액은 {totalPriceSum.toLocaleString()}원입니다.</span>
               </div>
             )}
           </div>
