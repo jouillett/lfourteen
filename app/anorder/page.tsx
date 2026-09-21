@@ -53,6 +53,20 @@ function OrderDetails() {
     }
   };
 
+  
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-';
+    const parts = dateString.split(' ');
+    if (parts.length < 2) return dateString;
+    const dateParts = parts[0].split('-');
+    const timeParts = parts[1].split(':');
+    let hour = parseInt(timeParts[0]);
+    const ampm = hour >= 12 ? '오후' : '오전';
+    if (hour > 12) hour -= 12;
+    if (hour === 0) hour = 12;
+    return `${dateParts[0]}. ${parseInt(dateParts[1])}. ${parseInt(dateParts[2])}. ${ampm} ${hour}:${timeParts[1]}:${timeParts[2]}`;
+  };
+
   const handleSave = async () => {
     try {
       const res = await fetch('/api/anorder', {
@@ -133,7 +147,7 @@ function OrderDetails() {
 
         <div>
           <label className="block text-sm font-bold text-on-surface-variant mb-1">Created At</label>
-          <input type="text" readOnly value={new Date(order.created_at).toLocaleString()} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
+          <input type="text" readOnly value={formatDate(order.created_at_str)} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
         </div>
 
         <hr className="border-outline-variant my-4" />

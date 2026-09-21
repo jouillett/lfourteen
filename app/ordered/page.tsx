@@ -23,11 +23,15 @@ export default function OrderedPage() {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '-';
-    const dt = new Date(dateString);
-    const formatter = new Intl.DateTimeFormat('ko-KR', {
-      timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
-    });
-    return formatter.format(dt).replace('AM', '오전').replace('PM', '오후');
+    // dateString is "2026-09-21 12:43:23"
+    const parts = dateString.split(' ');
+    const dateParts = parts[0].split('-');
+    const timeParts = parts[1].split(':');
+    let hour = parseInt(timeParts[0]);
+    const ampm = hour >= 12 ? '오후' : '오전';
+    if (hour > 12) hour -= 12;
+    if (hour === 0) hour = 12;
+    return `${dateParts[0]}. ${parseInt(dateParts[1])}. ${parseInt(dateParts[2])}. ${ampm} ${hour}:${timeParts[1]}:${timeParts[2]}`;
   };
 
   const totalPriceSum = orders.reduce((acc, cur) => acc + (Number(cur.total_price) || 0), 0);
@@ -65,7 +69,7 @@ export default function OrderedPage() {
                       <td className="px-6 py-4">{order.product_name}</td>
                       <td className="px-6 py-4">{order.total_qty}</td>
                       <td className="px-6 py-4">{Number(order.total_price).toLocaleString()}원</td>
-                      <td className="px-6 py-4">{formatDate(order.created_at)}</td>
+                      <td className="px-6 py-4">{formatDate(order.created_at_str)}</td>
                       <td className="px-6 py-4">{order.customer_name}</td>
                     </tr>
                   ))

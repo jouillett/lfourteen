@@ -257,7 +257,7 @@ export async function GET(req: Request) {
 
         if (finalStatus === 1 && shipment && shipment.includes('|')) {
           const query = `
-            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at, o.receiver_name, o.receiver_address,
+            SELECT o.id, o.order_number, o.order_name, o.total_price, DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str, o.receiver_name, o.receiver_address,
                    c.name as customer_name, c.email, c.mobile
             FROM orders o
             LEFT JOIN customers c ON o.customer_id = c.id
@@ -351,7 +351,7 @@ export async function GET(req: Request) {
         // Return completion email: status 8 (반품완료)
         if (finalStatus === 8) {
           const query = `
-            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at,
+            SELECT o.id, o.order_number, o.order_name, o.total_price, DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str,
                    c.name as customer_name, c.email, c.mobile
             FROM orders o
             LEFT JOIN customers c ON o.customer_id = c.id
@@ -427,7 +427,7 @@ export async function GET(req: Request) {
         // Exchange completion email: status 6 (교환완료)
         if (finalStatus === 6) {
           const query = `
-            SELECT o.id, o.order_number, o.order_name, o.total_price, o.created_at,
+            SELECT o.id, o.order_number, o.order_name, o.total_price, DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str,
                    c.name as customer_name, c.email
             FROM orders o
             LEFT JOIN customers c ON o.customer_id = c.id

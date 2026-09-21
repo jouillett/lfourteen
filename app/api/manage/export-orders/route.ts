@@ -13,7 +13,7 @@ export async function GET(req: Request) {
         p.name as product_name, 
         (oi.quantity * pr.quantity) as total_qty, 
         (oi.quantity * pr.price) as total_price, 
-        o.created_at, 
+        DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str, 
         o.receiver_name, 
         o.receiver_mobile, 
         o.receiver_phone, 
@@ -47,9 +47,9 @@ export async function GET(req: Request) {
     let totalSum = 0;
 
     rows.forEach((row: any, index: number) => {
-       const dt = new Date(row.created_at);
+       const dt = new Date(row.created_at_str);
        const formatter = new Intl.DateTimeFormat('ko-KR', {
-         timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
+         timeZone: 'Asia/Seoul', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
        });
        let dateStr = formatter.format(dt);
        dateStr = dateStr.replace('AM', '오전').replace('PM', '오후');
