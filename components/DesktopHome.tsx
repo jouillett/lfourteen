@@ -28,9 +28,9 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
         "8": "480,000원",
       },
       options: [
-        { value: "5", label: "1개: 40,000원" },
-        { value: "6", label: "2개: 80,000원" },
-        { value: "7", label: "6개: 240,000원" },
+        { value: "5", label: "1개: 45,000원" },
+        { value: "6", label: "2개: 85,000원" },
+        { value: "7", label: "6개: 250,000원" },
         { value: "8", label: "12개: 480,000원" },
       ]
     }
