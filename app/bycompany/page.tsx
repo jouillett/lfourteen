@@ -12,7 +12,7 @@ function CompanyOrderDetails() {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
-  const [shipment, setShipment] = useState("");
+  const [shipment, setShipment] = useState("롯데택배|");
   const [returnTracking, setReturnTracking] = useState("");
   const [reshipment, setReshipment] = useState("");
   const status = 1; // 강제로 배송중으로 고정
@@ -24,7 +24,7 @@ function CompanyOrderDetails() {
         .then(data => {
           if (data.success && data.order) {
             setOrder(data.order);
-            setShipment(data.order.shipment || "");
+            setShipment(data.order.shipment || "롯데택배|");
             setReturnTracking(data.order.return || "");
             setReshipment(data.order.reshipment || "");
           }
