@@ -1,0 +1,87 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+
+export default function OrderedPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/ordered')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.orders) {
+          setOrders(data.orders);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-';
+    const dt = new Date(dateString);
+    const formatter = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
+    });
+    return formatter.format(dt).replace('AM', '오전').replace('PM', '오후');
+  };
+
+  const totalPriceSum = orders.reduce((acc, cur) => acc + (Number(cur.total_price) || 0), 0);
+
+  return (
+    <div className="bg-background text-on-background antialiased min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 w-full pt-12 pb-24 px-4 max-w-5xl mx-auto">
+        <h1 className="text-[28px] font-bold text-on-surface text-center mb-10">주문 정보</h1>
+        
+        {loading ? (
+          <div className="text-center py-24">로딩중...</div>
+        ) : (
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-x-auto">
+            <table className="min-w-full divide-y divide-outline-variant text-sm text-left">
+              <thead className="bg-surface-container-low text-on-surface font-bold text-center">
+                <tr>
+                  <th scope="col" className="px-6 py-4">제품</th>
+                  <th scope="col" className="px-6 py-4">갯수</th>
+                  <th scope="col" className="px-6 py-4">가격</th>
+                  <th scope="col" className="px-6 py-4">주문 일시</th>
+                  <th scope="col" className="px-6 py-4">성명</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant text-center">
+                {orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-on-surface-variant">
+                      결제 완료된 주문이 없습니다.
+                    </td>
+                  </tr>
+                ) : (
+                  orders.map((order, idx) => (
+                    <tr key={idx} className="hover:bg-surface-container-low transition-colors cursor-pointer" onClick={() => window.location.href = `/bycompany?id=${order.order_id}`}>
+                      <td className="px-6 py-4">{order.product_name}</td>
+                      <td className="px-6 py-4">{order.total_qty}</td>
+                      <td className="px-6 py-4">{Number(order.total_price).toLocaleString()}원</td>
+                      <td className="px-6 py-4">{formatDate(order.created_at)}</td>
+                      <td className="px-6 py-4">{order.customer_name}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+            
+            {orders.length > 0 && (
+              <div className="p-6 text-right text-lg font-bold text-on-surface">
+                총 합계금액은 {totalPriceSum.toLocaleString()}원입니다.
+              </div>
+            )}
+          </div>
+        )}
+      </main>
+      <Footer />
+    </div>
+  );
+}
