@@ -22,9 +22,9 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
     },
     2: {
       prices: {
-        "5": "40,000원",
-        "6": "80,000원",
-        "7": "240,000원",
+        "5": "45,000원",
+        "6": "85,000원",
+        "7": "250,000원",
         "8": "480,000원",
       },
       options: [

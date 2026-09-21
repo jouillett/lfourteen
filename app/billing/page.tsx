@@ -196,9 +196,9 @@ export default function BillingPage() {
                 >
                   {isGrade8 ? (
                     <>
-                      <option value="5">1개: 40,000원</option>
-                      <option value="6">2개: 80,000원</option>
-                      <option value="7">6개: 240,000원</option>
+                      <option value="5">1개: 45,000원</option>
+                      <option value="6">2개: 85,000원</option>
+                      <option value="7">6개: 250,000원</option>
                       <option value="8">12개: 480,000원</option>
                     </>
                   ) : (
