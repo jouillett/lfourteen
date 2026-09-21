@@ -16,7 +16,8 @@ export async function GET(req: Request) {
     try {
       const query = `
         SELECT o.id, o.order_number, o.order_name, o.customer_id, c.name as customer_name, 
-               o.total_price, o.status, o.shipment, o.\`return\`, o.reshipment, o.created_at
+               o.total_price, o.status, o.shipment, o.\`return\`, o.reshipment, DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str,
+               (SELECT SUM(oi.quantity * pr.wholesale) FROM order_items oi JOIN prices pr ON oi.price_id = pr.id WHERE oi.order_id = o.id) as wholesale_price
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.id
         WHERE o.id = ?

@@ -10,7 +10,7 @@ export async function GET(request: Request) {
         o.id as order_id, 
         p.name as product_name, 
         (oi.quantity * pr.quantity) as total_qty, 
-        (oi.quantity * pr.price) as total_price, 
+        (oi.quantity * pr.wholesale) as total_price, 
         DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str, 
         o.receiver_name as customer_name
       FROM orders o

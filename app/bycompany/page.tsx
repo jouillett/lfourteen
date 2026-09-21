@@ -103,8 +103,8 @@ function CompanyOrderDetails() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-bold text-on-surface-variant mb-1">Total Price</label>
-            <input type="text" readOnly value={`${order.total_price ? order.total_price.toLocaleString() : '0'}원`} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
+            <label className="block text-sm font-bold text-on-surface-variant mb-1">Total Price (도매가)</label>
+            <input type="text" readOnly value={`${order.wholesale_price ? order.wholesale_price.toLocaleString() : '0'}원`} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
           </div>
           <div>
             <label className="block text-sm font-bold text-on-surface-variant mb-1">Status</label>
