@@ -49,7 +49,7 @@ export async function GET(req: Request) {
     rows.forEach((row: any, index: number) => {
        const dt = new Date(row.created_at);
        const formatter = new Intl.DateTimeFormat('ko-KR', {
-         timeZone: 'Asia/Seoul', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
+         timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true
        });
        let dateStr = formatter.format(dt);
        dateStr = dateStr.replace('AM', '오전').replace('PM', '오후');
