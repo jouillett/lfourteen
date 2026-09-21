@@ -12,10 +12,10 @@ export async function GET(request: Request) {
         (oi.quantity * pr.quantity) as total_qty, 
         (oi.quantity * pr.price) as total_price, 
         o.created_at, 
-        o.customer_name
+        o.receiver_name as customer_name
       FROM orders o
       JOIN order_items oi ON o.id = oi.order_id
-      JOIN prices pr ON oi.priced_id = pr.id
+      JOIN prices pr ON oi.price_id = pr.id
       JOIN products p ON oi.product_id = p.id
       WHERE o.status = 0
       ORDER BY o.created_at DESC
