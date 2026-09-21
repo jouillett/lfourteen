@@ -47,17 +47,16 @@ export async function GET(req: Request) {
     // Insert actual data starting from row 2
     let currentRow = 2;
     rows.forEach((row: any) => {
-      // Parse address if possible to get postal code. Sometimes address is formatted as "(01234) 서울특별시..."
+      // Parse address if possible to get postal code. Sometimes address is formatted as "(01234) 서울특별시..." or "[01234]"
       let postalCode = "";
       let fullAddress = row.receiver_address || "";
-      const match = fullAddress.match(/^\((\d{5})\)\s*(.*)$/);
+      const match = fullAddress.match(/^[\[\(](\d{5})[\]\)]\s*(.*)$/);
       if (match) {
         postalCode = match[1];
         fullAddress = match[2];
       }
 
       worksheet.getRow(currentRow).values = [
-        null,
         "", // A: 운송장번호 (비워둠)
         row.product_name || "", // B: 품목명
         "", // C: 내품명 (비워둠)
