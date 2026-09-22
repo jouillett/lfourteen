@@ -22,8 +22,9 @@ export async function POST(req: Request) {
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber === 1) return;
 
-      const tracking = row.values[1]; // 운송장번호
-      const orderId = row.values[11]; // 주문번호
+      const values = row.values as any[];
+      const tracking = values[1]; // 운송장번호
+      const orderId = values[11]; // 주문번호
 
       if (tracking && orderId) {
         let trackingStr = String(tracking).trim();
