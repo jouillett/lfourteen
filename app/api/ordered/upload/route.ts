@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    await workbook.xlsx.load(buffer as any);
     
     const worksheet = workbook.worksheets[0];
     const updates: { order_id: number, tracking: string }[] = [];
