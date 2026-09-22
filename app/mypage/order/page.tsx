@@ -310,9 +310,7 @@ export default function OrderPage() {
           const delData = await delRes.json();
           if (delData.success) {
             alert("주문이 취소 및 삭제되었습니다.");
-            setOrders(prev => prev.filter(order => String(order.id) !== String(orderId)));
-            setTotalOrderCount(prev => (prev !== null && prev > 0) ? prev - 1 : prev);
-            if (numStatus > 2 && numStatus !== 99) setMissingCount(prev => (prev !== null && prev > 0) ? prev - 1 : prev);
+            window.location.reload();
           } else {
             alert("주문 삭제에 실패했습니다.");
           }
@@ -341,9 +339,8 @@ export default function OrderPage() {
         .then(res => res.json())
         .then(data => {
           if (data.success) {
-            setOrders(prev => prev.filter(order => String(order.id) !== String(orderId)));
-            setTotalOrderCount(prev => (prev !== null && prev > 0) ? prev - 1 : prev);
-            if (numStatus > 2 && numStatus !== 99) setMissingCount(prev => (prev !== null && prev > 0) ? prev - 1 : prev);
+            alert("주문이 삭제되었습니다.");
+            window.location.reload();
           } else {
             alert('주문 삭제에 실패했습니다.');
           }

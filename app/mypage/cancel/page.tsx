@@ -85,7 +85,7 @@ export default function OrderPage() {
               body: JSON.stringify({ id: orderId, status: 3 })
             });
             alert("결제가 취소되었습니다.");
-            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 3 } : o));
+            window.location.reload();
           } else {
             alert("결제 취소에 실패했습니다: " + (data.message || ''));
           }
@@ -102,7 +102,8 @@ export default function OrderPage() {
           .then(res => res.json())
           .then(data => {
             if (data.success) {
-              setOrders(prev => prev.filter(order => order.id !== orderId));
+              alert("주문이 삭제되었습니다.");
+              window.location.reload();
             } else {
               alert('주문 삭제에 실패했습니다.');
             }
