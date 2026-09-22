@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import ExcelJS from 'exceljs';
+import pool from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +44,22 @@ export async function POST(req: Request) {
     const baseUrl = `${protocol}://${host}`;
 
     let updatedCount = 0;
-    for (const update of updates) {
+    
+    // DB 연결을 가져와서 현재 상태가 0인 주문만 필터링
+    const connection = await pool.getConnection();
+    let validUpdates = [];
+    try {
+      for (const update of updates) {
+        const [rows]: any = await connection.execute('SELECT status FROM orders WHERE id = ?', [update.order_id]);
+        if (rows.length > 0 && rows[0].status === 0) {
+          validUpdates.push(update);
+        }
+      }
+    } finally {
+      connection.release();
+    }
+
+    for (const update of validUpdates) {
       const shipmentStr = `롯데택배|${update.tracking}`;
       
       const res = await fetch(`${baseUrl}/api/anorder`, {
