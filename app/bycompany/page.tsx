@@ -85,7 +85,7 @@ function CompanyOrderDetails() {
           <input type="text" readOnly value={order.order_name || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
         </div>
         
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label className="block text-sm font-bold text-on-surface-variant mb-1">Customer Name (주문자)</label>
             <input type="text" readOnly value={order.customer_name || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
@@ -95,6 +95,11 @@ function CompanyOrderDetails() {
             <label className="block text-sm font-bold text-on-surface-variant mb-1">Recipient Name (받는 사람)</label>
             <input type="text" readOnly value={order.receiver_name || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
           </div>
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-bold text-on-surface-variant mb-1">Address (배송지 주소)</label>
+          <input type="text" readOnly value={order.receiver_address || '-'} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
