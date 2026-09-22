@@ -12,7 +12,8 @@ export async function GET(request: Request) {
         (oi.quantity * pr.quantity) as total_qty, 
         (oi.quantity * pr.wholesale) as total_price, 
         DATE_FORMAT(o.created_at, '%Y-%m-%d %H:%i:%s') as created_at_str, 
-        o.receiver_name as customer_name
+        o.receiver_name as customer_name,
+        o.shipment
       FROM orders o
       JOIN order_items oi ON o.id = oi.order_id
       JOIN prices pr ON oi.price_id = pr.id
