@@ -40,9 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: '업데이트할 운송장 정보가 엑셀에 없습니다.' }, { status: 400 });
     }
 
-    const host = req.headers.get('host') || 'localhost:3000';
-    const protocol = host.includes('localhost') ? 'http' : 'https';
-    const baseUrl = `${protocol}://${host}`;
+    const baseUrl = new URL(req.url).origin;
 
     let updatedCount = 0;
     
