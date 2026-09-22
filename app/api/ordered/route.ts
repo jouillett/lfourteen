@@ -18,8 +18,8 @@ export async function GET(request: Request) {
       JOIN order_items oi ON o.id = oi.order_id
       JOIN prices pr ON oi.price_id = pr.id
       JOIN products p ON oi.product_id = p.id
-      WHERE o.status = 0
-      ORDER BY o.created_at DESC
+      WHERE o.status < 2
+      ORDER BY o.receiver_name ASC
     `);
     
     return NextResponse.json({ success: true, orders: rows });
