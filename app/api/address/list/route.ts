@@ -57,7 +57,7 @@ export async function GET(request: Request) {
           const isDefault = addresses.length === 0 ? 1 : 0;
           const [insertResult]: any = await pool.query(
             `INSERT INTO address (customer_id, recipient_name, recipient_mobile, recipient_phone, zip_code, address, detail_address, is_default, written_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, '2000-01-01 00:00:00')`,
             [customerId, cName, cMobile, cPhone, cZip, cAddr, cDetail, isDefault]
           );
 
@@ -71,7 +71,7 @@ export async function GET(request: Request) {
             address: cAddr,
             detail_address: cDetail,
             is_default: isDefault,
-            written_at: new Date().toISOString()
+            written_at: '2000-01-01T00:00:00.000Z'
           });
 
           // Sort again so default is on top

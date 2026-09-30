@@ -66,7 +66,7 @@ export async function GET(request: Request) {
         if (cZip && cAddr) {
           const [insertResult]: any = await pool.query(
             `INSERT INTO address (customer_id, recipient_name, recipient_mobile, recipient_phone, zip_code, address, detail_address, is_default, written_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW())`,
+             VALUES (?, ?, ?, ?, ?, ?, ?, 1, '2000-01-01 00:00:00')`,
             [customerId, cName, cMobile, cPhone, cZip, cAddr, cDetail]
           );
 
@@ -80,7 +80,7 @@ export async function GET(request: Request) {
             address: cAddr,
             detail_address: cDetail,
             is_default: 1,
-            written_at: new Date().toISOString()
+            written_at: '2000-01-01T00:00:00.000Z'
           };
           return NextResponse.json({ success: true, address: newAddress, deliveryMessage: '' });
         }
