@@ -498,6 +498,11 @@ export default function MobileOrder() {
                     <PhoneInput id="m-phone" value={phone} onChange={setPhone} className={`bg-surface-container border ${errors.phone ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="010-0000-0000" />
                     {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                   </div>
+                  <div className="flex flex-col gap-xs">
+                    <label className="font-label-md text-label-md text-on-surface-variant" htmlFor="m-landline">일반전화</label>
+                    <PhoneInput id="m-landline" value={landline} onChange={setLandline} className={`bg-surface-container border ${errors.landline ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="02-000-0000" />
+                    {errors.landline && <p className="text-red-500 text-xs mt-1">{errors.landline}</p>}
+                  </div>
                 </div>
                 <div className="flex flex-col gap-xs mt-sm">
                   <label className="font-label-md text-label-md text-on-surface-variant">주소</label>

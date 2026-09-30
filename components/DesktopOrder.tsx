@@ -516,7 +516,7 @@ export default function DesktopOrder() {
 
                     <div className="flex flex-col gap-xs">
                       <label className="font-label-md text-label-md text-on-surface-variant" htmlFor="landline">일반전화</label>
-                      <input id="landline" value={landline} onChange={e => setLandline(e.target.value)} className={`bg-surface-container border ${errors.landline ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="02-000-0000" type="text" />
+                      <PhoneInput id="landline" value={landline} onChange={setLandline} className={`bg-surface-container border ${errors.landline ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="02-000-0000" />
                       {errors.landline && <p className="text-red-500 text-xs mt-1">{errors.landline}</p>}
                     </div>
                   </div>

@@ -47,7 +47,7 @@ export default function PhoneInput({ value, onChange, ...props }: PhoneInputProp
   return (
     <input
       type="tel"
-      value={value}
+      value={formatPhoneNumber(value)}
       onChange={handleChange}
       {...props}
     />
