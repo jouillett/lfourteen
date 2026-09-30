@@ -20,7 +20,7 @@ export default function OrderPage() {
   useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (customerId) {
-      fetch(`/api/check-order?customerId=${customerId}&status=1,2,4&unreviewed=true`)
+      fetch(`/api/check-order?customerId=${customerId}&status=1,2,4&unreviewed=true&t=${Date.now()}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -29,7 +29,7 @@ export default function OrderPage() {
         })
         .catch(console.error);
 
-      fetch(`/api/check-order?customerId=${customerId}&statusGreaterThan=2`)
+      fetch(`/api/check-order?customerId=${customerId}&statusGreaterThan=2&t=${Date.now()}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -38,7 +38,7 @@ export default function OrderPage() {
         })
         .catch(console.error);
 
-      fetch(`/api/check-order?customerId=${customerId}`)
+      fetch(`/api/check-order?customerId=${customerId}&t=${Date.now()}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
