@@ -6,13 +6,7 @@ import MobileOrder from "../../components/MobileOrder";
 
 export default function OrderPage() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
-  const hasAlerted = useRef(false);
-
   useEffect(() => {
-    if (!hasAlerted.current) {
-      alert("현대카드, 우리카드, 하나카드는 현재 결제 서비스 준비중입니다.\n다른 카드사를 선택해주세요.");
-      hasAlerted.current = true;
-    }
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
     };
