@@ -111,6 +111,37 @@ export async function PUT(req: Request) {
         params
       );
 
+      // If address is provided, add it to the shipping address list (address table) if it doesn't already exist
+      if (address && zip_code) {
+        const [existingAddress]: any = await connection.execute(
+          'SELECT id FROM address WHERE customer_id = ? AND zip_code = ? AND address = ? AND detail_address = ?',
+          [customerId, zip_code, address, detail_address || '']
+        );
+        if (existingAddress.length === 0) {
+          // Check if they already have a default address
+          const [defaultCheck]: any = await connection.execute(
+            'SELECT id FROM address WHERE customer_id = ? AND is_default = 1 LIMIT 1',
+            [customerId]
+          );
+          const is_default = defaultCheck.length === 0 ? 1 : 0; // Make default if it's the first one
+
+          // Get existing name/mobile if not in payload
+          const [customerRows]: any = await connection.execute(
+            'SELECT name, mobile, phone FROM customers WHERE id = ?',
+            [customerId]
+          );
+          const cName = name !== undefined ? name : (customerRows[0]?.name?.toString('utf8') || '');
+          const cMobile = mobile !== undefined ? mobile : (customerRows[0]?.mobile?.toString('utf8') || '');
+          const cPhone = phone !== undefined ? phone : (customerRows[0]?.phone?.toString('utf8') || '');
+
+          await connection.execute(
+            `INSERT INTO address (customer_id, recipient_name, recipient_mobile, recipient_phone, zip_code, address, detail_address, is_default, written_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+            [customerId, cName, cMobile, cPhone, zip_code, address, detail_address || '', is_default]
+          );
+        }
+      }
+
       return NextResponse.json({ success: true, message: 'Profile updated' });
     } finally {
       connection.release();
