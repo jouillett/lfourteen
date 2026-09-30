@@ -82,6 +82,23 @@ export async function POST(request: Request) {
       [customer_id, recipient_name, recipient_mobile, recipient_phone, zip_code, address, detail_address, is_default]
     );
 
+    if (recipient_mobile) {
+      const cleanRecipientMobile = recipient_mobile.replace(/-/g, '');
+      const [customerRows]: any = await pool.query(
+        'SELECT mobile FROM customers WHERE id = ?',
+        [customer_id]
+      );
+      if (customerRows.length > 0) {
+        const customerMobile = (customerRows[0].mobile?.toString('utf8') || '').replace(/-/g, '');
+        if (cleanRecipientMobile && customerMobile === cleanRecipientMobile) {
+          await pool.query(
+            'UPDATE customers SET zip_code = ?, address = ?, detail_address = ? WHERE id = ?',
+            [zip_code, address, detail_address || '', customer_id]
+          );
+        }
+      }
+    }
+
     return NextResponse.json({ success: true, addressId: result.insertId });
   } catch (error) {
     console.error('Failed to save address:', error);

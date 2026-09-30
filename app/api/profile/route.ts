@@ -111,34 +111,36 @@ export async function PUT(req: Request) {
         params
       );
 
-      // If address is provided, add it to the shipping address list (address table) if it doesn't already exist
+      // 1 & 2: 배송목록 갯수가 0이고 회원정보에 주소가 있다면 추가, 
+      // 주소 수정 시 address table에 recipient_mobile이 회원 mobile번호와 같은 레코드의 값을 찾아 수정
       if (address && zip_code) {
-        const [existingAddress]: any = await connection.execute(
-          'SELECT id FROM address WHERE customer_id = ? AND zip_code = ? AND address = ? AND detail_address = ?',
-          [customerId, zip_code, address, detail_address || '']
+        const [customerRows]: any = await connection.execute(
+          'SELECT name, mobile, phone FROM customers WHERE id = ?',
+          [customerId]
         );
-        if (existingAddress.length === 0) {
-          // Check if they already have a default address
-          const [defaultCheck]: any = await connection.execute(
-            'SELECT id FROM address WHERE customer_id = ? AND is_default = 1 LIMIT 1',
-            [customerId]
-          );
-          const is_default = defaultCheck.length === 0 ? 1 : 0; // Make default if it's the first one
+        const cName = name !== undefined ? name : (customerRows[0]?.name?.toString('utf8') || '');
+        const cMobile = mobile !== undefined ? mobile : (customerRows[0]?.mobile?.toString('utf8') || '');
+        const cPhone = phone !== undefined ? phone : (customerRows[0]?.phone?.toString('utf8') || '');
 
-          // Get existing name/mobile if not in payload
-          const [customerRows]: any = await connection.execute(
-            'SELECT name, mobile, phone FROM customers WHERE id = ?',
-            [customerId]
-          );
-          const cName = name !== undefined ? name : (customerRows[0]?.name?.toString('utf8') || '');
-          const cMobile = mobile !== undefined ? mobile : (customerRows[0]?.mobile?.toString('utf8') || '');
-          const cPhone = phone !== undefined ? phone : (customerRows[0]?.phone?.toString('utf8') || '');
+        const [addressList]: any = await connection.execute(
+          'SELECT id FROM address WHERE customer_id = ?',
+          [customerId]
+        );
 
+        if (addressList.length === 0) {
           await connection.execute(
             `INSERT INTO address (customer_id, recipient_name, recipient_mobile, recipient_phone, zip_code, address, detail_address, is_default, written_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-            [customerId, cName, cMobile, cPhone, zip_code, address, detail_address || '', is_default]
+             VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW())`,
+            [customerId, cName, cMobile.replace(/-/g, ''), cPhone.replace(/-/g, ''), zip_code, address, detail_address || '']
           );
+        } else {
+          const cleanCMobile = cMobile.replace(/-/g, '');
+          if (cleanCMobile) {
+            await connection.execute(
+              `UPDATE address SET zip_code = ?, address = ?, detail_address = ? WHERE customer_id = ? AND recipient_mobile = ?`,
+              [zip_code, address, detail_address || '', customerId, cleanCMobile]
+            );
+          }
         }
       }
 
