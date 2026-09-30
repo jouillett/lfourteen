@@ -34,6 +34,7 @@ export default function MobileOrder() {
   // Manual Form State
   const [firstName, setFirstName] = useState("");
   const [phone, setPhone] = useState("");
+  const [landline, setLandline] = useState("");
   const [zipcode, setZipcode] = useState("");
   const [address, setAddress] = useState("");
   const [addressDetail, setAddressDetail] = useState("");
@@ -307,6 +308,7 @@ export default function MobileOrder() {
       const isModified = 
         firstName !== (originalProfileAddress.name || "") ||
         phone !== (originalProfileAddress.mobile || "") ||
+        landline !== (originalProfileAddress.phone || "") ||
         zipcode !== (originalProfileAddress.zip_code || "") ||
         address !== (originalProfileAddress.address || "") ||
         addressDetail !== (originalProfileAddress.detail_address || "");
@@ -321,6 +323,7 @@ export default function MobileOrder() {
         userId,
         recipientName: firstName,
         recipientPhone: phone,
+        recipientLandline: landline,
         zipCode: zipcode,
         address,
         detailAddress: addressDetail,
@@ -339,13 +342,13 @@ export default function MobileOrder() {
     // Build receiver info from whichever tab is active
     let receiverName = '';
     let receiverMobile = '';
-    let receiverPhone = '';
+    let receiverPhone = landline || '';
     let receiverAddress = '';
     let isDefault = 0;
     if (activeTab === 'manual') {
       receiverName = firstName;
       receiverMobile = phone;
-      receiverPhone = '';
+      receiverPhone = landline || '';
       receiverAddress = `[${zipcode}] ${address} ${addressDetail}`.trim();
       isDefault = saveDefault ? 1 : 0;
     } else if (recentAddress) {
@@ -484,7 +487,7 @@ export default function MobileOrder() {
               </div>
             ) : (
               <div className="flex flex-col gap-sm">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-sm">
                   <div className="flex flex-col gap-xs">
                     <label className="font-label-md text-label-md text-on-surface-variant" htmlFor="m-firstName">이름</label>
                     <input id="m-firstName" value={firstName} onChange={e => setFirstName(e.target.value)} className={`bg-surface-container border ${errors.firstName ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="홍길동" type="text" />

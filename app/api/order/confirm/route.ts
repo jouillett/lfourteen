@@ -67,6 +67,7 @@ export async function POST(req: Request) {
       console.log('[confirm] Saving address...');
       
       const cleanRecipientPhone = (pendingAddress.recipientPhone || '').replace(/-/g, '');
+      const cleanRecipientLandline = (pendingAddress.recipientLandline || '').replace(/-/g, '');
 
       await connection.execute(
         `INSERT INTO address (customer_id, recipient_name, recipient_mobile, recipient_phone, zip_code, address, detail_address, is_default, written_at)
@@ -75,7 +76,7 @@ export async function POST(req: Request) {
           customerId,
           pendingAddress.recipientName || '',
           cleanRecipientPhone,
-          '',
+          cleanRecipientLandline,
           pendingAddress.zipCode || '',
           pendingAddress.address || '',
           pendingAddress.detailAddress || '',

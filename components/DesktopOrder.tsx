@@ -33,6 +33,7 @@ export default function DesktopOrder() {
   // Manual Form State
   const [firstName, setFirstName] = useState("");
   const [phone, setPhone] = useState("");
+  const [landline, setLandline] = useState("");
   const [zipcode, setZipcode] = useState("");
   const [address, setAddress] = useState("");
   const [addressDetail, setAddressDetail] = useState("");
@@ -310,6 +311,7 @@ export default function DesktopOrder() {
       const isModified = 
         firstName !== (originalProfileAddress.name || "") ||
         phone !== (originalProfileAddress.mobile || "") ||
+        landline !== (originalProfileAddress.phone || "") ||
         zipcode !== (originalProfileAddress.zip_code || "") ||
         address !== (originalProfileAddress.address || "") ||
         addressDetail !== (originalProfileAddress.detail_address || "");
@@ -324,6 +326,7 @@ export default function DesktopOrder() {
         userId,
         recipientName: firstName,
         recipientPhone: phone,
+        recipientLandline: landline,
         zipCode: zipcode,
         address,
         detailAddress: addressDetail,
@@ -357,13 +360,13 @@ export default function DesktopOrder() {
     // Build receiver info from whichever tab is active
     let receiverName = '';
     let receiverMobile = '';
-    let receiverPhone = '';
+    let receiverPhone = landline || '';
     let receiverAddress = '';
     let isDefault = 0;
     if (activeTab === 'manual') {
       receiverName = firstName;
       receiverMobile = phone;
-      receiverPhone = '';
+      receiverPhone = landline || '';
       receiverAddress = `[${zipcode}] ${address} ${addressDetail}`.trim();
       isDefault = saveDefault ? 1 : 0;
     } else if (recentAddress) {
@@ -499,7 +502,7 @@ export default function DesktopOrder() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-sm">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-sm">
                     <div className="flex flex-col gap-xs">
                       <label className="font-label-md text-label-md text-on-surface-variant" htmlFor="firstName">이름</label>
                       <input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} className={`bg-surface-container border ${errors.firstName ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="홍길동" type="text" />
@@ -509,6 +512,12 @@ export default function DesktopOrder() {
                       <label className="font-label-md text-label-md text-on-surface-variant" htmlFor="phone">연락처</label>
                       <PhoneInput id="phone" value={phone} onChange={setPhone} className={`bg-surface-container border ${errors.phone ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="010-0000-0000" />
                       {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                    </div>
+
+                    <div className="flex flex-col gap-xs">
+                      <label className="font-label-md text-label-md text-on-surface-variant" htmlFor="landline">일반전화</label>
+                      <input id="landline" value={landline} onChange={e => setLandline(e.target.value)} className={`bg-surface-container border ${errors.landline ? 'border-red-500' : 'border-outline-variant'} rounded-lg px-sm py-sm focus:outline-none focus:border-primary`} placeholder="02-000-0000" type="text" />
+                      {errors.landline && <p className="text-red-500 text-xs mt-1">{errors.landline}</p>}
                     </div>
                   </div>
                   <div className="flex flex-col gap-xs mt-sm">
