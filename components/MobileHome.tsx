@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
+export default function MobileHome({ initialReviewCount = 0, averageRating = 5.0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, averageRating?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
   const productConfigs = {
     1: {
       prices: {
@@ -407,7 +407,7 @@ export default function MobileHome({ initialReviewCount = 0, initialQnaCount = 0
                 <h2 className="font-headline-md text-headline-md text-on-surface">고객 리뷰 ({reviewCount})</h2>
                 <div className="flex items-center gap-xs">
                   <span className="material-symbols-outlined text-primary" style={{fontVariationSettings: "'FILL' 1"}}>star</span>
-                  <span className="font-label-md text-label-md font-bold text-on-surface">4.9</span>
+                  <span className="font-label-md text-label-md font-bold text-on-surface">{averageRating.toFixed(1)}</span>
                   <span className="font-caption text-caption text-on-surface-variant">({reviewCount}개)</span>
                 </div>
               </div>

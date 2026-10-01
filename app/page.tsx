@@ -8,14 +8,18 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   let reviewCount = 0;
+  let averageRating = 5.0;
   let qnaCount = 0;
   let topReviews: any[] = [];
 
   try {
-    const [reviewRows] = await pool.query<RowDataPacket[]>('SELECT COUNT(*) as count FROM review');
+    const [reviewRows] = await pool.query<RowDataPacket[]>('SELECT COUNT(*) as count, AVG(rating) as avgRating FROM review');
     const [qnaRows] = await pool.query<RowDataPacket[]>('SELECT COUNT(*) as count FROM qna');
     reviewCount = reviewRows[0].count;
     qnaCount = qnaRows[0].count;
+    if (reviewCount > 0 && reviewRows[0].avgRating !== null) {
+      averageRating = Number(Number(reviewRows[0].avgRating).toFixed(1));
+    }
 
     const [topReviewsData] = await pool.query<RowDataPacket[]>(
       'SELECT customer_name, rating, content, created_at FROM review ORDER BY focus LIMIT 2'
@@ -58,10 +62,10 @@ export default async function Home() {
         }
       `}</style>
       <div className="desktop-only-view">
-        <DesktopHome initialReviewCount={reviewCount} initialQnaCount={qnaCount} topReviews={topReviews} />
+        <DesktopHome initialReviewCount={reviewCount} averageRating={averageRating} initialQnaCount={qnaCount} topReviews={topReviews} />
       </div>
       <div className="mobile-only-view">
-        <MobileHome initialReviewCount={reviewCount} initialQnaCount={qnaCount} topReviews={topReviews} />
+        <MobileHome initialReviewCount={reviewCount} averageRating={averageRating} initialQnaCount={qnaCount} topReviews={topReviews} />
       </div>
     </>
   );

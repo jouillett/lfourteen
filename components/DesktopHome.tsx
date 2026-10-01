@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
-export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
+export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, averageRating?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
   const productConfigs = {
     1: {
       prices: {
@@ -375,13 +375,13 @@ export default function DesktopHome({ initialReviewCount = 0, initialQnaCount = 
                   <h2 className="font-headline-lg text-headline-lg text-primary">리뷰 ({reviewCount})</h2>
                   <div className="flex items-center gap-xs mt-xs">
                     <div className="flex text-primary">
-                      <span className="material-symbols-outlined text-lg filled">star</span>
-                      <span className="material-symbols-outlined text-lg filled">star</span>
-                      <span className="material-symbols-outlined text-lg filled">star</span>
-                      <span className="material-symbols-outlined text-lg filled">star</span>
-                      <span className="material-symbols-outlined text-lg filled">star_half</span>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} className="material-symbols-outlined text-lg filled">
+                          {star <= averageRating ? 'star' : star - 0.5 <= averageRating ? 'star_half' : 'star_border'}
+                        </span>
+                      ))}
                     </div>
-                    <span className="font-headline-md text-headline-md font-bold ml-xs">4.9</span>
+                    <span className="font-headline-md text-headline-md font-bold ml-xs">{averageRating.toFixed(1)}</span>
                     <span className="font-body-md text-on-surface-variant">/ 5.0</span>
                   </div>
                 </div>
