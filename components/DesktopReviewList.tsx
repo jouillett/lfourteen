@@ -219,6 +219,10 @@ export default function DesktopReviewList() {
     if (currentPage > totalPages) setCurrentPage(1);
   }, [totalPages, currentPage]);
 
+    useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
   const paginatedReviews = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredAndSortedReviews.slice(startIndex, startIndex + itemsPerPage);
