@@ -47,6 +47,9 @@ export async function GET(req: Request) {
       { header: '배송 메시지', key: 'delivery_message', width: 40 },
     ];
 
+    // Set right alignment for the price column
+    worksheet.getColumn('price').alignment = { horizontal: 'right' };
+
     // Style header row
     worksheet.getRow(1).font = { bold: true };
     worksheet.getRow(1).fill = {
@@ -55,9 +58,6 @@ export async function GET(req: Request) {
       fgColor: { argb: 'FFFFE0' } // Light yellow
     };
     worksheet.getRow(1).alignment = { horizontal: 'center', vertical: 'middle' };
-
-    // Set right alignment for the price column
-    worksheet.getColumn('price').alignment = { horizontal: 'right' };
 
     let totalSum = 0;
 
