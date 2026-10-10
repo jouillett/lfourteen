@@ -11,9 +11,10 @@ export async function GET(req: Request) {
   try {
     const [rows]: any = await connection.execute(`
       SELECT 
-        o.id as order_id, 
-        p.name as product_name, 
-        (oi.quantity * pr.quantity) as total_qty, 
+        o.shipment,
+        o.order_name,
+        p.name as product_name,
+        oi.quantity as quantity,
         o.receiver_name, 
         o.receiver_mobile, 
         o.receiver_phone, 
@@ -22,7 +23,6 @@ export async function GET(req: Request) {
       FROM orders o
       JOIN order_items oi ON o.id = oi.order_id
       JOIN products p ON oi.product_id = p.id
-      JOIN prices pr ON oi.price_id = pr.id
       WHERE o.status < 2
       ORDER BY o.receiver_name ASC
     `);
@@ -38,40 +38,91 @@ export async function GET(req: Request) {
 
     const worksheet = workbook.worksheets[0];
     
-    // Clear rows starting from row 2
+    // Clear existing rows
     const rowCount = worksheet.rowCount;
-    for (let i = rowCount; i >= 2; i--) {
+    for (let i = rowCount; i >= 1; i--) {
       worksheet.spliceRows(i, 1);
     }
 
-    // Insert actual data starting from row 2
-    let currentRow = 2;
-    rows.forEach((row: any) => {
-      // Parse address if possible to get postal code. Sometimes address is formatted as "(01234) 서울특별시..." or "[01234]"
-      let postalCode = "";
-      let fullAddress = row.receiver_address || "";
-      const match = fullAddress.match(/^[\[\(](\d{5})[\]\)]\s*(.*)$/);
-      if (match) {
-        postalCode = match[1];
-        fullAddress = match[2];
-      }
+    const parseBuffer = (val: any) => {
+      if (val === null || val === undefined) return '';
+      if (Buffer.isBuffer(val)) return val.toString('utf8');
+      if (val && val.type === 'Buffer') return Buffer.from(val.data).toString('utf8');
+      return String(val);
+    };
 
-      worksheet.getRow(currentRow).values = [
-        "", // A: 운송장번호 (비워둠)
-        row.product_name || "", // B: 품목명
-        "", // C: 내품명 (비워둠)
-        row.total_qty || 1, // D: 내품수량
-        row.receiver_name || "", // E: 이름
-        row.receiver_mobile || "", // F: 받는분전화번호
-        row.receiver_phone || "", // G: 받는분기타연락처
-        postalCode, // H: 받는분우편번호
-        fullAddress, // I: 받는분주소
-        row.delivery_message || "", // J: 배송메세지
-        row.order_id || "", // K: 주문번호
-        "" // L: 비고
-      ];
-      currentRow++;
+    // Set headers identical to /manage
+    worksheet.columns = [
+      { header: '운송장 번호', key: 'shipment', width: 20 },
+      { header: '품목명', key: 'product_name', width: 40 },
+      { header: '가격', key: 'price', width: 15 },
+      { header: '수량', key: 'quantity', width: 10 },
+      { header: '이름', key: 'receiver_name', width: 15 },
+      { header: '휴대폰', key: 'receiver_mobile', width: 20 },
+      { header: '전화번호', key: 'receiver_phone', width: 20 },
+      { header: '우편번호', key: 'zipcode', width: 15 },
+      { header: '주소', key: 'address', width: 60 },
+      { header: '배송 메시지', key: 'delivery_message', width: 40 },
+    ];
+
+    // Set right alignment for the price column
+    worksheet.getColumn('price').alignment = { horizontal: 'right' };
+
+    // Style header row
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFFFE0' } // Light yellow
+    };
+    worksheet.getRow(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+    let totalSum = 0;
+
+    rows.forEach((row: any) => {
+       const fullAddress = parseBuffer(row.receiver_address);
+       
+       let zipcode = '';
+       let cleanAddress = fullAddress;
+       const zipMatch = fullAddress.match(/^\[?(\d{5})\]?\s*/);
+       if (zipMatch) {
+         zipcode = zipMatch[1];
+         cleanAddress = fullAddress.replace(zipMatch[0], '');
+       }
+
+       const quantity = Number(row.quantity) || 0;
+       const priceVal = quantity * 25000;
+       totalSum += priceVal;
+
+       worksheet.addRow({
+         shipment: parseBuffer(row.shipment),
+         product_name: parseBuffer(row.order_name) || parseBuffer(row.product_name),
+         price: priceVal.toLocaleString() + '원',
+         quantity: quantity,
+         receiver_name: parseBuffer(row.receiver_name),
+         receiver_mobile: parseBuffer(row.receiver_mobile),
+         receiver_phone: parseBuffer(row.receiver_phone),
+         zipcode: zipcode,
+         address: cleanAddress,
+         delivery_message: parseBuffer(row.delivery_message)
+       });
     });
+
+    if (rows.length > 0) {
+      const totalRow = worksheet.addRow({
+        shipment: '합계',
+        product_name: '',
+        price: totalSum.toLocaleString() + '원',
+        quantity: '',
+        receiver_name: '',
+        receiver_mobile: '',
+        receiver_phone: '',
+        zipcode: '',
+        address: '',
+        delivery_message: ''
+      });
+      totalRow.font = { bold: true };
+    }
 
     const buffer = await workbook.xlsx.writeBuffer();
 
