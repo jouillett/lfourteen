@@ -54,6 +54,10 @@ export async function GET(req: Request) {
       pattern: 'solid',
       fgColor: { argb: 'FFFFE0' } // Light yellow
     };
+    worksheet.getRow(1).alignment = { horizontal: 'center', vertical: 'middle' };
+
+    // Set right alignment for the price column
+    worksheet.getColumn('price').alignment = { horizontal: 'right' };
 
     let totalSum = 0;
 
