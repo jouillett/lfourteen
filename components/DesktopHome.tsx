@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+import ReelsSection from "./ReelsSection";
 
 export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.0, initialQnaCount = 0, topReviews = [], productId = 1 }: { initialReviewCount?: number, averageRating?: number, initialQnaCount?: number, topReviews?: any[], productId?: number }) {
   const productConfigs = {
@@ -321,6 +322,7 @@ export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.
       <main className="max-w-7xl mx-auto px-md md:px-lg pb-xl mt-md">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-xl">
           <div className="lg:col-span-8 flex flex-col gap-xl">
+            <ReelsSection />
             <div className="tabs-sticky bg-surface/95 backdrop-blur-sm border-b border-outline-variant/30">
               <nav className="flex gap-lg justify-start py-md overflow-x-auto whitespace-nowrap hide-scrollbar">
                 <a className="text-primary border-b-2 border-primary font-label-md text-label-md tab-link active px-xs pb-1" href="#description">상세정보</a>
