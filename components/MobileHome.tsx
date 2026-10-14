@@ -350,11 +350,11 @@ export default function MobileHome({ initialReviewCount = 0, averageRating = 5.0
 
       <main className="flex-grow w-[90%] mx-auto py-xl flex flex-col gap-lg items-start">
         <div className="w-full flex flex-col gap-xl">
+          <ReelsSection />
+
           <div className="rounded-xl overflow-hidden bg-surface-container-low flex justify-center items-center">
             <img alt="L14 Cordy Product Image" className="max-w-full h-auto object-cover object-center rounded-xl shadow-sm border border-surface-variant" style={{margin:"0 auto", display: "block", maxWidth:"100%"}} src="https://capofcom.mycafe24.com/l14_coordy/product/5383834b5b3bfe2017b727548b002180.jpg"/>
           </div>
-
-          <ReelsSection />
 
           <div className="flex flex-col gap-xl">
             <div className="border-b border-outline-variant sticky top-[80px] bg-surface pt-md z-40 -mx-xs px-xs">
