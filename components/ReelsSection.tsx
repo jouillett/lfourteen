@@ -20,8 +20,8 @@ export const REELS_DATA: ReelItem[] = [
     subtitle: "개운한 아침을 위한 야간뇨 케어",
     tag: "수면 & 야간뇨",
     duration: "00:57",
-    videoSrc: "/videos/L14Cordy2.mp4",
-    posterSrc: "/videos/L14Cordy2_thumb.jpg",
+    videoSrc: "/videos/L14Cordy2.mp4?v=2",
+    posterSrc: "/videos/L14Cordy2_thumb.jpg?v=2",
     instagramUrl: "https://www.instagram.com/lfourteen.life/",
   },
   {
@@ -30,8 +30,8 @@ export const REELS_DATA: ReelItem[] = [
     subtitle: "엘포틴 유산균 + 발효 동충하초 듀얼 배합",
     tag: "약학박사 개발",
     duration: "00:29",
-    videoSrc: "/videos/L14Intro.mp4",
-    posterSrc: "/videos/L14Intro_thumb.jpg",
+    videoSrc: "/videos/L14Intro.mp4?v=2",
+    posterSrc: "/videos/L14Intro_thumb.jpg?v=2",
     instagramUrl: "https://www.instagram.com/lfourteen.life/",
   },
   {
@@ -40,8 +40,8 @@ export const REELS_DATA: ReelItem[] = [
     subtitle: "체지방 & 대사 관리의 핵심",
     tag: "대사 & 체지방",
     duration: "01:25",
-    videoSrc: "/videos/L14.mp4",
-    posterSrc: "/videos/L14_thumb.jpg",
+    videoSrc: "/videos/L14.mp4?v=2",
+    posterSrc: "/videos/L14_thumb.jpg?v=2",
     instagramUrl: "https://www.instagram.com/lfourteen.life/",
   },
   {
@@ -50,8 +50,8 @@ export const REELS_DATA: ReelItem[] = [
     subtitle: "발효 동충하초 추출물의 놀라운 작용",
     tag: "발효동충하초",
     duration: "01:13",
-    videoSrc: "/videos/cordyceps.mp4",
-    posterSrc: "/videos/cordyceps_thumb.jpg",
+    videoSrc: "/videos/cordyceps.mp4?v=2",
+    posterSrc: "/videos/cordyceps_thumb.jpg?v=2",
     instagramUrl: "https://www.instagram.com/lfourteen.life/",
   },
 ];
@@ -72,11 +72,20 @@ export default function ReelsSection() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // When modal opens/changes video, play it
+  // When modal opens/changes video, play it with mobile-friendly fallback
   useEffect(() => {
     if (activeReelIndex !== null && modalVideoRef.current) {
       modalVideoRef.current.currentTime = 0;
-      modalVideoRef.current.play().catch(() => {});
+      const playPromise = modalVideoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If unmuted autoplay is blocked on mobile, mute and play
+          if (modalVideoRef.current) {
+            modalVideoRef.current.muted = true;
+            modalVideoRef.current.play().catch(() => {});
+          }
+        });
+      }
     }
   }, [activeReelIndex]);
 
@@ -175,7 +184,7 @@ export default function ReelsSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/35 group-hover:from-black/90 transition-colors pointer-events-none" />
 
               {/* Top Bar: Tag & Duration */}
-              <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between items-center z-10">
+              <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between items-center z-10 pointer-events-none">
                 <span className="px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md text-[10px] md:text-[11px] font-semibold text-white/90 border border-white/20">
                   {reel.tag}
                 </span>
@@ -251,12 +260,13 @@ export default function ReelsSection() {
             {/* Main Video Area */}
             <div className="relative flex-1 bg-black flex items-center justify-center overflow-hidden">
               <video
+                key={activeReel.id}
                 ref={modalVideoRef}
                 src={activeReel.videoSrc}
                 poster={activeReel.posterSrc}
                 controls
                 playsInline
-                autoPlay
+                preload="auto"
                 className="w-full h-full object-contain"
               />
 
