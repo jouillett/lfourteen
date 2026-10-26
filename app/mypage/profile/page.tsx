@@ -11,7 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const profileSchema = z.object({
-  currentPassword: z.string().min(1, "정보 수정을 위해 현재 비밀번호를 입력해주세요."),
+  currentPassword: z.string().optional(),
   name: z.string().min(1, "이름을 입력해주세요."),
   zipcode: z.string().optional(),
   address1: z.string().optional(),
@@ -30,8 +30,11 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 export default function ProfilePage() {
   const router = useRouter();
   const [customerId, setCustomerId] = useState<string | null>(null);
+  const [loginType, setLoginType] = useState<string | null>(null);
   const [reviewCount, setReviewCount] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  const isSocial = loginType === "kakao" || loginType === "naver";
   const {
     register,
     handleSubmit,
@@ -56,6 +59,7 @@ export default function ProfilePage() {
       return;
     }
     setCustomerId(id);
+    setLoginType(localStorage.getItem("loginType"));
 
     fetch(`/api/check-order?customerId=${id}&status=1,2,4&unreviewed=true`)
       .then(res => res.json())
@@ -106,10 +110,16 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileFormValues) => {
     if (!customerId) return;
     
+    if (!isSocial && !data.currentPassword) {
+      alert("정보 수정을 위해 현재 비밀번호를 입력해주세요.");
+      return;
+    }
+
     try {
       const payload = {
         customerId,
-        currentPassword: data.currentPassword,
+        isSocial,
+        currentPassword: data.currentPassword || "",
         name: data.name,
         zip_code: data.zipcode,
         address: data.address1,
@@ -230,44 +240,86 @@ export default function ProfilePage() {
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <div className="border-t-2 border-black w-full flex flex-col text-[14px]">
               
-              {/* 비밀번호 (본인 확인용) */}
-              <div className="flex border-b border-[#EAEAEA]">
-                <LabelCol required>비밀번호 확인</LabelCol>
-                <div className="flex-1 py-3 px-4 flex flex-col md:flex-row md:items-center gap-2">
-                  <div className="flex-1">
-                    <div className="relative flex items-center md:w-[250px]">
-                      <input 
-                        type={showPassword ? "text" : "password"}
-                        placeholder="정보 수정을 위해 비밀번호 입력"
-                        {...register("currentPassword")} 
-                        className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full pr-10 outline-none focus:border-black" 
-                      />
-                      <button
-                        type="button"
-                        tabIndex={-1}
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2 text-gray-500 hover:text-black transition-colors focus:outline-none flex items-center justify-center"
+              {/* 비밀번호 (본인 확인용) / 소셜 로그인 인증 방식 */}
+              {isSocial ? (
+                <div className="flex border-b border-[#EAEAEA]">
+                  <LabelCol>인증 방식</LabelCol>
+                  <div className="flex-1 py-3 px-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold w-fit ${
+                          loginType === "kakao"
+                            ? "bg-[#FEE500] text-[#191919]"
+                            : "bg-[#03C75A] text-white"
+                        }`}
                       >
-                        <span className="material-symbols-outlined text-[18px]">
-                          {showPassword ? "visibility" : "visibility_off"}
-                        </span>
-                      </button>
+                        {loginType === "kakao" ? (
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 3C6.477 3 2 6.477 2 10.771c0 2.766 1.838 5.19 4.606 6.55-.203.757-.74 2.756-.848 3.19-.133.535.195.528.411.385.17-.113 2.684-1.834 3.766-2.58.68.098 1.38.15 2.065.15 5.523 0 10-3.477 10-7.771C22 6.477 17.523 3 12 3z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16.273 12.845 7.372 0H0v24h7.727V11.155L16.628 24H24V0h-7.727v12.845z" />
+                          </svg>
+                        )}
+                        <span>{loginType === "kakao" ? "카카오 1초 로그인 회원" : "네이버 1초 로그인 회원"}</span>
+                      </span>
+                      <span className="text-xs text-on-surface-variant">
+                        소셜 계정 인증으로 비밀번호 확인 없이 정보 수정이 가능합니다.
+                      </span>
                     </div>
-                    {errors.currentPassword && <p className="text-error text-xs mt-1">{errors.currentPassword.message}</p>}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const { mobile1, mobile2, mobile3 } = getValues();
+                        const phone = `${mobile1 || ""}${mobile2 || ""}${mobile3 || ""}`;
+                        router.push(`/password_auth?phone=${phone}`);
+                      }}
+                      className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap self-start md:self-auto rounded cursor-pointer"
+                    >
+                      비밀번호 신규 설정
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const { mobile1, mobile2, mobile3 } = getValues();
-                      const phone = `${mobile1 || ''}${mobile2 || ''}${mobile3 || ''}`;
-                      router.push(`/password_auth?phone=${phone}`);
-                    }}
-                    className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap md:w-auto self-start mt-2 md:mt-0"
-                  >
-                    비밀번호 수정
-                  </button>
                 </div>
-              </div>
+              ) : (
+                <div className="flex border-b border-[#EAEAEA]">
+                  <LabelCol required>비밀번호 확인</LabelCol>
+                  <div className="flex-1 py-3 px-4 flex flex-col md:flex-row md:items-center gap-2">
+                    <div className="flex-1">
+                      <div className="relative flex items-center md:w-[250px]">
+                        <input 
+                          type={showPassword ? "text" : "password"}
+                          placeholder="정보 수정을 위해 비밀번호 입력"
+                          {...register("currentPassword")} 
+                          className="bg-white border border-[#CCCCCC] px-3 py-1.5 w-full pr-10 outline-none focus:border-black" 
+                        />
+                        <button
+                          type="button"
+                          tabIndex={-1}
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-2 text-gray-500 hover:text-black transition-colors focus:outline-none flex items-center justify-center cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">
+                            {showPassword ? "visibility" : "visibility_off"}
+                          </span>
+                        </button>
+                      </div>
+                      {errors.currentPassword && <p className="text-error text-xs mt-1">{errors.currentPassword.message}</p>}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const { mobile1, mobile2, mobile3 } = getValues();
+                        const phone = `${mobile1 || ''}${mobile2 || ''}${mobile3 || ''}`;
+                        router.push(`/password_auth?phone=${phone}`);
+                      }}
+                      className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap md:w-auto self-start mt-2 md:mt-0 cursor-pointer"
+                    >
+                      비밀번호 수정
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* 이름 */}
               <div className="flex border-b border-[#EAEAEA]">

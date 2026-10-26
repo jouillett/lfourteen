@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import AddressListPopup from "./AddressListPopup";
 import PhoneInput from "@/components/PhoneInput";
 import { z } from "zod";
+import { formatCardPaymentMethod } from "@/lib/card";
 
 interface OrderItem {
   product_name: string;
@@ -192,9 +193,15 @@ export default function MobileOrder() {
 
         paymentWidgetRef.current.on('paymentMethodSelect', (methodInfo: any) => {
           let pName = methodInfo.method || methodInfo.paymentMethodKey || methodInfo.type || methodInfo.name || methodInfo.code;
-          if (methodInfo.easyPay?.provider) pName = methodInfo.easyPay.provider;
-          if (methodInfo.easypay?.provider) pName = methodInfo.easypay.provider;
-          if (methodInfo.transfer?.provider) pName = methodInfo.transfer.provider;
+          if (methodInfo.card?.cardCompany) {
+            pName = formatCardPaymentMethod(methodInfo.card.cardCompany);
+          } else if (methodInfo.easyPay?.provider) {
+            pName = methodInfo.easyPay.provider;
+          } else if (methodInfo.easypay?.provider) {
+            pName = methodInfo.easypay.provider;
+          } else if (methodInfo.transfer?.provider) {
+            pName = methodInfo.transfer.provider;
+          }
           if (pName === 'QUICK_TRANSFER') pName = '퀵계좌이체';
           if (pName === 'CUSTOM') pName = methodInfo.paymentMethodKey || '퀵계좌이체';
           sessionStorage.setItem('selectedPaymentMethod', pName);

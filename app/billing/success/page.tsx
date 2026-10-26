@@ -32,7 +32,7 @@ function SuccessContent() {
         customerKey,
         authKey,
         parseInt(option || "1", 10),
-        parseInt(duration || "4", 10),
+        parseInt(duration || "2", 10),
         (period as "weeks" | "months") || "weeks"
       )
         .then((res) => {

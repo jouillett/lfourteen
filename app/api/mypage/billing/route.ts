@@ -3,6 +3,7 @@ import pool from "@/lib/db";
 import { RowDataPacket } from "mysql2";
 import { sendSubscriptionCancelEmail } from "@/lib/email";
 import { sendSubscriptionCancelAlimtalk } from "@/lib/alimtalk";
+import { getSubscriptionCancelInfo } from "@/lib/subscription";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -46,13 +47,14 @@ export async function GET(req: Request) {
       const customerGrade = customerRows.length > 0 ? String(customerRows[0].grade) : null;
       const targetProductId = customerGrade === "8" ? 2 : 1;
 
-      // Get available subscription options
+      // Get available subscription options (9~12 for normal subscribers, 5~8 for grade 8)
+      const targetPricedIds = customerGrade === "8" ? [5, 6, 7, 8] : [9, 10, 11, 12];
       const [availableOptionRows] = await connection.execute<RowDataPacket[]>(
         `SELECT pp.id as priced_id, p.name as product_name, pp.quantity as option_quantity_val, pp.price
          FROM prices pp
          JOIN products p ON pp.product_id = p.id
-         WHERE pp.product_id = ?`,
-        [targetProductId]
+         WHERE pp.id IN (${targetPricedIds.join(",")})
+         ORDER BY pp.id ASC`
       );
 
       return NextResponse.json({
@@ -227,6 +229,29 @@ export async function DELETE(req: Request) {
         }
       }
 
+      // Check order history and record next allowed subscription date if customer has purchase history
+      const cancelInfo = await getSubscriptionCancelInfo(connection, userId);
+      if (cancelInfo.hasPurchased && cancelInfo.nextDate) {
+        const parseBuffer = (val: any) => {
+          if (!val) return "";
+          if (Buffer.isBuffer(val)) return val.toString("utf8");
+          if (val && val.type === "Buffer") return Buffer.from(val.data).toString("utf8");
+          return String(val);
+        };
+        const mobileStr = customerInfo ? parseBuffer(customerInfo.mobile) : "";
+        const cleanMobile = mobileStr.replace(/[^0-9]/g, "");
+
+        await connection.execute(
+          "DELETE FROM subscription WHERE mobile = ? OR id = ?",
+          [cleanMobile, userId]
+        );
+        await connection.execute(
+          "INSERT INTO subscription (id, mobile, next) VALUES (?, ?, ?)",
+          [userId, cleanMobile, cancelInfo.nextDate]
+        );
+      }
+
+      await connection.execute("DELETE FROM billing_item WHERE billing_id IN (SELECT id FROM billing WHERE customer_id = ?)", [userId]).catch(() => {});
       await connection.execute("DELETE FROM billing WHERE customer_id = ?", [userId]);
 
       await connection.commit();

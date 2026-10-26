@@ -196,25 +196,8 @@ export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.
     window.location.href = `/order?source=buy&priceId=${pricedId}`;
   };
 
-  const handleSubscribeClick = async () => {
-    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
-    if (customerId) {
-      try {
-        const res = await fetch(`/api/mypage/billing?userId=${customerId}`);
-        const data = await res.json();
-        if (data.success && data.subscribed) {
-          if (confirm("이미 '정기구매'를 신청하셨습니다.\n등록된 정기구매 정보를 확인하시겠습니까?")) {
-            window.location.href = "/mypage/billing";
-          }
-          return;
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    const selectEl = document.getElementById("pricing-options") as HTMLSelectElement;
-    const opt = selectEl ? selectEl.value : "1";
-    window.location.href = `/billing?option=${opt}`;
+  const handleSubscribeClick = () => {
+    alert("수정중입니다.");
   };
 
   useEffect(() => {
@@ -510,7 +493,7 @@ export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.
                     구매하기
                   </button>
                   <button className="w-full bg-surface-container text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-high active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-subscribe-btn" onClick={handleSubscribeClick}>
-                    정기구매
+                    정기구매 (할인혜택)
                   </button>
                   <button className="w-full bg-transparent border border-primary text-primary font-label-md text-label-md py-sm rounded-lg hover:bg-surface-container-low active:scale-98 transition-all duration-200 flex items-center justify-center gap-xs" id="drawer-cart-btn" onClick={handleAddToCart}>
                     장바구니

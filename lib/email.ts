@@ -300,3 +300,107 @@ export async function sendSubscriptionCancelEmail(toEmail: string, data: { produ
     console.error('Error sending subscription cancel email:', error);
   }
 }
+
+
+export interface OrderCancelData {
+  orderNumber: string;
+  productName: string;
+  cancelDate: string;
+  amount: number;
+  paymentMethod?: string;
+  customerName?: string;
+}
+
+export async function sendOrderCancelEmail(toEmail: string, data: OrderCancelData) {
+  const fromEmail = `"기쁜하루" <beluga.in.the.forest@gmail.com>`;
+  const formattedAmount = new Intl.NumberFormat('ko-KR').format(data.amount);
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>기쁜하루 결제 취소 완료</title>
+</head>
+<body style="margin:0;padding:0;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans KR',sans-serif;color:#333333;">
+  <div style="max-width:480px;margin:0 auto;background-color:#ffffff;border:1px solid #e5e5e5;">
+    <div style="padding:40px 24px 48px 24px;">
+      <div style="margin-bottom:24px;">
+        <a href="https://lfourteen.life" style="text-decoration:none;">
+          <h1 style="margin:0;font-size:36px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:#941F32;">기쁜하루</h1>
+        </a>
+      </div>
+      <div style="margin-bottom:32px;">
+        <h2 style="margin:0 0 8px 0;font-size:22px;font-weight:700;color:#941F32;line-height:1.4;">주문 결제가 정상적으로 취소되었습니다.</h2>
+        <p style="margin:0;font-size:15px;color:#666666;">취소 및 환불 정보를 확인해주세요.</p>
+      </div>
+      <div style="margin-bottom:40px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-top:2px solid #333333;">
+          <tr>
+            <td width="34%" style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">주문번호</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${data.orderNumber}</td>
+          </tr>
+          <tr>
+            <td width="34%" style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">취소상품</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${data.productName}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">취소일시</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${data.cancelDate}</td>
+          </tr>
+          <tr>
+            <td style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">취소(환불)금액</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#941F32;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${formattedAmount}원</td>
+          </tr>
+          ${data.paymentMethod ? `
+          <tr>
+            <td style="padding:12px;background-color:#f5f5f5;font-size:13px;font-weight:500;color:#555555;border-bottom:1px solid #e5e5e5;vertical-align:middle;">결제수단</td>
+            <td style="padding:12px;font-size:13px;font-weight:600;color:#111111;border-bottom:1px solid #e5e5e5;vertical-align:middle;">${data.paymentMethod}</td>
+          </tr>` : ''}
+        </table>
+      </div>
+      <div style="text-align:center;">
+        <a href="https://lfourteen.life/mypage/cancel" style="display:inline-block;background-color:#941F32;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:16px 32px;border-radius:6px;min-width:260px;text-align:center;">취소/반품 내역 확인하기</a>
+      </div>
+    </div>
+    <!-- Notice Area -->
+    <div style="background-color:#f5f5f5;padding:24px;border-top:1px solid #e5e5e5;">
+      <p style="margin:0 0 8px 0;font-size:12px;color:#666666;line-height:1.6;">본 메일은 발신 전용으로 회신되지 않습니다. 문의사항은 <a href="https://lfourteen.life/inquiry"><strong>문의 게시판</strong></a>을 이용해주세요.</p>
+      <p style="margin:0;font-size:12px;color:#666666;line-height:1.6;">카드 결제 취소의 경우 카드사 사정에 따라 영업일 기준 3~5일 내에 한도 복구 또는 환불 처리됩니다.</p>
+    </div>
+    <!-- Footer -->
+    <div style="padding:32px 24px;display:flex;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="140" style="vertical-align:middle;padding-right:16px;white-space:nowrap;">
+            <a href="https://lfourteen.life" style="text-decoration:none;">
+              <span style="font-size:22px;font-weight:700;font-style:italic;font-family:Georgia,serif;color:#941F32;">L14 Cordy</span>
+            </a>
+          </td>
+          <td style="vertical-align:middle;">
+            <p style="margin:0 0 4px 0;font-size:11px;color:#888888;line-height:1.6;">대표 조민균 | 사업자등록번호: 691-23-02249</p>
+            <p style="margin:0 0 4px 0;font-size:11px;color:#888888;line-height:1.6;">문의전화: 010-2115-2249</p>
+            <p style="margin:16px 0 0 0;font-size:10px;color:#aaaaaa;">© 2026 L14 Cordy. All rights reserved.</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+`;
+
+  try {
+    const info = await transporter.sendMail({
+      from: fromEmail,
+      to: toEmail,
+      subject: '[기쁜하루] 결제가 취소되었습니다.',
+      html: htmlContent,
+    });
+    console.log('Order cancel email sent:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('Error sending order cancel email:', error);
+  }
+}

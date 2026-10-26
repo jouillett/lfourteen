@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
 import { RowDataPacket } from '@/lib/db';
+import { formatCardPaymentMethod } from '@/lib/card';
 
 export async function POST(req: Request) {
   let connection;
@@ -174,7 +175,7 @@ export async function POST(req: Request) {
     // 4. Determine payment method
     let paymentMethod = payment.method || payment.type || '카드';
     if (payment.easyPay?.provider) paymentMethod = payment.easyPay.provider;
-    if (payment.card && !payment.easyPay) paymentMethod = '카드';
+    if (payment.card && !payment.easyPay) paymentMethod = formatCardPaymentMethod(payment.card.issuerCode || payment.card.acquirerCode || payment.card.cardCompany || payment.card.company);
     if (payment.transfer) paymentMethod = '계좌이체';
     if (payment.virtualAccount) paymentMethod = '가상계좌';
     if (payment.mobilePhone) paymentMethod = '휴대폰';

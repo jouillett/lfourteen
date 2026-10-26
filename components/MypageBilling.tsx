@@ -38,7 +38,15 @@ export default function MypageBilling() {
   const [availableOptions, setAvailableOptions] = useState<AvailableOption[]>([]);
   const [selectedOptionId, setSelectedOptionId] = useState<number | "">("");
   const [reviewCount, setReviewCount] = useState<number | null>(null);
+  const [nextEligibleDate, setNextEligibleDate] = useState<string | null>(null);
 
+  useEffect(() => {
+    alert("수정중입니다.");
+    window.location.href = "/mypage";
+    return;
+  }, []);
+
+  /*
   useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!customerId) {
@@ -58,6 +66,7 @@ export default function MypageBilling() {
       })
       .catch(console.error);
   }, []);
+  */
 
   const fetchBillingInfo = async (customerId: string) => {
     setLoading(true);
@@ -70,6 +79,19 @@ export default function MypageBilling() {
           setBillingInfo(data.billing);
           setItems(data.items);
           setAvailableOptions(data.availableOptions || []);
+        } else {
+          // Check subscription eligibility if not currently subscribed
+          try {
+            const eligRes = await fetch(`/api/billing/eligibility?customerId=${customerId}`);
+            const eligData = await eligRes.json();
+            if (eligData.eligible === false && eligData.nextDate) {
+              setNextEligibleDate(eligData.nextDate);
+            } else {
+              setNextEligibleDate(null);
+            }
+          } catch (err) {
+            console.error(err);
+          }
         }
       } else {
         alert("정보를 불러오는데 실패했습니다.");
@@ -82,11 +104,28 @@ export default function MypageBilling() {
     }
   };
 
+  const handleApplyClick = (e: React.MouseEvent) => {
+    if (nextEligibleDate) {
+      e.preventDefault();
+      alert(`다음 정기구매가 가능한 날짜는 '${nextEligibleDate}'입니다.`);
+    }
+  };
+
   const handleCancel = async () => {
-    if (!confirm("정말 정기구매를 취소하시겠습니까?")) return;
-    
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (!customerId) return;
+
     try {
+      const previewRes = await fetch(`/api/mypage/billing/cancel-preview?userId=${customerId}`);
+      const previewData = await previewRes.json();
+
+      let confirmMsg = "정말 정기구매를 취소하시겠습니까?";
+      if (previewData.hasPurchased && previewData.formattedDate) {
+        confirmMsg = `지금 취소하시면 다음 정기구매가 가능한 날짜는 '${previewData.formattedDate}'입니다. 진행할까요?`;
+      }
+
+      if (!confirm(confirmMsg)) return;
+
       const res = await fetch(`/api/mypage/billing?userId=${customerId}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
@@ -225,8 +264,22 @@ export default function MypageBilling() {
           ) : !isSubscribed ? (
             <div className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant flex flex-col items-center justify-center py-20">
               <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-4">event_repeat</span>
-              <p className="text-on-surface-variant text-lg mb-6">현재 이용 중인 정기구매 서비스가 없습니다.</p>
-              <Link href="/billing" className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity">
+              <p className="text-on-surface-variant text-lg mb-2">현재 이용 중인 정기구매 서비스가 없습니다.</p>
+              {nextEligibleDate ? (
+                <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-center max-w-md">
+                  <p className="text-amber-800 text-sm font-medium break-keep">
+                    ※ 최근 정기구매 취소 이력으로 인해,<br />
+                    다음 정기구매는 <span className="font-bold underline">{nextEligibleDate}</span>부터 신청 가능합니다.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-on-surface-variant text-sm mb-6">정기구매를 신청하시면 추가 할인 혜택을 받으실 수 있습니다.</p>
+              )}
+              <Link 
+                href="/billing" 
+                onClick={handleApplyClick}
+                className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
+              >
                 정기구매 신청하기
               </Link>
             </div>

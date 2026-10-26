@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 import { RowDataPacket } from '@/lib/db';
+import { formatCardPaymentMethod } from '@/lib/card';
 
 export async function GET(req: Request) {
   try {
@@ -29,6 +30,35 @@ export async function GET(req: Request) {
           order[key] = order[key].toString('utf8');
         } else if (order[key] && order[key].type === 'Buffer') {
           order[key] = Buffer.from(order[key].data).toString('utf8');
+        }
+      }
+
+      // If payment_method is just '카드' or empty and payment_key exists, resolve specific card from Toss
+      if ((!order.payment_method || order.payment_method === '카드') && order.payment_key) {
+        try {
+          const secretKey = process.env.TOSS_API_SECRET_KEY || process.env.TOSS_SECRET_KEY;
+          if (secretKey) {
+            const auth = Buffer.from(secretKey + ':').toString('base64');
+            const tossRes = await fetch(`https://api.tosspayments.com/v1/payments/${order.payment_key}`, {
+              headers: { Authorization: `Basic ${auth}` },
+              signal: AbortSignal.timeout(2000),
+            });
+            if (tossRes.ok) {
+              const tossData = await tossRes.json();
+              if (tossData.card) {
+                const cardCode = tossData.card.issuerCode || tossData.card.acquirerCode || tossData.card.cardCompany || tossData.card.company;
+                const formatted = formatCardPaymentMethod(cardCode);
+                order.payment_method = formatted;
+                // Update DB asynchronously so future queries don't need external fetch
+                connection.execute('UPDATE orders SET payment_method = ? WHERE id = ?', [formatted, order.id]).catch(() => {});
+              } else if (tossData.easyPay?.provider) {
+                order.payment_method = tossData.easyPay.provider;
+                connection.execute('UPDATE orders SET payment_method = ? WHERE id = ?', [tossData.easyPay.provider, order.id]).catch(() => {});
+              }
+            }
+          }
+        } catch (e) {
+          // ignore error and keep existing payment_method
         }
       }
 

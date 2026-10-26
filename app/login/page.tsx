@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import PhoneInput from "@/components/PhoneInput";
+import SocialLoginButtons from "@/components/SocialLoginButtons";
 
 export default function LoginPage() {
   const [phone, setPhone] = useState("");
@@ -53,6 +54,7 @@ export default function LoginPage() {
         if (data.grade !== undefined && data.grade !== null) {
           localStorage.setItem("customerGrade", String(data.grade));
         }
+        localStorage.setItem("loginType", "phone");
         localStorage.setItem("lastActivity", Date.now().toString());
         const params = new URLSearchParams(window.location.search);
         let redirect = params.get("redirect") || "/";
@@ -117,7 +119,19 @@ export default function LoginPage() {
 
       <main className="flex-grow flex flex-col items-center justify-center w-full px-md md:px-lg py-xl max-w-7xl mx-auto">
         <div className="w-full max-w-[440px] bg-surface-container-lowest rounded-xl p-md sm:p-lg shadow-sm border border-surface-variant flex flex-col gap-md">
-          <h2 className="font-headline-md text-headline-md text-on-surface mb-xs">로그인</h2>
+          {/* Social 1-Second Login */}
+          <SocialLoginButtons
+            title="로그인"
+            subtitle={"아이디와 비밀번호 입력하기 귀찮으시죠?\n1초 회원가입으로 입력없이 간편하게 로그인 하세요."}
+            showBanner={false}
+          />
+
+          <div className="relative flex items-center justify-center my-1">
+            <div className="flex-grow border-t border-outline-variant/30"></div>
+            <span className="mx-3 text-[12px] text-on-surface-variant/70 font-medium">또는 휴대폰 번호로 로그인</span>
+            <div className="flex-grow border-t border-outline-variant/30"></div>
+          </div>
+
           <form className="flex flex-col gap-md" onSubmit={handleLogin}>
             {/* Phone Number Input */}
             <div className="flex flex-col gap-xs">

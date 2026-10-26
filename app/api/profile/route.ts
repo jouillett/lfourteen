@@ -53,7 +53,7 @@ export async function GET(req: Request) {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { customerId, password, currentPassword, name, zip_code, address, detail_address, mobile, phone, email } = body;
+    const { customerId, password, currentPassword, isSocial, name, zip_code, address, detail_address, mobile, phone, email } = body;
 
     if (!customerId) {
       return NextResponse.json({ success: false, message: 'Missing customerId' }, { status: 400 });
@@ -67,16 +67,19 @@ export async function PUT(req: Request) {
       }
       const dbPassword = rows[0].password ? rows[0].password.toString('utf8') : null;
 
-      if (!currentPassword) {
-        return NextResponse.json({ success: false, message: 'wrong_password' });
-      }
+      // Verify password only for non-social users
+      if (!isSocial) {
+        if (!currentPassword) {
+          return NextResponse.json({ success: false, message: 'wrong_password' });
+        }
 
-      const { Blowfish } = require('javascript-blowfish');
-      const bf = new Blowfish('yrhan');
-      const inputEncrypted = bf.base64Encode(bf.encrypt(currentPassword));
+        const { Blowfish } = require('javascript-blowfish');
+        const bf = new Blowfish('yrhan');
+        const inputEncrypted = bf.base64Encode(bf.encrypt(currentPassword));
 
-      if (inputEncrypted !== dbPassword) {
-        return NextResponse.json({ success: false, message: 'wrong_password' });
+        if (inputEncrypted !== dbPassword) {
+          return NextResponse.json({ success: false, message: 'wrong_password' });
+        }
       }
 
       let updateQueries = [];

@@ -291,3 +291,68 @@ export async function sendSubscriptionCancelAlimtalk(toPhone: string, data: { pr
     console.error('Error sending subscription cancel alimtalk:', error);
   }
 }
+
+
+export async function sendOrderCancelNotification(toPhone: string, data: { orderNumber: string, product: string, amount: string, date: string, isSubscription?: boolean }) {
+  if (data.isSubscription) {
+    return sendSubscriptionCancelAlimtalk(toPhone, {
+      product: data.product,
+      date: data.date,
+      amount: data.amount
+    });
+  }
+
+  const accessKey = process.env.SMS_ACCESS_KEY || '';
+  const secretKey = process.env.SMS_SECRET_KEY || '';
+  const apiId = process.env.SMS_API_ID || '';
+
+  if (!accessKey || !secretKey || !apiId) {
+    console.error('Missing SMS credentials');
+    return;
+  }
+
+  const phone = toPhone.replace(/[^0-9]/g, '');
+  const method = "POST";
+  const space = " ";
+  const newLine = "\n";
+  const timestamp = Date.now().toString();
+  const url2 = `/sms/v2/services/${encodeURIComponent(apiId)}/messages`;
+
+  const hmac = crypto.createHmac('sha256', secretKey);
+  hmac.update(method);
+  hmac.update(space);
+  hmac.update(url2);
+  hmac.update(newLine);
+  hmac.update(timestamp);
+  hmac.update(newLine);
+  hmac.update(accessKey);
+  const signature = hmac.digest('base64');
+
+  const apiUrl = `https://sens.apigw.ntruss.com${url2}`;
+  const message = `[기쁜하루] 주문이 정상적으로 취소되었습니다.\n\n- 주문번호: ${data.orderNumber}\n- 취소상품: ${data.product}\n- 취소금액: ${data.amount}\n- 취소일자: ${data.date}\n\n이용해 주셔서 감사합니다.`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "x-ncp-apigw-timestamp": timestamp,
+        "x-ncp-iam-access-key": accessKey,
+        "x-ncp-apigw-signature-v2": signature,
+      },
+      body: JSON.stringify({
+        type: "SMS",
+        contentType: "COMM",
+        countryCode: "82",
+        from: "01021152249",
+        content: message,
+        messages: [{ to: phone }]
+      })
+    });
+    const result = await response.json();
+    console.log('Order cancel SMS send result:', result);
+    return result;
+  } catch (error) {
+    console.error('Error sending order cancel SMS:', error);
+  }
+}

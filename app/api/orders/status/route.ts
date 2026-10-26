@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
+import { sendSubscriptionCancelEmail, sendOrderCancelEmail, sendReturnEmail } from '@/lib/email';
+import { sendOrderCancelNotification, sendReturnAlimtalk } from '@/lib/alimtalk';
 
 export async function PATCH(req: Request) {
   try {
@@ -12,7 +14,11 @@ export async function PATCH(req: Request) {
         // If status is changed to 3 (Cancel Complete) or 8 (Return Complete)
         if (status === 3 || status === 8) {
           const [orderRecs]: any = await connection.execute(
-            `SELECT total_price, customer_id, status as old_status, used_point, point_recnum FROM orders WHERE id = ?`,
+            `SELECT o.order_number, o.order_name, o.total_price, o.customer_id, o.status as old_status, o.used_point, o.point_recnum, o.created_at, o.payment_method,
+                    c.name as customer_name, c.email as customer_email, c.mobile as customer_mobile
+             FROM orders o 
+             LEFT JOIN customers c ON o.customer_id = c.id 
+             WHERE o.id = ?`,
             [id]
           );
           
@@ -65,6 +71,102 @@ export async function PATCH(req: Request) {
             );
             const totalPoints = pointSumRow[0]?.total || 0;
             await connection.execute(`UPDATE customers SET point = ? WHERE id = ?`, [totalPoints, customerId]);
+
+            // Send cancellation / return notifications
+            if (status === 3) {
+              const customerEmail = parseBuffer(orderRecord.customer_email);
+              const customerMobile = parseBuffer(orderRecord.customer_mobile);
+              const orderName = parseBuffer(orderRecord.order_name) || '엘포틴 코디';
+              const orderNumber = parseBuffer(orderRecord.order_number) || String(id);
+              const paymentMethodStr = parseBuffer(orderRecord.payment_method) || '카드';
+              const isSubscription = orderName.includes('정기구독') || orderNumber.startsWith('auto_order_');
+
+              const today = new Date();
+              const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+              if (customerEmail) {
+                if (isSubscription) {
+                  sendSubscriptionCancelEmail(customerEmail, {
+                    productName: orderName,
+                    paymentDate: dateStr,
+                    amount: actualTotalPrice
+                  }).catch(e => console.error("Cancel email error:", e));
+                } else {
+                  sendOrderCancelEmail(customerEmail, {
+                    orderNumber,
+                    productName: orderName,
+                    cancelDate: dateStr,
+                    amount: actualTotalPrice,
+                    paymentMethod: paymentMethodStr
+                  }).catch(e => console.error("Cancel email error:", e));
+                }
+              }
+
+              if (customerMobile) {
+                sendOrderCancelNotification(customerMobile, {
+                  orderNumber,
+                  product: orderName,
+                  amount: actualTotalPrice.toLocaleString() + '원',
+                  date: dateStr,
+                  isSubscription
+                }).catch(e => console.error("Cancel notification error:", e));
+              }
+
+              // If subscription order is cancelled, also clean up billing and billing_item
+              if (isSubscription && customerId) {
+                try {
+                  const [bRows]: any = await connection.execute(
+                    "SELECT id, billing_key FROM billing WHERE customer_id = ?",
+                    [customerId]
+                  );
+                  if (bRows && bRows.length > 0) {
+                    const secretKey = process.env.TOSS_API_SECRET_KEY || "test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ";
+                    const encodedSecretKey = Buffer.from(secretKey + ":").toString("base64");
+                    for (const bRow of bRows) {
+                      if (bRow.billing_key) {
+                        try {
+                          await fetch(`https://api.tosspayments.com/v1/billing/${bRow.billing_key}`, {
+                            method: "DELETE",
+                            headers: { Authorization: `Basic ${encodedSecretKey}` }
+                          }).catch(() => {});
+                        } catch (tossErr) {}
+                      }
+                      await connection.execute("DELETE FROM billing_item WHERE billing_id = ?", [bRow.id]);
+                    }
+                    await connection.execute("DELETE FROM billing WHERE customer_id = ?", [customerId]);
+                  }
+                } catch (bErr) {
+                  console.error("Error deleting billing & billing_item on order cancel:", bErr);
+                }
+              }
+            } else if (status === 8) {
+              const customerEmail = parseBuffer(orderRecord.customer_email);
+              const customerMobile = parseBuffer(orderRecord.customer_mobile);
+              const customerName = parseBuffer(orderRecord.customer_name) || '고객';
+              const orderName = parseBuffer(orderRecord.order_name) || '엘포틴 코디';
+              const orderNumber = parseBuffer(orderRecord.order_number) || String(id);
+              const rawPrice = actualTotalPrice;
+              const refundAmount = Math.max(0, rawPrice - 3300);
+
+              if (customerEmail) {
+                sendReturnEmail(customerEmail, {
+                  customerName,
+                  orderNumber,
+                  productName: orderName,
+                  price: rawPrice.toLocaleString(),
+                  createdAt: new Date().toISOString().split('T')[0]
+                }).catch(e => console.error("Return email error:", e));
+              }
+
+              if (customerMobile) {
+                sendReturnAlimtalk(customerMobile, {
+                  name: customerName,
+                  amount: rawPrice.toLocaleString(),
+                  charge: '3,300',
+                  refund: refundAmount.toLocaleString()
+                }).catch(e => console.error("Return alimtalk error:", e));
+              }
+            }
           }
           }
         }

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../../lib/db';
+import { sendSubscriptionCancelEmail, sendOrderCancelEmail } from '@/lib/email';
+import { sendOrderCancelNotification } from '@/lib/alimtalk';
 
 export async function POST(req: Request) {
   try {
@@ -14,7 +16,11 @@ export async function POST(req: Request) {
 
     try {
       const [orderRecs]: any = await connection.execute(
-        `SELECT o.total_price, o.customer_id, o.status, o.used_point, c.grade as customer_grade FROM orders o LEFT JOIN customers c ON o.customer_id = c.id WHERE o.id = ?`,
+        `SELECT o.order_number, o.order_name, o.total_price, o.customer_id, o.status, o.used_point, o.payment_method,
+                c.grade as customer_grade, c.name as customer_name, c.email as customer_email, c.mobile as customer_mobile
+         FROM orders o 
+         LEFT JOIN customers c ON o.customer_id = c.id 
+         WHERE o.id = ?`,
         [orderId]
       );
       
@@ -82,6 +88,77 @@ export async function POST(req: Request) {
         `UPDATE orders SET status = 3 WHERE id = ?`,
         [orderId]
       );
+
+      // 4. Send cancellation notification
+      try {
+        const customerEmail = parseBuffer(orderRecord.customer_email);
+        const customerMobile = parseBuffer(orderRecord.customer_mobile);
+        const orderName = parseBuffer(orderRecord.order_name) || '엘포틴 코디';
+        const orderNumber = parseBuffer(orderRecord.order_number) || String(orderId);
+        const paymentMethodStr = parseBuffer(orderRecord.payment_method) || '카드';
+        const isSubscription = orderName.includes('정기구독') || orderNumber.startsWith('auto_order_');
+
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        if (customerEmail) {
+          if (isSubscription) {
+            sendSubscriptionCancelEmail(customerEmail, {
+              productName: orderName,
+              paymentDate: dateStr,
+              amount: actualTotalPrice
+            }).catch(e => console.error("Cancel email error:", e));
+          } else {
+            sendOrderCancelEmail(customerEmail, {
+              orderNumber,
+              productName: orderName,
+              cancelDate: dateStr,
+              amount: actualTotalPrice,
+              paymentMethod: paymentMethodStr
+            }).catch(e => console.error("Cancel email error:", e));
+          }
+        }
+
+        if (customerMobile) {
+          sendOrderCancelNotification(customerMobile, {
+            orderNumber,
+            product: orderName,
+            amount: actualTotalPrice.toLocaleString() + '원',
+            date: dateStr,
+            isSubscription
+          }).catch(e => console.error("Cancel notification error:", e));
+        }
+
+        // If subscription order is cancelled, also clean up billing and billing_item
+        if (isSubscription && customerId) {
+          try {
+            const [bRows]: any = await connection.execute(
+              "SELECT id, billing_key FROM billing WHERE customer_id = ?",
+              [customerId]
+            );
+            if (bRows && bRows.length > 0) {
+              const secretKey = process.env.TOSS_API_SECRET_KEY || "test_sk_E92LAa5PVbNakNYZdRnJV7YmpXyJ";
+              const encodedSecretKey = Buffer.from(secretKey + ":").toString("base64");
+              for (const bRow of bRows) {
+                if (bRow.billing_key) {
+                  try {
+                    await fetch(`https://api.tosspayments.com/v1/billing/${bRow.billing_key}`, {
+                      method: "DELETE",
+                      headers: { Authorization: `Basic ${encodedSecretKey}` }
+                    }).catch(() => {});
+                  } catch (tossErr) {}
+                }
+                await connection.execute("DELETE FROM billing_item WHERE billing_id = ?", [bRow.id]);
+              }
+              await connection.execute("DELETE FROM billing WHERE customer_id = ?", [customerId]);
+            }
+          } catch (bErr) {
+            console.error("Error deleting billing & billing_item on cancel-completed:", bErr);
+          }
+        }
+      } catch (notifyErr) {
+        console.error("Cancel completed notification error:", notifyErr);
+      }
 
       await connection.commit();
       return NextResponse.json({ success: true, debug: { customerId, actualTotalPrice } });

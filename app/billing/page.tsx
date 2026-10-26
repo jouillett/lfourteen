@@ -1,29 +1,42 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function BillingPage() {
-  const [option, setOption] = useState<number>(4);
+  const [option, setOption] = useState<number>(9);
   const [period, setPeriod] = useState<"weeks" | "months">("weeks");
-  const [duration, setDuration] = useState<number | "">(4);
+  const [duration, setDuration] = useState<number | "">(2);
   const [payment, setPayment] = useState<any>(null);
   const [grade, setGrade] = useState<string | null>(null);
-  const hasAlerted = useRef(false);
 
   useEffect(() => {
-    if (!hasAlerted.current) {
-      alert("현대카드는 현재 결제 서비스 준비중입니다.\n다른 카드사를 선택해주세요.");
-      hasAlerted.current = true;
-    }
+    alert("수정중입니다.");
+    window.location.href = "/";
+    return;
+  }, []);
+
+  /*
+  useEffect(() => {
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
       alert("로그인이 필요합니다.");
       window.location.href = "/login?redirect=/billing";
       return;
     }
+
+    // Check subscription eligibility
+    fetch(`/api/billing/eligibility?customerId=${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.eligible === false && data.nextDate) {
+          alert(`다음 정기구매가 가능한 날짜는 '${data.nextDate}'입니다.`);
+          window.location.href = "/";
+        }
+      })
+      .catch(console.error);
     
     const customerGrade = localStorage.getItem("customerGrade");
     setGrade(customerGrade);
@@ -45,6 +58,7 @@ export default function BillingPage() {
     }
     fetchPayment();
   }, []);
+  */
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -52,31 +66,62 @@ export default function BillingPage() {
     if (opt) {
       const numOpt = parseInt(opt, 10);
       if (!isNaN(numOpt)) {
-        setOption(numOpt);
+        // Map normal price options (1~4) to discounted subscription price options (9~12)
+        if (numOpt >= 1 && numOpt <= 4) {
+          setOption(numOpt + 8);
+        } else {
+          setOption(numOpt);
+        }
       }
     } else {
       const customerGrade = localStorage.getItem("customerGrade");
       if (customerGrade === "8") {
         setOption(8);
+      } else {
+        setOption(9);
       }
     }
   }, []);
 
   const isGrade8 = grade === "8";
 
+  // Discounted subscription prices (id 9~12)
   const optionPrices: Record<number, number> = isGrade8 ? {
     5: 40000,
     6: 80000,
     7: 240000,
     8: 480000,
   } : {
+    9: 60000,
+    10: 100000,
+    11: 240000,
+    12: 450000,
+    // fallback if raw 1~4 is referenced
+    1: 60000,
+    2: 100000,
+    3: 240000,
+    4: 450000,
+  };
+
+  // Original single-purchase prices for discount comparison
+  const regularPrices: Record<number, number> = isGrade8 ? {
+    5: 45000,
+    6: 85000,
+    7: 250000,
+    8: 480000,
+  } : {
+    9: 65000,
+    10: 110000,
+    11: 270000,
+    12: 480000,
     1: 65000,
     2: 110000,
     3: 270000,
     4: 480000,
   };
 
-  const basePrice = optionPrices[option] || (isGrade8 ? 40000 : 65000);
+  const basePrice = optionPrices[option] || (isGrade8 ? 40000 : 60000);
+  const discountAmount = regularPrices[option] ? Math.max(0, regularPrices[option] - basePrice) : 0;
   const totalPrice = basePrice;
   const formattedPrice = totalPrice.toLocaleString() + "원";
 
@@ -92,6 +137,21 @@ export default function BillingPage() {
 
   async function handleBilling() {
     if (!payment) return;
+
+    const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (userId) {
+      try {
+        const checkRes = await fetch(`/api/billing/eligibility?customerId=${userId}`);
+        const checkData = await checkRes.json();
+        if (checkData.eligible === false && checkData.nextDate) {
+          alert(`다음 정기구매가 가능한 날짜는 '${checkData.nextDate}'입니다.`);
+          window.location.href = "/";
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
     
     const params = new URLSearchParams({
       option: option.toString(),
@@ -203,10 +263,10 @@ export default function BillingPage() {
                     </>
                   ) : (
                     <>
-                      <option value="1">1개: 65,000원</option>
-                      <option value="2">2개: 110,000원</option>
-                      <option value="3">6개: 270,000원</option>
-                      <option value="4">12개: 480,000원</option>
+                      <option value="9">1개: 60,000원 (정기구독 할인가)</option>
+                      <option value="10">2개: 100,000원 (정기구독 할인가)</option>
+                      <option value="11">6개: 240,000원 (정기구독 할인가)</option>
+                      <option value="12">12개: 450,000원 (정기구독 할인가)</option>
                     </>
                   )}
                 </select>
@@ -219,12 +279,25 @@ export default function BillingPage() {
           <section className="bg-surface-container rounded-2xl p-lg flex flex-col gap-md shadow-sm border border-surface-container-highest">
             <h3 className="font-headline-md text-headline-md text-primary">주문 요약</h3>
             <div className="flex justify-between items-center py-sm border-b border-outline-variant/30">
-              <span className="font-body-md text-on-surface-variant">{duration}{period === "weeks" ? "주" : "개월"} 마다</span>
-              <span className="font-body-md text-on-surface font-medium">{formattedPrice}</span>
+              <span className="font-body-md text-on-surface-variant">정기 배송 주기</span>
+              <span className="font-body-md text-on-surface font-medium">{duration}{period === "weeks" ? "주" : "개월"} 마다</span>
             </div>
-            <div className="flex justify-between items-center pt-sm pb-md">
-              <span className="font-headline-md text-headline-md text-primary font-semibold">결제 금액</span>
-              <span className="font-headline-lg text-headline-lg text-primary font-semibold">{formattedPrice}</span>
+            
+            <div className="flex justify-between items-center py-xs text-sm">
+              <span className="text-on-surface-variant">일반 구매 정가</span>
+              <span className="line-through text-outline">{(regularPrices[option] || basePrice).toLocaleString()}원</span>
+            </div>
+
+            {discountAmount > 0 && (
+              <div className="flex justify-between items-center py-xs text-sm font-semibold text-[#a8442a]">
+                <span>정기구독 특별 할인</span>
+                <span>-{discountAmount.toLocaleString()}원</span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-sm pb-md border-t border-outline-variant/30 mt-1">
+              <span className="font-headline-md text-headline-md text-primary font-semibold">정기 결제 금액</span>
+              <span className="font-headline-lg text-headline-lg text-primary font-bold">{formattedPrice}</span>
             </div>
             <button onClick={handleBilling} className="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-md rounded-full shadow-sm transition-all flex justify-center items-center gap-xs">
               정기 구매 시작하기

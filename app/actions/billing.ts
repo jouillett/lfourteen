@@ -3,6 +3,8 @@
 import pool from "@/lib/db";
 import { sendSubscriptionSuccessEmail } from "@/lib/email";
 import { sendSubscriptionAlimtalk } from "@/lib/alimtalk";
+import { formatCardPaymentMethod } from "@/lib/card";
+import { checkSubscriptionEligibility } from "@/lib/subscription";
 
 export async function issueBillingKeyAndSave(
   customerKey: string,
@@ -52,7 +54,12 @@ export async function issueBillingKeyAndSave(
   // Save to DB
   // Parse customerId from customerKey (which might be prefixed with "user_") or fallback to 1
   const numericKey = customerKey.replace(/^user_/, "");
-  const customerId = parseInt(numericKey, 10) || 1; 
+  const customerId = parseInt(numericKey, 10) || 1;
+
+  const eligibility = await checkSubscriptionEligibility(pool, customerId);
+  if (!eligibility.eligible && eligibility.nextDate) {
+    throw new Error(`다음 정기구매가 가능한 날짜는 '${eligibility.nextDate}'입니다.`);
+  } 
 
   const periodInt = period === "weeks" ? 0 : 1;
 
@@ -87,6 +94,11 @@ export async function issueBillingKeyAndSave(
         }
       }
       // Delete from DB to prevent unique constraint error
+      for (const row of existingRows) {
+        if (row.id) {
+          await pool.query("DELETE FROM billing_item WHERE billing_id = ?", [row.id]);
+        }
+      }
       await pool.query("DELETE FROM billing WHERE customer_id = ?", [customerId]);
     }
 
@@ -257,7 +269,13 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
     }
 
     // 4. Insert into orders and order_items
-    const paymentMethod = paymentData.method || paymentData.type || "빌링결제";
+    let paymentMethod = paymentData.method || paymentData.type || "카드";
+    if (paymentData.card) {
+      const cardCode = paymentData.card.issuerCode || paymentData.card.acquirerCode || paymentData.card.cardCompany || paymentData.card.company;
+      paymentMethod = formatCardPaymentMethod(cardCode);
+    } else if (paymentData.easyPay?.provider) {
+      paymentMethod = paymentData.easyPay.provider;
+    }
     const [orderResult]: any = await pool.query(
       `INSERT INTO orders (order_number, order_name, customer_id, total_price, payment_key, payment_method, receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,

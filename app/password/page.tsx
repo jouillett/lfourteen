@@ -76,6 +76,7 @@ export default function PasswordPage() {
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("customerId", data.userId);
             localStorage.setItem("customerGrade", "9");
+            localStorage.setItem("loginType", "phone");
             localStorage.setItem("lastActivity", Date.now().toString());
           }
 
