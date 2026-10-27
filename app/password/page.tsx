@@ -46,6 +46,7 @@ export default function PasswordPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const phoneVal = urlParams.get("phone") || "";
     const mode = urlParams.get("mode");
+    const redirectUrl = urlParams.get("redirect");
 
     if (!phoneVal) {
       setErrorMsg("인증된 휴대폰 번호 정보가 없습니다. 다시 인증을 진행해 주세요.");
@@ -82,14 +83,18 @@ export default function PasswordPage() {
 
           const wantsProfile = window.confirm("지금 개인정보를 입력하시겠습니까?");
           if (wantsProfile) {
-            window.location.href = `/mypage/profile`;
+            window.location.href = redirectUrl || `/mypage/profile`;
           } else {
             alert("회원가입이 완료되었습니다.");
-            window.location.href = `/`;
+            window.location.href = redirectUrl || `/`;
           }
         } else {
-          alert("비밀번호가 성공적으로 설정되었습니다. 로그인 페이지로 이동합니다.");
-          window.location.href = `/login?phone=${encodeURIComponent(phoneVal)}`;
+          alert("비밀번호가 성공적으로 설정되었습니다.");
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+          } else {
+            window.location.href = `/login?phone=${encodeURIComponent(phoneVal)}`;
+          }
         }
       } else {
         setErrorMsg(data.message || "처리 중 오류가 발생했습니다.");

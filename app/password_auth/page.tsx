@@ -7,6 +7,7 @@ import PhoneInput from "@/components/PhoneInput";
 
 export default function PasswordAuthPage() {
   const [phone, setPhone] = useState("");
+  const [redirect, setRedirect] = useState("");
   const [authSent, setAuthSent] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [expectedCode, setExpectedCode] = useState("");
@@ -17,6 +18,10 @@ export default function PasswordAuthPage() {
     const p = params.get('phone');
     if (p) {
       setPhone(p);
+    }
+    const r = params.get('redirect');
+    if (r) {
+      setRedirect(r);
     }
   }, []);
 
@@ -61,7 +66,8 @@ export default function PasswordAuthPage() {
     } else if (authCode === expectedCode) {
       setErrorMsg("");
       const cleanPhone = phone.replace(/\D/g, "");
-      window.location.href = `/password?phone=${cleanPhone}&mode=reset`;
+      const redirectParam = redirect ? `&redirect=${encodeURIComponent(redirect)}` : "";
+      window.location.href = `/password?phone=${cleanPhone}&mode=reset${redirectParam}`;
     }
   };
 

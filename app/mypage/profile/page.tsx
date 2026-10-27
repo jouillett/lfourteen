@@ -272,8 +272,8 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => {
                         const { mobile1, mobile2, mobile3 } = getValues();
-                        const phone = `${mobile1 || ""}${mobile2 || ""}${mobile3 || ""}`;
-                        router.push(`/password_auth?phone=${phone}`);
+                        const phone = `${mobile1 || ""}${mobile2 || ""}${mobile3 || ""}`.replace(/\D/g, "");
+                        router.push(`/password_auth?phone=${phone}&redirect=/mypage/profile`);
                       }}
                       className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap self-start md:self-auto rounded cursor-pointer"
                     >
@@ -310,8 +310,8 @@ export default function ProfilePage() {
                       type="button"
                       onClick={() => {
                         const { mobile1, mobile2, mobile3 } = getValues();
-                        const phone = `${mobile1 || ''}${mobile2 || ''}${mobile3 || ''}`;
-                        router.push(`/password_auth?phone=${phone}`);
+                        const phone = `${mobile1 || ''}${mobile2 || ''}${mobile3 || ''}`.replace(/\D/g, "");
+                        router.push(`/password_auth?phone=${phone}&redirect=/mypage/profile`);
                       }}
                       className="bg-white border border-[#CCCCCC] text-[#333333] px-3 py-1.5 text-[13px] hover:bg-[#FAFAFA] transition-colors whitespace-nowrap md:w-auto self-start mt-2 md:mt-0 cursor-pointer"
                     >
