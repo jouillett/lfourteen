@@ -64,7 +64,7 @@ export async function GET(req: Request) {
         }
 
         // Check if we are changing to 3 or 8 from a different status, or changing to 2
-        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id, used_point, refund_bank, refund_account, refund_holder FROM orders WHERE id = ?', [id]);
+        const [currRows]: any = await connection.execute('SELECT status, payment_key, total_price, customer_id, used_point, refund_bank, refund_account, refund_holder, order_name, order_number FROM orders WHERE id = ?', [id]);
         if (currRows.length === 0) return NextResponse.json({ success: false, message: 'Order not found' }, { status: 404 });
         
         const currentOrder = currRows[0];
@@ -203,14 +203,58 @@ export async function GET(req: Request) {
         }
 
         if (isEarningPoints) {
-          const actualTotalPrice = Number(Buffer.isBuffer(currentOrder.total_price) ? currentOrder.total_price.toString('utf8') : currentOrder.total_price) || 0;
-          const customerId = Buffer.isBuffer(currentOrder.customer_id) ? currentOrder.customer_id.toString('utf8') : currentOrder.customer_id;
+          const parseBuffer = (val: any) => {
+            if (Buffer.isBuffer(val)) return val.toString('utf8');
+            if (val && val.type === 'Buffer') return Buffer.from(val.data).toString('utf8');
+            return val;
+          };
+
+          const actualTotalPrice = Number(parseBuffer(currentOrder.total_price)) || 0;
+          const customerId = parseBuffer(currentOrder.customer_id);
+          const orderName = parseBuffer(currentOrder.order_name) || '';
+          const orderNumber = parseBuffer(currentOrder.order_number) || '';
           
           if (customerId) {
             const [custRows]: any = await connection.execute('SELECT grade FROM customers WHERE id = ?', [customerId]);
             const customerGrade = custRows.length > 0 ? custRows[0].grade : null;
             if (String(customerGrade) !== "8") {
-              const amount = Math.round(actualTotalPrice * 0.01);
+              let amount = 0;
+
+              // Subscription order points reward logic
+              const isSubscription = orderName.includes('정기구독') || orderNumber.startsWith('auto_order_');
+              if (isSubscription) {
+                const [orderItems]: any = await connection.execute(
+                  `SELECT price_id, quantity FROM order_items WHERE order_id = ?`,
+                  [id]
+                );
+                const [priceRows]: any = await connection.execute(
+                  `SELECT id, price FROM prices WHERE id IN (1, 2, 3, 4, 9, 10, 11, 12)`
+                );
+                const priceMap: Record<number, number> = {};
+                for (const pr of priceRows) {
+                  priceMap[Number(pr.id)] = Number(pr.price);
+                }
+
+                for (const item of orderItems) {
+                  const pid = Number(item.price_id);
+                  const qty = Number(item.quantity) || 1;
+                  if (pid === 1) {
+                    amount += Math.max(0, (priceMap[1] || 65000) - (priceMap[9] || 60000)) * qty;
+                  } else if (pid === 2) {
+                    amount += Math.max(0, (priceMap[2] || 110000) - (priceMap[10] || 100000)) * qty;
+                  } else if (pid === 3) {
+                    amount += Math.max(0, (priceMap[3] || 270000) - (priceMap[11] || 250000)) * qty;
+                  } else if (pid === 4) {
+                    amount += Math.max(0, (priceMap[4] || 480000) - (priceMap[12] || 450000)) * qty;
+                  }
+                }
+              }
+
+              // Fallback to regular 1% if non-subscription or not mapped
+              if (amount === 0) {
+                amount = Math.round(actualTotalPrice * 0.01);
+              }
+
               if (amount > 0) {
                 await connection.beginTransaction();
                 try {
