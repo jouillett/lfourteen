@@ -269,7 +269,7 @@ export async function POST(req: Request) {
 
     await connection.commit();
     console.log('[confirm] All done successfully!');
-    return NextResponse.json({ success: true, payment });
+    return NextResponse.json({ success: true, payment, rewardPoint });
 
   } catch (error: any) {
     if (connection) {
