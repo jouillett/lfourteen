@@ -53,18 +53,43 @@ function renderLoginSuccessHtml(options: {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${isNewUser ? "회원가입 완료" : "로그인 완료"}</title>
+        <title>${isNewUser ? "회원가입 완료" : "로그인 완료"} - 엘포틴</title>
       </head>
-      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #FAF9F5; padding: 20px;">
-        <div style="background: white; border-radius: 16px; padding: 36px 24px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
-          <div style="width: 52px; height: 52px; background-color: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 26px;">✓</div>
-          <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 8px; color: #1c1b18;">
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #FAF9F5; padding: 20px; box-sizing: border-box;">
+        <div style="background: white; border-radius: 20px; padding: 40px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.04);">
+          <div style="width: 58px; height: 58px; background-color: #E8F5E9; color: #2E7D32; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 28px; font-weight: bold;">✓</div>
+          
+          <h2 style="font-size: 22px; font-weight: bold; margin: 0 0 10px; color: #1c1b18;">
             ${isNewUser ? "회원가입 완료!" : "로그인 완료!"}
           </h2>
-          <p style="font-size: 14px; color: #4a453e; line-height: 1.5; margin-bottom: 24px;">
-            ${isNewUser ? `환영합니다, <strong>${userName}</strong>님!<br>엘포틴 회원가입이 완료되었습니다.` : `반갑습니다, <strong>${userName}</strong>님!`}
+          
+          <p style="font-size: 15px; color: #4a453e; line-height: 1.6; margin: 0 0 20px;">
+            ${
+              isNewUser
+                ? `환영합니다, <strong>${userName}</strong>님!<br>엘포틴 회원가입이 완료되었습니다.`
+                : `반갑습니다, <strong>${userName}</strong>님!`
+            }
           </p>
-          <div style="font-size: 12px; color: #797670;">페이지로 이동 중입니다...</div>
+
+          ${
+            isNewUser
+              ? `<div style="background: #FDF8F0; border: 1px solid #F5E6D0; border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; font-size: 13px; color: #7A5222; text-align: center;">
+                  🎉 신규 가입 축하 <strong>1,000P</strong> 적립금이 지급되었습니다!
+                </div>`
+              : userPoints > 0 && userGrade !== "8"
+              ? `<div style="background: #FDF8F0; border: 1px solid #F5E6D0; border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; font-size: 13px; color: #7A5222; text-align: center;">
+                  현재 보유 포인트: <strong>${userPoints.toLocaleString()}P</strong>
+                </div>`
+              : ""
+          }
+
+          <button id="proceedBtn" onclick="proceed()" style="width: 100%; padding: 14px 0; background: #2B231D; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 2px 8px rgba(43,35,29,0.2);">
+            확인 (쇼핑하러 가기)
+          </button>
+
+          <p style="font-size: 12px; color: #9E9B95; margin-top: 14px; margin-bottom: 0;">
+            버튼을 누르시면 화면으로 이동합니다
+          </p>
         </div>
 
         <script>
@@ -75,18 +100,19 @@ function renderLoginSuccessHtml(options: {
             localStorage.setItem("customerGrade", "${userGrade}");
             localStorage.setItem("loginType", "${provider}");
             localStorage.setItem("lastActivity", Date.now().toString());
-
-            ${
-              isNewUser
-                ? `alert("환영합니다! ${userName}님, 엘포틴 회원가입이 완료되었습니다. (신규 가입 1,000P 적립)");`
-                : userPoints > 0 && userGrade !== "8"
-                ? `alert("반갑습니다. ${userName} 고객님 전체 보유 포인트는 ${userPoints.toLocaleString()}원입니다.");`
-                : ""
-            }
-
-            window.location.replace("${redirectTarget}");
           } catch (e) {
             console.error("Storage error:", e);
+          }
+
+          var redirected = false;
+          function proceed() {
+            if (redirected) return;
+            redirected = true;
+            var btn = document.getElementById("proceedBtn");
+            if (btn) {
+              btn.innerText = "이동 중...";
+              btn.style.opacity = "0.7";
+            }
             window.location.replace("${redirectTarget}");
           }
         </script>
