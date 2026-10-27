@@ -104,10 +104,30 @@ export default function BillingPage() {
     12: 480000,
   };
 
+  // Points rewarded upon delivery complete for each option
+  const deliveryRewardPoints: Record<number, number> = isGrade8 ? {
+    5: 0, 6: 0, 7: 0, 8: 0
+  } : {
+    1: 5000,   // 65,000 - 60,000
+    2: 10000,  // 110,000 - 100,000
+    3: 20000,  // 270,000 - 250,000
+    4: 30000,  // 480,000 - 450,000
+    9: 5000,
+    10: 10000,
+    11: 20000,
+    12: 30000,
+  };
+
   const basePrice = optionPrices[option] || (isGrade8 ? 45000 : 65000);
-  const pointToDeduct = isGrade8 ? 0 : Math.min(customerPoint, basePrice);
-  const estimatedPrice = Math.max(0, basePrice - pointToDeduct);
-  const formattedPrice = estimatedPrice.toLocaleString() + "원";
+  
+  // 첫 정기 결제: 현재 보유 포인트 자동 적용
+  const firstPointDeduct = isGrade8 ? 0 : Math.min(customerPoint, basePrice);
+  const firstEstimatedPrice = Math.max(0, basePrice - firstPointDeduct);
+
+  // 다음 정기 결제: 배송완료 후 적립 포인트 적용
+  const rewardPoint = deliveryRewardPoints[option] || 0;
+  const nextPointDeduct = isGrade8 ? 0 : Math.min(rewardPoint, basePrice);
+  const nextEstimatedPrice = Math.max(0, basePrice - nextPointDeduct);
 
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
@@ -247,10 +267,10 @@ export default function BillingPage() {
                     </>
                   ) : (
                     <>
-                      <option value="1">1개: 65,000원</option>
-                      <option value="2">2개: 110,000원</option>
-                      <option value="3">6개: 270,000원</option>
-                      <option value="4">12개: 480,000원</option>
+                      <option value="1">1개: 65,000원 (배송완료 시 5,000P 적립)</option>
+                      <option value="2">2개: 110,000원 (배송완료 시 10,000P 적립)</option>
+                      <option value="3">6개: 270,000원 (배송완료 시 20,000P 적립)</option>
+                      <option value="4">12개: 480,000원 (배송완료 시 30,000P 적립)</option>
                     </>
                   )}
                 </select>
@@ -262,6 +282,7 @@ export default function BillingPage() {
           {/* Order Summary Card */}
           <section className="bg-surface-container rounded-2xl p-lg flex flex-col gap-md shadow-sm border border-surface-container-highest">
             <h3 className="font-headline-md text-headline-md text-primary">주문 요약</h3>
+            
             <div className="flex justify-between items-center py-sm border-b border-outline-variant/30">
               <span className="font-body-md text-on-surface-variant">정기 배송 주기</span>
               <span className="font-body-md text-on-surface font-medium">{duration}{period === "weeks" ? "주" : "개월"} 마다</span>
@@ -272,23 +293,41 @@ export default function BillingPage() {
               <span className="text-on-surface font-medium">{basePrice.toLocaleString()}원</span>
             </div>
 
-            {!isGrade8 && pointToDeduct > 0 && (
-              <div className="flex justify-between items-center py-xs text-sm font-semibold text-[#a8442a]">
-                <span>보유 포인트 자동 적용</span>
-                <span>-{pointToDeduct.toLocaleString()}원</span>
+            {/* 첫 정기 결제 예상 금액 */}
+            <div className="bg-surface-container-lowest rounded-xl p-3.5 border border-outline-variant/30 flex flex-col gap-1.5 my-1">
+              <div className="flex justify-between items-baseline gap-2">
+                <span className="font-label-md text-[14px] font-bold text-primary shrink-0">첫 정기 결제 예상 금액</span>
+                <span className="font-bold text-[18px] text-primary whitespace-nowrap">{firstEstimatedPrice.toLocaleString()}원</span>
+              </div>
+              {!isGrade8 && (
+                <div className="flex justify-between items-center text-xs text-[#a8442a] pt-1 border-t border-outline-variant/20">
+                  <span>보유 포인트 자동 적용</span>
+                  <span className="font-medium">{firstPointDeduct > 0 ? `-${firstPointDeduct.toLocaleString()}원` : "0원"}</span>
+                </div>
+              )}
+            </div>
+
+            {/* 다음 정기 결제 예상 금액 */}
+            {!isGrade8 && rewardPoint > 0 && (
+              <div className="bg-surface-container-lowest rounded-xl p-3.5 border border-outline-variant/30 flex flex-col gap-1.5">
+                <div className="flex justify-between items-baseline gap-2">
+                  <span className="font-label-md text-[14px] font-bold text-on-surface shrink-0">다음 정기 결제 예상 금액</span>
+                  <span className="font-bold text-[18px] text-on-surface whitespace-nowrap">{nextEstimatedPrice.toLocaleString()}원</span>
+                </div>
+                <div className="flex justify-between items-center text-xs text-primary pt-1 border-t border-outline-variant/20">
+                  <span>(배송완료후 적립 포인트 {rewardPoint.toLocaleString()}원 적용)</span>
+                  <span className="font-medium">-{rewardPoint.toLocaleString()}원</span>
+                </div>
               </div>
             )}
 
-            <div className="flex justify-between items-center pt-sm pb-md border-t border-outline-variant/30 mt-1">
-              <span className="font-headline-md text-headline-md text-primary font-semibold">정기 결제 예상 금액</span>
-              <span className="font-headline-lg text-headline-lg text-primary font-bold">{formattedPrice}</span>
-            </div>
             {!isGrade8 && (
-              <p className="font-caption text-[12px] text-on-surface-variant text-center -mt-2 mb-2">
-                ※ 정기구매 시 보유하신 전액 포인트가 자동 적용되어 차감 결제됩니다. (보유 포인트: {customerPoint.toLocaleString()}원)
+              <p className="font-caption text-[11px] text-on-surface-variant text-center my-0.5 leading-relaxed">
+                ※ 정기구매는 배송완료 시 포인트가 적립되며, 다음 결제 시 보유 포인트가 자동 차감되어 결제됩니다.
               </p>
             )}
-            <button onClick={handleBilling} className="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-md rounded-full shadow-sm transition-all flex justify-center items-center gap-xs">
+
+            <button onClick={handleBilling} className="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-md rounded-full shadow-sm transition-all flex justify-center items-center gap-xs cursor-pointer mt-1">
               정기 구매 시작하기
               <span className="material-symbols-outlined">arrow_forward</span>
             </button>

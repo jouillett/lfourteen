@@ -108,8 +108,47 @@ export async function GET(req: Request) {
             const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
             const customerId = parseBuffer(order.customer_id);
             const customerGrade = order.customer_grade;
+            const orderName = parseBuffer(order.order_name) || '';
+            const orderNumber = parseBuffer(order.order_number) || '';
+
             if (customerId && String(customerGrade) !== "8") {
-              const amount = Math.round(actualTotalPrice * 0.01);
+              let amount = 0;
+
+              // Subscription order points reward logic
+              const isSubscription = orderName.includes('정기구독') || orderNumber.startsWith('auto_order_');
+              if (isSubscription) {
+                const [orderItems]: any = await connection.execute(
+                  `SELECT price_id, quantity FROM order_items WHERE order_id = ?`,
+                  [order.id]
+                );
+                const [priceRows]: any = await connection.execute(
+                  `SELECT id, price FROM prices WHERE id IN (1, 2, 3, 4, 9, 10, 11, 12)`
+                );
+                const priceMap: Record<number, number> = {};
+                for (const pr of priceRows) {
+                  priceMap[Number(pr.id)] = Number(pr.price);
+                }
+
+                for (const item of orderItems) {
+                  const pid = Number(item.price_id);
+                  const qty = Number(item.quantity) || 1;
+                  if (pid === 1) {
+                    amount += Math.max(0, (priceMap[1] || 65000) - (priceMap[9] || 60000)) * qty;
+                  } else if (pid === 2) {
+                    amount += Math.max(0, (priceMap[2] || 110000) - (priceMap[10] || 100000)) * qty;
+                  } else if (pid === 3) {
+                    amount += Math.max(0, (priceMap[3] || 270000) - (priceMap[11] || 250000)) * qty;
+                  } else if (pid === 4) {
+                    amount += Math.max(0, (priceMap[4] || 480000) - (priceMap[12] || 450000)) * qty;
+                  }
+                }
+              }
+
+              // Fallback to regular 1% if non-subscription or not mapped
+              if (amount === 0) {
+                amount = Math.round(actualTotalPrice * 0.01);
+              }
+
               if (amount > 0) {
                 const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
                 let pointId = 0;
