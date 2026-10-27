@@ -254,25 +254,34 @@ export default function MypageBilling() {
           {loading ? (
             <div className="py-20 text-center">로딩 중...</div>
           ) : !isSubscribed ? (
-            <div className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant flex flex-col items-center justify-center py-20">
-              <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-4">event_repeat</span>
-              <p className="text-on-surface-variant text-lg mb-2">현재 이용 중인 정기구매 서비스가 없습니다.</p>
+            <div className="bg-surface-container-lowest rounded-2xl p-8 sm:p-12 shadow-sm border border-outline-variant flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center mb-4 text-on-surface-variant">
+                <span className="material-symbols-outlined text-[28px]">event_repeat</span>
+              </div>
+              <h3 className="text-on-surface font-bold text-[18px] mb-2">현재 이용 중인 정기구매 서비스가 없습니다.</h3>
               {nextEligibleDate ? (
-                <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-center max-w-md">
-                  <p className="text-amber-800 text-sm font-medium break-keep">
-                    ※ 최근 정기구매 취소 이력으로 인해,<br />
-                    다음 정기구매는 <span className="font-bold underline">{nextEligibleDate}</span>부터 신청 가능합니다.
+                <div className="w-full max-w-[460px] my-5 p-5 bg-surface-container rounded-2xl border border-outline-variant/50 flex flex-col items-center text-center shadow-xs">
+                  <div className="flex items-center gap-1.5 text-primary font-bold text-[14.5px] mb-2">
+                    <span className="material-symbols-outlined text-[19px] text-[#a8442a]">calendar_clock</span>
+                    <span>정기구매 재신청 안내</span>
+                  </div>
+                  <p className="text-on-surface-variant text-[13.5px] leading-relaxed break-keep">
+                    최근 정기구매 취소 이력으로 인해,<br />
+                    다음 정기구매는 <span className="inline-block px-2.5 py-0.5 rounded-md bg-[#f2e0c3] text-primary font-bold mx-1 my-0.5 tracking-tight">{nextEligibleDate}</span>부터 신청 가능합니다.
                   </p>
                 </div>
               ) : (
-                <p className="text-on-surface-variant text-sm mb-6">정기구매를 신청하시면 추가 할인 혜택을 받으실 수 있습니다.</p>
+                <p className="text-on-surface-variant text-sm mb-6 max-w-sm leading-relaxed">
+                  정기구매를 신청하시면 매 회차 포인트 적립 및 편리한 자동 배송 혜택을 받으실 수 있습니다.
+                </p>
               )}
               <Link 
                 href="/billing" 
                 onClick={handleApplyClick}
-                className="bg-primary text-on-primary px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
+                className="bg-primary hover:bg-primary/90 text-on-primary px-8 py-3 rounded-full font-bold transition-all shadow-sm flex items-center gap-1.5"
               >
-                정기구매 신청하기
+                <span>정기구매 신청하기</span>
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
               </Link>
             </div>
           ) : (
