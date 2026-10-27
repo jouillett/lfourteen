@@ -129,7 +129,7 @@ export default function PrivacyPage() {
                 <p>성명: 조민균 (대표)</p>
                 <p>상호: 기쁜하루</p>
                 <p>연락처: 010-2115-2249</p>
-                <p>이메일: beluga.in.the.forest@gmail.com</p>
+                <p>이메일: grace.hahn@lfourteen.life</p>
                 <p>주소: 경기도 성남시 분당구 궁내로22번길 16 (궁내동, 장미월드빌) 302호</p>
               </div>
             </section>
