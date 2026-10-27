@@ -244,9 +244,23 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
     // 3. Points Calculation (Apply total points to subscription purchase)
     let usedPoint = 0;
     let chargedAmount = originalPrice;
+    let rewardPoint = 0;
 
     const customerGrade = String(customer.grade ?? '');
     if (customerGrade !== '8') {
+      // Calculate reward point for subscription
+      const [priceRows]: any = await pool.query(
+        "SELECT id, price FROM prices WHERE id IN (1, 2, 3, 4, 9, 10, 11, 12)"
+      );
+      const priceMap: Record<number, number> = {};
+      for (const pr of priceRows) {
+        priceMap[Number(pr.id)] = Number(pr.price);
+      }
+      if (priceId === 1) rewardPoint = Math.max(0, (priceMap[1] || 65000) - (priceMap[9] || 60000));
+      else if (priceId === 2) rewardPoint = Math.max(0, (priceMap[2] || 110000) - (priceMap[10] || 100000));
+      else if (priceId === 3) rewardPoint = Math.max(0, (priceMap[3] || 270000) - (priceMap[11] || 250000));
+      else if (priceId === 4) rewardPoint = Math.max(0, (priceMap[4] || 480000) - (priceMap[12] || 450000));
+
       // Clean up expired points
       await pool.query('DELETE FROM points WHERE customer_id = ? AND expired_at < NOW()', [customerId]);
 
@@ -335,9 +349,9 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
 
     // 6. Insert into orders and order_items
     const [orderResult]: any = await pool.query(
-      `INSERT INTO orders (order_number, order_name, customer_id, total_price, used_point, payment_key, payment_method, receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
-      [orderId, orderNameText, customerId, chargedAmount, usedPoint, paymentKey, paymentMethod, receiverName, receiverMobile, receiverPhone, fullAddress]
+      `INSERT INTO orders (order_number, order_name, customer_id, total_price, used_point, reward_point, payment_key, payment_method, receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
+      [orderId, orderNameText, customerId, chargedAmount, usedPoint, rewardPoint, paymentKey, paymentMethod, receiverName, receiverMobile, receiverPhone, fullAddress]
     );
 
     const insertedOrderId = orderResult.insertId;

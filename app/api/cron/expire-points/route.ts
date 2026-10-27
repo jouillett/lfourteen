@@ -50,7 +50,7 @@ export async function GET(req: Request) {
 
     // --- New feature: Check order deliveries ---
     const [ordersRows]: any = await connection.execute(
-      'SELECT id, customer_id, total_price, shipment FROM orders WHERE status < 2 AND shipment IS NOT NULL AND shipment != ""'
+      'SELECT id, customer_id, total_price, shipment, reward_point FROM orders WHERE status < 2 AND shipment IS NOT NULL AND shipment != ""'
     );
 
     const CARRIERS = [
@@ -128,7 +128,7 @@ export async function GET(req: Request) {
                 [order.id]
               );
               
-              const pointAmount = Math.round((order.total_price || 0) * 0.01);
+              const pointAmount = Number(order.reward_point) || 0;
               if (pointAmount > 0) {
                 await connection.execute(
                   'INSERT INTO points (customer_id, order_id, point_amount, expired_at) VALUES (?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 30 DAY))',

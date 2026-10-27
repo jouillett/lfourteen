@@ -74,7 +74,7 @@ export async function GET(req: Request) {
     try {
       // Fetch orders with status 1, 4, 5, or 7 — include fields needed for refund and emails
       const [orders]: any = await connection.execute(`
-        SELECT o.id, o.status, o.shipment, o.\`return\`, o.reshipment, o.payment_key, o.total_price, o.customer_id,
+        SELECT o.id, o.status, o.shipment, o.\`return\`, o.reshipment, o.payment_key, o.total_price, o.reward_point, o.customer_id,
                o.order_number, o.order_name, o.created_at, o.receiver_name, o.receiver_address,
                o.point_recnum, o.used_point, o.payment_method,
                o.refund_bank, o.refund_account, o.refund_holder,
@@ -105,72 +105,30 @@ export async function GET(req: Request) {
             }
 
             // Reward points
-            const actualTotalPrice = Number(parseBuffer(order.total_price)) || 0;
             const customerId = parseBuffer(order.customer_id);
-            const customerGrade = order.customer_grade;
-            const orderName = parseBuffer(order.order_name) || '';
-            const orderNumber = parseBuffer(order.order_number) || '';
+            const rewardAmount = Number(parseBuffer(order.reward_point)) || 0;
 
-            if (customerId && String(customerGrade) !== "8") {
-              let amount = 0;
-
-              // Subscription order points reward logic
-              const isSubscription = orderName.includes('정기구독') || orderNumber.startsWith('auto_order_');
-              if (isSubscription) {
-                const [orderItems]: any = await connection.execute(
-                  `SELECT price_id, quantity FROM order_items WHERE order_id = ?`,
-                  [order.id]
+            if (customerId && rewardAmount > 0) {
+              const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
+              let pointId = 0;
+              
+              if (awarded.length === 0) {
+                const [result]: any = await connection.execute(
+                  'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                  [customerId, order.id, rewardAmount]
                 );
-                const [priceRows]: any = await connection.execute(
-                  `SELECT id, price FROM prices WHERE id IN (1, 2, 3, 4, 9, 10, 11, 12)`
+                pointId = result.insertId;
+                
+                await connection.execute(
+                  'UPDATE customers SET point = point + ? WHERE id = ?',
+                  [rewardAmount, customerId]
                 );
-                const priceMap: Record<number, number> = {};
-                for (const pr of priceRows) {
-                  priceMap[Number(pr.id)] = Number(pr.price);
-                }
-
-                for (const item of orderItems) {
-                  const pid = Number(item.price_id);
-                  const qty = Number(item.quantity) || 1;
-                  if (pid === 1) {
-                    amount += Math.max(0, (priceMap[1] || 65000) - (priceMap[9] || 60000)) * qty;
-                  } else if (pid === 2) {
-                    amount += Math.max(0, (priceMap[2] || 110000) - (priceMap[10] || 100000)) * qty;
-                  } else if (pid === 3) {
-                    amount += Math.max(0, (priceMap[3] || 270000) - (priceMap[11] || 250000)) * qty;
-                  } else if (pid === 4) {
-                    amount += Math.max(0, (priceMap[4] || 480000) - (priceMap[12] || 450000)) * qty;
-                  }
-                }
+              } else {
+                pointId = awarded[0].id;
               }
-
-              // Fallback to regular 1% if non-subscription or not mapped
-              if (amount === 0) {
-                amount = Math.round(actualTotalPrice * 0.01);
-              }
-
-              if (amount > 0) {
-                const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);
-                let pointId = 0;
-                
-                if (awarded.length === 0) {
-                  const [result]: any = await connection.execute(
-                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
-                    [customerId, order.id, amount]
-                  );
-                  pointId = result.insertId;
-                  
-                  await connection.execute(
-                    'UPDATE customers SET point = point + ? WHERE id = ?',
-                    [amount, customerId]
-                  );
-                } else {
-                  pointId = awarded[0].id;
-                }
-                
-                if (pointId > 0) {
-                  await connection.execute('UPDATE orders SET point_recnum = ? WHERE id = ?', [pointId, order.id]);
-                }
+              
+              if (pointId > 0) {
+                await connection.execute('UPDATE orders SET point_recnum = ? WHERE id = ?', [pointId, order.id]);
               }
             }
             updatedCount++;

@@ -125,6 +125,13 @@ function OrderDetails() {
             <input type="text" readOnly value={`${order.total_price ? order.total_price.toLocaleString() : '0'}원`} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
           </div>
           <div>
+            <label className="block text-sm font-bold text-on-surface-variant mb-1">배송완료 시 적립 포인트</label>
+            <input type="text" readOnly value={`${order.reward_point ? Number(order.reward_point).toLocaleString() : '0'}P`} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-primary font-bold focus:outline-none cursor-not-allowed" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
             <label className="block text-sm font-bold text-on-surface-variant mb-1">Status</label>
             <select 
               value={status} 
@@ -143,11 +150,10 @@ function OrderDetails() {
               <option value={8}>반품완료</option>
             </select>
           </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-bold text-on-surface-variant mb-1">Created At</label>
-          <input type="text" readOnly value={formatDate(order.created_at_str)} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
+          <div>
+            <label className="block text-sm font-bold text-on-surface-variant mb-1">Created At</label>
+            <input type="text" readOnly value={formatDate(order.created_at_str)} className="w-full bg-surface-container border border-outline-variant rounded-md px-4 py-2 text-on-surface focus:outline-none cursor-not-allowed" />
+          </div>
         </div>
 
         <hr className="border-outline-variant my-4" />

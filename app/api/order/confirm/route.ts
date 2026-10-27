@@ -190,11 +190,21 @@ export async function POST(req: Request) {
     // 가상계좌(무통장입금) 등 입금 대기 상태인 경우에만 status=99(결제대기)로 저장
     const isPendingPayment = (paymentMethod === '가상계좌' || paymentMethod === '계좌이체') && payment.status === 'WAITING_FOR_DEPOSIT';
     const initialStatus = isPendingPayment ? 99 : 0;
-    console.log('[confirm] Inserting order... paymentMethod:', paymentMethod, 'initialStatus:', initialStatus);
+
+    // Calculate reward point (1% of paid amount, 0 for grade 8)
+    let rewardPoint = 0;
+    if (customerId) {
+      const [custRows]: any = await connection.execute('SELECT grade FROM customers WHERE id = ?', [customerId]);
+      if (custRows.length > 0 && String(custRows[0].grade) !== '8') {
+        rewardPoint = Math.round(Number(amount) * 0.01);
+      }
+    }
+
+    console.log('[confirm] Inserting order... paymentMethod:', paymentMethod, 'initialStatus:', initialStatus, 'rewardPoint:', rewardPoint);
     const [orderResult]: any = await connection.execute(
-      `INSERT INTO orders (order_number, order_name, customer_id, memo, total_price, used_point, payment_key, payment_method, status,
+      `INSERT INTO orders (order_number, order_name, customer_id, memo, total_price, used_point, reward_point, payment_key, payment_method, status,
         receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         orderNum,
         orderName,
@@ -202,6 +212,7 @@ export async function POST(req: Request) {
         memo,
         Number(amount),
         Number(orderInfo?.pointUsed) || 0,
+        rewardPoint,
         paymentKey,
         paymentMethod,
         initialStatus,
