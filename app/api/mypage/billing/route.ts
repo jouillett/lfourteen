@@ -47,8 +47,8 @@ export async function GET(req: Request) {
       const customerGrade = customerRows.length > 0 ? String(customerRows[0].grade) : null;
       const targetProductId = customerGrade === "8" ? 2 : 1;
 
-      // Get available subscription options (9~12 for normal subscribers, 5~8 for grade 8)
-      const targetPricedIds = customerGrade === "8" ? [5, 6, 7, 8] : [9, 10, 11, 12];
+      // Get available subscription options (1~4 for normal subscribers, 5~8 for grade 8)
+      const targetPricedIds = customerGrade === "8" ? [5, 6, 7, 8] : [1, 2, 3, 4];
       const [availableOptionRows] = await connection.execute<RowDataPacket[]>(
         `SELECT pp.id as priced_id, p.name as product_name, pp.quantity as option_quantity_val, pp.price
          FROM prices pp

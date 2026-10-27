@@ -41,13 +41,6 @@ export default function MypageBilling() {
   const [nextEligibleDate, setNextEligibleDate] = useState<string | null>(null);
 
   useEffect(() => {
-    alert("수정중입니다.");
-    window.location.href = "/mypage";
-    return;
-  }, []);
-
-  /*
-  useEffect(() => {
     const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!customerId) {
       window.location.href = "/login?redirect=/mypage/billing";
@@ -66,7 +59,6 @@ export default function MypageBilling() {
       })
       .catch(console.error);
   }, []);
-  */
 
   const fetchBillingInfo = async (customerId: string) => {
     setLoading(true);

@@ -188,8 +188,25 @@ export default function MobileHome({ initialReviewCount = 0, averageRating = 5.0
     window.location.href = `/order?source=buy&priceId=${pricedId}`;
   };
 
-  const handleSubscribeClick = () => {
-    alert("수정중입니다.");
+  const handleSubscribeClick = async () => {
+    const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
+    if (customerId) {
+      try {
+        const res = await fetch(`/api/mypage/billing?userId=${customerId}`);
+        const data = await res.json();
+        if (data.success && data.subscribed) {
+          if (confirm("이미 '정기구매'를 신청하셨습니다.\n등록된 정기구매 정보를 확인하시겠습니까?")) {
+            window.location.href = "/mypage/billing";
+          }
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const selectEl = document.getElementById("m-pricing-options") as HTMLSelectElement;
+    const opt = selectEl ? selectEl.value : "1";
+    window.location.href = `/billing?option=${opt}`;
   };
 
   useEffect(() => {

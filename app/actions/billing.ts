@@ -198,11 +198,11 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
     // 1. Get product price from DB
     const [priceRows]: any = await pool.query("SELECT price, quantity FROM prices WHERE id = ?", [priceId]);
     if (!priceRows || priceRows.length === 0) throw new Error("Price not found");
-    const amount = Number(priceRows[0].price);
+    const originalPrice = Number(priceRows[0].price);
 
-    // 2. Check Customer Address and Email
+    // 2. Check Customer Address, Email, and Points
     const [customerRows]: any = await pool.query(
-      "SELECT name, mobile, phone, zip_code, address, detail_address, email FROM customers WHERE id = ?",
+      "SELECT name, mobile, phone, zip_code, address, detail_address, email, grade, point FROM customers WHERE id = ?",
       [customerId]
     );
 
@@ -241,45 +241,103 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
     const suffix = isFirstPayment ? "(정기구독 첫 결제)" : "(정기구독 결제)";
     const orderNameText = `${productName} ${suffix}`;
 
-    // 3. Execute Toss Billing
+    // 3. Points Calculation (Apply total points to subscription purchase)
+    let usedPoint = 0;
+    let chargedAmount = originalPrice;
+
+    const customerGrade = String(customer.grade ?? '');
+    if (customerGrade !== '8') {
+      // Clean up expired points
+      await pool.query('DELETE FROM points WHERE customer_id = ? AND expired_at < NOW()', [customerId]);
+
+      // Query sum of valid points
+      const [pointSumRow]: any = await pool.query(
+        'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+        [customerId]
+      );
+      const availablePoints = Math.max(0, Number(pointSumRow[0]?.total) || 0);
+
+      // Sync customer points
+      await pool.query('UPDATE customers SET point = ? WHERE id = ?', [availablePoints, customerId]);
+
+      // Apply total available points up to originalPrice
+      if (availablePoints > 0) {
+        usedPoint = Math.min(availablePoints, originalPrice);
+        chargedAmount = originalPrice - usedPoint;
+      }
+    }
+
+    // 4. Execute Toss Billing (if chargedAmount > 0)
     const orderId = "auto_order_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
     const secretKey = process.env.TOSS_API_SECRET_KEY;
     if (!secretKey) throw new Error("TOSS_API_SECRET_KEY is not defined in environment variables");
     const encodedSecretKey = Buffer.from(secretKey + ":").toString("base64");
 
-    const tossRes = await fetch(`https://api.tosspayments.com/v1/billing/${billingKey}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${encodedSecretKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        customerKey,
-        amount,
-        orderId,
-        orderName: orderNameText,
-      })
-    });
+    let paymentData: any = null;
+    let paymentKey = `POINT_AUTO_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+    let paymentMethod = "전액포인트결제";
 
-    const paymentData = await tossRes.json();
-    console.log("Toss billing response status:", tossRes.status);
-    console.log("Toss billing response data:", JSON.stringify(paymentData));
-    if (!tossRes.ok) {
-      throw new Error(`Billing execution failed: ${paymentData.message || paymentData.code}`);
+    if (chargedAmount > 0) {
+      const tossRes = await fetch(`https://api.tosspayments.com/v1/billing/${billingKey}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${encodedSecretKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          customerKey,
+          amount: chargedAmount,
+          orderId,
+          orderName: orderNameText,
+        })
+      });
+
+      paymentData = await tossRes.json();
+      console.log("Toss billing response status:", tossRes.status);
+      console.log("Toss billing response data:", JSON.stringify(paymentData));
+      if (!tossRes.ok) {
+        throw new Error(`Billing execution failed: ${paymentData.message || paymentData.code}`);
+      }
+
+      paymentKey = paymentData.paymentKey;
+      paymentMethod = paymentData.method || paymentData.type || "카드";
+      if (paymentData.card) {
+        const cardCode = paymentData.card.issuerCode || paymentData.card.acquirerCode || paymentData.card.cardCompany || paymentData.card.company;
+        paymentMethod = formatCardPaymentMethod(cardCode);
+      } else if (paymentData.easyPay?.provider) {
+        paymentMethod = paymentData.easyPay.provider;
+      }
     }
 
-    // 4. Insert into orders and order_items
-    let paymentMethod = paymentData.method || paymentData.type || "카드";
-    if (paymentData.card) {
-      const cardCode = paymentData.card.issuerCode || paymentData.card.acquirerCode || paymentData.card.cardCompany || paymentData.card.company;
-      paymentMethod = formatCardPaymentMethod(cardCode);
-    } else if (paymentData.easyPay?.provider) {
-      paymentMethod = paymentData.easyPay.provider;
+    // 5. Deduct used points
+    if (usedPoint > 0) {
+      let pointsToDeduct = usedPoint;
+      const [pointRecords]: any = await pool.query(
+        `SELECT id, point_amount FROM points WHERE customer_id = ? ORDER BY expired_at ASC`,
+        [customerId]
+      );
+      for (const record of pointRecords) {
+        if (pointsToDeduct <= 0) break;
+        const available = Number(record.point_amount) || 0;
+        if (available <= pointsToDeduct) {
+          await pool.query(`DELETE FROM points WHERE id = ?`, [record.id]);
+          pointsToDeduct -= available;
+        } else {
+          await pool.query(`UPDATE points SET point_amount = point_amount - ? WHERE id = ?`, [pointsToDeduct, record.id]);
+          pointsToDeduct = 0;
+        }
+      }
+      await pool.query(
+        `UPDATE customers SET point = GREATEST(0, point - ?) WHERE id = ?`,
+        [usedPoint, customerId]
+      );
     }
+
+    // 6. Insert into orders and order_items
     const [orderResult]: any = await pool.query(
-      `INSERT INTO orders (order_number, order_name, customer_id, total_price, payment_key, payment_method, receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
-      [orderId, orderNameText, customerId, amount, paymentData.paymentKey, paymentMethod, receiverName, receiverMobile, receiverPhone, fullAddress]
+      `INSERT INTO orders (order_number, order_name, customer_id, total_price, used_point, payment_key, payment_method, receiver_name, receiver_mobile, receiver_phone, receiver_address, delivery_message)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '')`,
+      [orderId, orderNameText, customerId, chargedAmount, usedPoint, paymentKey, paymentMethod, receiverName, receiverMobile, receiverPhone, fullAddress]
     );
 
     const insertedOrderId = orderResult.insertId;
@@ -290,7 +348,13 @@ export async function executeBillingPayment(customerId: number, billingKey: stri
       [insertedOrderId, productIdForOrder, priceId]
     );
 
-    return { success: true, orderId: insertedOrderId };
+    return { 
+      success: true, 
+      orderId: insertedOrderId,
+      chargedAmount,
+      usedPoint,
+      originalPrice
+    };
   } catch (error: any) {
     console.error("Execute Billing Error:", error);
     throw new Error(error.message || "Failed to execute billing payment");
