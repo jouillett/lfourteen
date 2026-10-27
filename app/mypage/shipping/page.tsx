@@ -56,7 +56,7 @@ export default function ShippingPage() {
             <li><button onClick={handleWriteReview} className="hover:text-on-surface transition-colors pb-2">구매후기 작성</button></li>
             <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/review">내가 쓴 구매후기</Link></li>
             <li><Link href="/mypage/shipping" className="font-bold text-primary border-b-2 border-primary pb-2">배송지 관리</Link></li>
-            <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors pb-2">회원정보 수정</Link></li>
+            <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors pb-2">회원정보</Link></li>
           </ul>
         </nav>
         {/* Sidebar Menu (Desktop only) */}
@@ -70,7 +70,7 @@ export default function ShippingPage() {
             <li><a href="#" onClick={handleWriteReview} className="hover:text-on-surface transition-colors flex items-center justify-between">구매후기 작성 <span className="text-outline text-sm">{reviewCount && reviewCount > 0 ? reviewCount : ''}</span></a></li>
             <li><Link className="hover:text-on-surface transition-colors" href="/mypage/review">내가 쓴 구매후기</Link></li>
             <li><Link href="/mypage/shipping" className="font-bold text-on-surface hover:underline underline-offset-4">배송지 관리</Link></li>
-            <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors">회원정보 수정</Link></li>
+            <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors">회원정보</Link></li>
           </ul>
         </nav>
 

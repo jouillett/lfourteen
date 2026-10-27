@@ -223,7 +223,7 @@ export default function MypageBilling() {
           <li><button onClick={handleWriteReview} className="hover:text-on-surface transition-colors pb-2">구매후기 작성</button></li>
           <li><Link href="/mypage/review" className="hover:text-on-surface transition-colors pb-2">내가 쓴 구매후기</Link></li>
           <li><Link href="/mypage/shipping" className="hover:text-on-surface transition-colors pb-2">배송지 관리</Link></li>
-          <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors pb-2">회원정보 수정</Link></li>
+          <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors pb-2">회원정보</Link></li>
         </ul>
       </nav>
       {/* Desktop Sidebar */}
@@ -237,7 +237,7 @@ export default function MypageBilling() {
           <li><a href="#" onClick={handleWriteReview} className="hover:text-on-surface transition-colors flex items-center justify-between">구매후기 작성 <span className="text-outline text-sm">{reviewCount && reviewCount > 0 ? reviewCount : ''}</span></a></li>
           <li><Link href="/mypage/review" className="hover:text-on-surface transition-colors">내가 쓴 구매후기</Link></li>
           <li><Link href="/mypage/shipping" className="hover:text-on-surface transition-colors">배송지 관리</Link></li>
-          <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors">회원정보 수정</Link></li>
+          <li><Link href="/mypage/profile" className="hover:text-on-surface transition-colors">회원정보</Link></li>
         </ul>
       </nav>
     </>

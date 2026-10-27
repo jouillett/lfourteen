@@ -33,6 +33,7 @@ export default function ProfilePage() {
   const [loginType, setLoginType] = useState<string | null>(null);
   const [reviewCount, setReviewCount] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [point, setPoint] = useState<number | null>(null);
 
   const isSocial = loginType === "kakao" || loginType === "naver";
   const {
@@ -75,6 +76,7 @@ export default function ProfilePage() {
       .then(res => {
         if (res.success && res.data) {
           const d = res.data;
+          setPoint(Number(d.point) || 0);
           
           const parsePhoneNum = (str: string) => {
             if (!str) return [];
@@ -216,7 +218,7 @@ export default function ProfilePage() {
             <li><button onClick={handleWriteReview} className="hover:text-on-surface transition-colors pb-2">구매후기 작성</button></li>
             <li><Link className="hover:text-on-surface transition-colors pb-2" href="/mypage/review">내가 쓴 구매후기</Link></li>
             <li><Link href="/mypage/shipping" className="hover:text-on-surface transition-colors pb-2">배송지 관리</Link></li>
-            <li><Link href="/mypage/profile" className="font-bold text-primary border-b-2 border-primary pb-2">회원정보 수정</Link></li>
+            <li><Link href="/mypage/profile" className="font-bold text-primary border-b-2 border-primary pb-2">회원정보</Link></li>
           </ul>
         </nav>
         {/* Sidebar Menu (Desktop only) */}
@@ -230,13 +232,20 @@ export default function ProfilePage() {
             <li><a href="#" onClick={handleWriteReview} className="hover:text-on-surface transition-colors flex items-center justify-between">구매후기 작성 <span className="text-outline text-sm">{reviewCount && reviewCount > 0 ? reviewCount : ''}</span></a></li>
             <li><Link className="hover:text-on-surface transition-colors" href="/mypage/review">내가 쓴 구매후기</Link></li>
             <li><Link href="/mypage/shipping" className="hover:text-on-surface transition-colors">배송지 관리</Link></li>
-            <li><Link href="/mypage/profile" className="font-bold text-on-surface hover:underline underline-offset-4">회원정보 수정</Link></li>
+            <li><Link href="/mypage/profile" className="font-bold text-on-surface hover:underline underline-offset-4">회원정보</Link></li>
           </ul>
         </nav>
 
         {/* Content Area */}
         <section className="flex-1 flex flex-col space-y-6" data-purpose="profile-content">
-          <h2 className="text-[20px] font-bold text-on-surface">회원정보 수정</h2>
+          <div className="flex items-center gap-4 flex-wrap">
+            <h2 className="text-[20px] font-bold text-on-surface">회원정보</h2>
+            {point !== null && (
+              <span className="text-[15px] font-bold text-[#BA1A1A]">
+                보유 포인트: {point.toLocaleString()}원
+              </span>
+            )}
+          </div>
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <div className="border-t-2 border-black w-full flex flex-col text-[14px]">
               
