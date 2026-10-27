@@ -186,7 +186,7 @@ export default function BillingPage() {
         }
       `}</style>
       <Header />
-      <main className="flex-grow py-xl px-md w-full max-w-[500px] mx-auto flex flex-col gap-lg">
+      <main className="flex-grow py-6 sm:py-xl px-4 sm:px-md w-full max-w-[500px] mx-auto flex flex-col gap-6 sm:gap-lg">
         {/* Header Section */}
         <section className="text-center md:text-left mb-md">
           <h1 className="font-headline-lg text-headline-lg text-primary mb-sm">정기구매</h1>
@@ -197,7 +197,7 @@ export default function BillingPage() {
         <div className="flex flex-col gap-md">
           
           {/* Period Selection Card */}
-          <section className="bg-surface-container rounded-2xl p-lg flex flex-col gap-md shadow-sm border border-surface-container-highest">
+          <section className="bg-surface-container rounded-2xl p-4 sm:p-6 flex flex-col gap-md shadow-sm border border-surface-container-highest">
             <h2 className="font-headline-md text-headline-md text-primary">기간 선택</h2>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md">
               {/* Segmented Control Removed as requested (Only weekly unit is allowed) */}
@@ -244,7 +244,7 @@ export default function BillingPage() {
           </section>
 
           {/* Product Card */}
-          <section className="bg-surface-container-lowest rounded-2xl p-lg flex flex-col gap-md shadow-sm border border-outline-variant">
+          <section className="bg-surface-container-lowest rounded-2xl p-4 sm:p-6 flex flex-col gap-md shadow-sm border border-outline-variant">
             <div>
               <h3 className="font-headline-md text-headline-md text-primary mb-xs">엘포틴 코디 15ml X 15포</h3>
               <p className="font-caption text-caption text-on-surface-variant">[발효동충하초추출물, 엘포틴유산균]</p>
@@ -253,7 +253,7 @@ export default function BillingPage() {
               <label className="font-label-md text-label-md text-on-surface-variant">옵션</label>
               <div className="relative">
                 <select 
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-2.5 pl-3 pr-8 text-[13.5px] sm:text-[14.5px] text-on-surface appearance-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none cursor-pointer tracking-tight"
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-2.5 pl-3 pr-8 text-[13px] sm:text-[14px] text-on-surface appearance-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none cursor-pointer tracking-tight"
                   id="pricing-options"
                   value={option}
                   onChange={(e) => setOption(Number(e.target.value))}
@@ -267,10 +267,10 @@ export default function BillingPage() {
                     </>
                   ) : (
                     <>
-                      <option value="1">1개: 65,000원 (배송완료 시 5,000P 적립)</option>
-                      <option value="2">2개: 110,000원 (배송완료 시 10,000P 적립)</option>
-                      <option value="3">6개: 270,000원 (배송완료 시 20,000P 적립)</option>
-                      <option value="4">12개: 480,000원 (배송완료 시 30,000P 적립)</option>
+                      <option value="1">1개: 65,000원 (+5,000P 적립)</option>
+                      <option value="2">2개: 110,000원 (+10,000P 적립)</option>
+                      <option value="3">6개: 270,000원 (+20,000P 적립)</option>
+                      <option value="4">12개: 480,000원 (+30,000P 적립)</option>
                     </>
                   )}
                 </select>
@@ -286,50 +286,51 @@ export default function BillingPage() {
           </section>
 
           {/* Order Summary Card */}
-          <section className="bg-surface-container rounded-2xl p-lg flex flex-col gap-md shadow-sm border border-surface-container-highest">
+          <section className="bg-surface-container rounded-2xl p-4 sm:p-6 flex flex-col gap-3.5 sm:gap-md shadow-sm border border-surface-container-highest">
             <h3 className="font-headline-md text-headline-md text-primary">주문 요약</h3>
             
-            <div className="flex justify-between items-center py-sm border-b border-outline-variant/30">
+            <div className="flex justify-between items-center py-2.5 border-b border-outline-variant/30">
               <span className="font-body-md text-on-surface-variant">정기 배송 주기</span>
               <span className="font-body-md text-on-surface font-medium">{duration}{period === "weeks" ? "주" : "개월"} 마다</span>
             </div>
             
-            <div className="flex justify-between items-center py-xs text-sm">
+            <div className="flex justify-between items-center py-1 text-sm">
               <span className="text-on-surface-variant">상품 금액</span>
               <span className="text-on-surface font-medium">{basePrice.toLocaleString()}원</span>
             </div>
 
             {/* 첫 정기 결제 예상 금액 */}
-            <div className="bg-surface-container-lowest rounded-xl p-3.5 border border-outline-variant/30 flex flex-col gap-1.5 my-1">
-              <div className="flex justify-between items-baseline gap-2">
-                <span className="font-label-md text-[14px] font-bold text-primary shrink-0">첫 정기 결제 예상 금액</span>
-                <span className="font-bold text-[18px] text-primary whitespace-nowrap">{firstEstimatedPrice.toLocaleString()}원</span>
+            <div className="bg-surface-container-lowest rounded-xl p-3 sm:p-3.5 border border-outline-variant/30 flex flex-col gap-1.5 my-0.5 shadow-xs">
+              <div className="flex items-center justify-between gap-1">
+                <span className="text-[13px] sm:text-[14px] font-bold text-primary">첫 정기 결제 예상 금액</span>
+                <span className="font-bold text-[17px] sm:text-[18px] text-primary whitespace-nowrap tracking-tight shrink-0">{firstEstimatedPrice.toLocaleString()}원</span>
               </div>
               {!isGrade8 && (
-                <div className="flex justify-between items-center text-xs text-[#a8442a] pt-1 border-t border-outline-variant/20">
-                  <span>보유 포인트 자동 적용</span>
-                  <span className="font-medium">{firstPointDeduct > 0 ? `-${firstPointDeduct.toLocaleString()}원` : "0원"}</span>
+                <div className="flex items-center justify-between text-[11.5px] sm:text-[12px] text-[#a8442a] pt-1.5 border-t border-outline-variant/20">
+                  <span className="text-on-surface-variant">보유 포인트 자동 적용</span>
+                  <span className="font-semibold whitespace-nowrap shrink-0">{firstPointDeduct > 0 ? `-${firstPointDeduct.toLocaleString()}원` : "0원"}</span>
                 </div>
               )}
             </div>
 
             {/* 다음 정기 결제 예상 금액 */}
             {!isGrade8 && rewardPoint > 0 && (
-              <div className="bg-surface-container-lowest rounded-xl p-3.5 border border-outline-variant/30 flex flex-col gap-1.5">
-                <div className="flex justify-between items-baseline gap-2">
-                  <span className="font-label-md text-[14px] font-bold text-on-surface shrink-0">다음 정기 결제 예상 금액</span>
-                  <span className="font-bold text-[18px] text-on-surface whitespace-nowrap">{nextEstimatedPrice.toLocaleString()}원</span>
+              <div className="bg-surface-container-lowest rounded-xl p-3 sm:p-3.5 border border-outline-variant/30 flex flex-col gap-1.5 shadow-xs">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[13px] sm:text-[14px] font-bold text-on-surface">다음 정기 결제 예상 금액</span>
+                  <span className="font-bold text-[17px] sm:text-[18px] text-on-surface whitespace-nowrap tracking-tight shrink-0">{nextEstimatedPrice.toLocaleString()}원</span>
                 </div>
-                <div className="flex justify-between items-center text-xs text-primary pt-1 border-t border-outline-variant/20">
-                  <span>(배송완료후 적립 포인트 {rewardPoint.toLocaleString()}원 적용)</span>
-                  <span className="font-medium">-{rewardPoint.toLocaleString()}원</span>
+                <div className="flex items-center justify-between text-[11.5px] sm:text-[12px] text-primary pt-1.5 border-t border-outline-variant/20">
+                  <span className="text-on-surface-variant">배송완료 적립 포인트 자동 적용</span>
+                  <span className="font-semibold whitespace-nowrap shrink-0">-{rewardPoint.toLocaleString()}원</span>
                 </div>
               </div>
             )}
 
             {!isGrade8 && (
               <p className="font-caption text-[11px] text-on-surface-variant text-center my-0.5 leading-relaxed">
-                ※ 정기구매는 배송완료 시 포인트가 적립되며, 다음 결제 시 보유 포인트가 자동 차감되어 결제됩니다.
+                ※ 정기구매는 배송완료 시 포인트가 적립되며,<br className="sm:hidden" />
+                다음 결제 시 보유 포인트가 자동 차감되어 결제됩니다.
               </p>
             )}
 
