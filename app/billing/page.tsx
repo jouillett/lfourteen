@@ -186,7 +186,7 @@ export default function BillingPage() {
         }
       `}</style>
       <Header />
-      <main className="flex-grow py-xl px-md w-full max-w-[440px] mx-auto flex flex-col gap-lg">
+      <main className="flex-grow py-xl px-md w-full max-w-[500px] mx-auto flex flex-col gap-lg">
         {/* Header Section */}
         <section className="text-center md:text-left mb-md">
           <h1 className="font-headline-lg text-headline-lg text-primary mb-sm">정기구매</h1>
@@ -253,7 +253,7 @@ export default function BillingPage() {
               <label className="font-label-md text-label-md text-on-surface-variant">옵션</label>
               <div className="relative">
                 <select 
-                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-sm px-sm font-body-md text-on-surface appearance-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none cursor-pointer"
+                  className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-2.5 pl-3 pr-8 text-[13.5px] sm:text-[14.5px] text-on-surface appearance-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors outline-none cursor-pointer tracking-tight"
                   id="pricing-options"
                   value={option}
                   onChange={(e) => setOption(Number(e.target.value))}
@@ -274,8 +274,14 @@ export default function BillingPage() {
                     </>
                   )}
                 </select>
-                <span className="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" style={{fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24"}}>arrow_drop_down</span>
+                <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[20px]" style={{fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24"}}>arrow_drop_down</span>
               </div>
+              {!isGrade8 && rewardPoint > 0 && (
+                <p className="text-[12px] text-primary font-medium mt-1 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[15px]">stars</span>
+                  배송완료 시 {rewardPoint.toLocaleString()}P가 적립되어 다음 결제 시 자동 차감됩니다.
+                </p>
+              )}
             </div>
           </section>
 
