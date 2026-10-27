@@ -13,7 +13,7 @@ export default function JoinPage() {
   const [authCode, setAuthCode] = useState("");
   const [expectedCode, setExpectedCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [showPhoneJoin, setShowPhoneJoin] = useState(false);
+  const [showPhoneJoin, setShowPhoneJoin] = useState(true);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
