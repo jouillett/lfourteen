@@ -3,7 +3,7 @@ import pool from '../../../lib/db';
 
 export async function POST(req: Request) {
   try {
-    const { mobile, password } = await req.json();
+    const { mobile, password, name } = await req.json();
 
     if (!mobile || !password) {
       return NextResponse.json({ success: false, message: 'Missing mobile or password' }, { status: 400 });
@@ -18,10 +18,14 @@ export async function POST(req: Request) {
       const encryptedPassword = bf.base64Encode(bf.encrypt(password));
 
       const customerQuery = `
-        INSERT INTO customers (mobile, password)
-        VALUES (?, ?)
+        INSERT INTO customers (mobile, password, name)
+        VALUES (?, ?, ?)
       `;
-      const [customerResult]: any = await connection.execute(customerQuery, [mobile, encryptedPassword]);
+      const [customerResult]: any = await connection.execute(customerQuery, [
+        mobile, 
+        encryptedPassword, 
+        name ? String(name).trim() : ''
+      ]);
       const customerId = customerResult.insertId;
 
       // Check if user exists in quit table

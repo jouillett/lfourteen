@@ -8,6 +8,7 @@ import PhoneInput from "@/components/PhoneInput";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
 
 export default function JoinPage() {
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [authSent, setAuthSent] = useState(false);
   const [authCode, setAuthCode] = useState("");
@@ -18,6 +19,10 @@ export default function JoinPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
+      const nameParam = params.get("name");
+      if (nameParam) {
+        setName(nameParam);
+      }
       const phoneParam = params.get("phone");
       if (phoneParam) {
         // Simple formatter for 01012345678 -> 010-1234-5678
@@ -37,10 +42,16 @@ export default function JoinPage() {
     }
   }, []);
 
+  const isNameValid = name.trim().length >= 2;
   const isPhoneValid = phone.length === 13; // 010-XXXX-XXXX
   const isCodeValid = authCode.length === 6;
+  const isFormValid = isNameValid && isPhoneValid && authSent && isCodeValid;
 
   const handleSendAuth = async () => {
+    if (!isNameValid) {
+      setErrorMsg("이름을 2자 이상 입력해 주세요.");
+      return;
+    }
     if (isPhoneValid) {
       const cleanPhone = phone.replace(/\D/g, "");
 
@@ -88,12 +99,18 @@ export default function JoinPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isNameValid) {
+      setErrorMsg("이름을 2자 이상 입력해 주세요.");
+      return;
+    }
     if (authCode !== expectedCode && authCode.length === 6) {
       setErrorMsg("잘못된 인증번호입니다.");
-    } else if (authCode === expectedCode) {
+      return;
+    }
+    if (authCode === expectedCode) {
       setErrorMsg("");
       const cleanPhone = phone.replace(/\D/g, "");
-      window.location.href = `/password?phone=${cleanPhone}`;
+      window.location.href = `/password?phone=${cleanPhone}&name=${encodeURIComponent(name.trim())}`;
     }
   };
 
@@ -130,14 +147,35 @@ export default function JoinPage() {
           {showPhoneJoin && (
             <div className="flex flex-col gap-4 pt-1">
               <div>
-                <h3 className="font-bold text-[15px] text-on-surface leading-tight">휴대폰 번호 인증 가입</h3>
-                <p className="text-xs text-on-surface-variant mt-1">인증번호를 받아 회원가입을 완료합니다.</p>
+                <h3 className="font-bold text-[15px] text-on-surface leading-tight">휴대폰 번호 가입</h3>
+                <p className="text-xs text-on-surface-variant mt-1">이름과 휴대폰 번호 인증을 통해 가입을 진행합니다.</p>
               </div>
 
               {/* Form Section */}
               <form className="flex flex-col gap-md" onSubmit={handleSubmit}>
+                {/* Name Field */}
                 <div className="flex flex-col gap-xs">
-                  <label className="font-label-md text-label-md text-on-surface-variant">휴대폰 번호</label>
+                  <label className="font-label-md text-label-md text-on-surface-variant">
+                    이름 (성명) <span className="text-[#a8442a] font-bold">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={20}
+                    placeholder="실명을 입력해주세요"
+                    className="w-full px-sm py-sm rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-body-md text-body-md focus:border-primary focus:ring-2 focus:ring-primary-container focus:outline-none transition-all placeholder:text-on-surface-variant/50"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setErrorMsg("");
+                    }}
+                  />
+                </div>
+
+                {/* Phone Field */}
+                <div className="flex flex-col gap-xs">
+                  <label className="font-label-md text-label-md text-on-surface-variant">
+                    휴대폰 번호 <span className="text-[#a8442a] font-bold">*</span>
+                  </label>
                   <div className="flex flex-col sm:flex-row gap-base">
                     <div className="relative flex-grow">
                       <PhoneInput
@@ -160,7 +198,9 @@ export default function JoinPage() {
 
                 {authSent && (
                   <div className="flex flex-col gap-xs mt-xs">
-                    <label className="font-label-md text-label-md text-on-surface-variant">인증번호</label>
+                    <label className="font-label-md text-label-md text-on-surface-variant">
+                      인증번호 <span className="text-[#a8442a] font-bold">*</span>
+                    </label>
                     <input
                       type="text"
                       maxLength={6}
@@ -180,13 +220,26 @@ export default function JoinPage() {
                   </div>
                 )}
 
+                {/* Privacy Consent Notice for Kakao / Regulatory Audit Compliance */}
+                <div className="bg-surface-container-low p-3.5 rounded-lg border border-outline-variant/50 text-xs text-on-surface-variant space-y-1.5 mt-1">
+                  <div className="flex items-center gap-1.5 font-bold text-on-surface text-[12.5px]">
+                    <span className="material-symbols-outlined text-[16px] text-primary">verified_user</span>
+                    <span>개인정보 수집 및 이용 동의</span>
+                  </div>
+                  <div className="text-[11.5px] leading-relaxed text-on-surface-variant/80 space-y-0.5">
+                    <div>• <strong>수집 항목:</strong> 이름, 휴대폰 번호</div>
+                    <div>• <strong>수집 목적:</strong> 회원 식별, 주문·배송 처리, 서비스 이용 안내</div>
+                    <div>• <strong>보유 기간:</strong> 회원 탈퇴 시 또는 관계 법령에 따른 보존 기간까지</div>
+                  </div>
+                </div>
+
                 {/* Primary Action Button */}
                 <button
                   type="submit"
-                  disabled={!authSent || !isCodeValid}
+                  disabled={!isFormValid}
                   className="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:opacity-90 active:scale-98 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer font-bold"
                 >
-                  다음
+                  다음 (비밀번호 설정)
                 </button>
               </form>
             </div>

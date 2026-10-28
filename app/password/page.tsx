@@ -45,6 +45,7 @@ export default function PasswordPage() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const phoneVal = urlParams.get("phone") || "";
+    const nameVal = urlParams.get("name") || "";
     const mode = urlParams.get("mode");
     const redirectUrl = urlParams.get("redirect");
 
@@ -64,6 +65,7 @@ export default function PasswordPage() {
         body: JSON.stringify({
           mobile: phoneVal,
           password: newPassword,
+          name: nameVal,
         }),
       });
 
@@ -81,13 +83,8 @@ export default function PasswordPage() {
             localStorage.setItem("lastActivity", Date.now().toString());
           }
 
-          const wantsProfile = window.confirm("지금 개인정보를 입력하시겠습니까?");
-          if (wantsProfile) {
-            window.location.href = redirectUrl || `/mypage/profile`;
-          } else {
-            alert("회원가입이 완료되었습니다.");
-            window.location.href = redirectUrl || `/`;
-          }
+          alert("회원가입이 완료되었습니다.");
+          window.location.href = redirectUrl || `/`;
         } else {
           alert("비밀번호가 성공적으로 설정되었습니다.");
           if (redirectUrl) {
