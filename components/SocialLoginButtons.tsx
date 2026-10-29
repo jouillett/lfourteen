@@ -31,7 +31,7 @@ export default function SocialLoginButtons({
     const redirectUri = getRedirectUri();
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${encodeURIComponent(
       redirectUri
-    )}&response_type=code&state=kakao`;
+    )}&response_type=code&state=kakao&scope=account_email,phone_number,name`;
     window.location.href = kakaoAuthUrl;
   };
 
