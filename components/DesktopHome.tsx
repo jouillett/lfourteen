@@ -524,15 +524,6 @@ export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.
       
       <Footer />
 
-      {/* Back to Top Button */}
-      <button 
-        className={`fixed bottom-8 right-8 z-50 bg-[#5C5544] text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 focus:outline-none hover:opacity-90 hover:scale-110 active:scale-95 ${showBackToTop ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-4'}`}
-        onClick={scrollToTop}
-        aria-label="Back to top"
-      >
-        <span className="material-symbols-outlined">arrow_upward</span>
-      </button>
-
       {/* Name Input Modal */}
       {showNameModal && (
         <div style={{

@@ -40,6 +40,7 @@ export const viewport: Viewport = {
 };
 
 import DisableCopy from "@/components/DisableCopy";
+import DesktopQuickNav from "@/components/DesktopQuickNav";
 
 export default function RootLayout({
   children,
@@ -54,6 +55,7 @@ export default function RootLayout({
       <body className="bg-surface text-on-surface font-body-md">
         <DisableCopy />
         {children}
+        <DesktopQuickNav />
       </body>
     </html>
   );
