@@ -483,20 +483,11 @@ export default function MobileHome({ initialReviewCount = 0, averageRating = 5.0
 
       <Footer />
 
-      {/* Back to Top Button */}
-      <button
-        className={`fixed bottom-24 right-8 z-50 bg-primary text-on-primary w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 focus:outline-none hover:opacity-90 hover:scale-110 active:scale-95 ${showBackToTop ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-4'}`}
-        onClick={scrollToTop}
-        aria-label="Back to top"
-      >
-        <span className="material-symbols-outlined">arrow_upward</span>
-      </button>
-
-      {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-outline-variant p-md flex justify-center items-center">
+      {/* Fixed Bottom Bar (구매하기 버튼: 하단 퀵네비게이션 58px 바로 위에 배치) */}
+      <div className="fixed bottom-[58px] left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-outline-variant/30 px-md py-2.5 flex justify-center items-center shadow-xs">
         <button
           id="m-open-purchase"
-          className="w-full max-w-[400px] bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs"
+          className="w-full max-w-[400px] bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:opacity-90 active:scale-98 transition-all duration-200 shadow-sm flex items-center justify-center gap-xs font-bold"
         >
           구매하기
         </button>
