@@ -17,7 +17,8 @@ export default function BillingPage() {
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
       alert("로그인이 필요합니다.");
-      window.location.href = "/login?redirect=/billing";
+      const currentUrl = window.location.pathname + window.location.search;
+      window.location.href = `/login?redirect=${encodeURIComponent(currentUrl)}`;
       return;
     }
 

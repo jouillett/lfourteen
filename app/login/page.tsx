@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [redirectUrl, setRedirectUrl] = useState("/");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -18,6 +19,10 @@ export default function LoginPage() {
       const phoneParam = params.get("phone");
       if (phoneParam) {
         setPhone(phoneParam);
+      }
+      const redirectParam = params.get("redirect");
+      if (redirectParam) {
+        setRedirectUrl(redirectParam);
       }
     }
   }, []);
@@ -73,7 +78,7 @@ export default function LoginPage() {
           } else {
             alert("배송 완료된 주문이 있어야 후기를 작성할 수 있습니다.");
           }
-        } else if (!data.name) {
+        } else if (!data.name && redirect === "/") {
           const wantsProfile = window.confirm("지금 개인정보를 입력하시겠습니까?");
           if (wantsProfile) {
             redirect = "/mypage/profile";
@@ -93,7 +98,8 @@ export default function LoginPage() {
         } else if (data.reason === "not_found") {
           const wantsJoin = window.confirm("가입되지 않은 전화번호입니다.\n지금 가입하시겠습니까?");
           if (wantsJoin) {
-            window.location.href = `/join?phone=${encodeURIComponent(phone.replace(/\D/g, ""))}`;
+            const redirectQuery = redirectUrl && redirectUrl !== "/" ? `&redirect=${encodeURIComponent(redirectUrl)}` : "";
+            window.location.href = `/join?phone=${encodeURIComponent(phone.replace(/\D/g, ""))}${redirectQuery}`;
           }
         } else {
           alert(data.message || "로그인에 실패했습니다.");
@@ -173,7 +179,7 @@ export default function LoginPage() {
             {/* Action Area */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-sm mt-xs sm:mt-sm">
               <div className="flex items-center justify-center gap-xs font-label-md text-label-md text-on-surface-variant w-full sm:w-auto order-2 sm:order-1 mt-xs sm:mt-0">
-                <Link className="hover:text-primary transition-colors" href="/join">회원가입</Link>
+                <Link className="hover:text-primary transition-colors" href={redirectUrl && redirectUrl !== "/" ? `/join?redirect=${encodeURIComponent(redirectUrl)}` : "/join"}>회원가입</Link>
                 <span className="text-outline-variant">|</span>
                 <button type="button" onClick={handleFindPassword} className="hover:text-primary transition-colors">비밀번호 찾기</button>
               </div>

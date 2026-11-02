@@ -84,17 +84,18 @@ function renderLoginSuccessHtml(options: {
           }
 
           <button id="proceedBtn" onclick="proceed()" style="width: 100%; padding: 14px 0; background: #2B231D; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 2px 8px rgba(43,35,29,0.2);">
-            확인 (쇼핑하러 가기)
+            ${redirectTarget.includes("billing") ? "확인 (정기구매로 이동)" : "확인 (쇼핑하러 가기)"}
           </button>
 
           <p style="font-size: 12px; color: #9E9B95; margin-top: 14px; margin-bottom: 0;">
-            버튼을 누르시면 화면으로 이동합니다
+            잠시 후 이동합니다
           </p>
         </div>
 
         <script>
           try {
             document.cookie = "session_active=1; path=/";
+            document.cookie = "oauth_redirect=; path=/; max-age=0";
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("customerId", "${userId}");
             localStorage.setItem("customerGrade", "${userGrade}");
@@ -115,6 +116,8 @@ function renderLoginSuccessHtml(options: {
             }
             window.location.replace("${redirectTarget}");
           }
+
+          setTimeout(proceed, 1200);
         </script>
       </body>
     </html>`,
@@ -376,7 +379,37 @@ export async function GET(request: NextRequest) {
       await connection.commit();
 
       let redirectTarget = "/";
-      if (userGrade === "8") {
+
+      // 1) Extract from state if present
+      if (state && state.includes("_redirect_")) {
+        try {
+          const raw = state.split("_redirect_")[1];
+          if (raw) {
+            redirectTarget = decodeURIComponent(raw.replace(/~/g, "%"));
+          }
+        } catch (e) {
+          console.error("Failed to parse redirect from state:", e);
+        }
+      }
+
+      // 2) Fallback to cookie
+      if (!redirectTarget || redirectTarget === "/") {
+        const cookieRedirect = request.cookies.get("oauth_redirect")?.value;
+        if (cookieRedirect) {
+          try {
+            redirectTarget = decodeURIComponent(cookieRedirect);
+          } catch (e) {
+            console.error("Failed to parse oauth_redirect cookie:", e);
+          }
+        }
+      }
+
+      // Security validation: must be a relative local path starting with /
+      if (!redirectTarget.startsWith("/") || redirectTarget.startsWith("//")) {
+        redirectTarget = "/";
+      }
+
+      if (userGrade === "8" && redirectTarget === "/") {
         redirectTarget = "/confidential";
       }
 

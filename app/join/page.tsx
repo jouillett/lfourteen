@@ -15,10 +15,15 @@ export default function JoinPage() {
   const [expectedCode, setExpectedCode] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [showPhoneJoin, setShowPhoneJoin] = useState(true);
+  const [redirectUrl, setRedirectUrl] = useState("/");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get("redirect");
+      if (redirectParam) {
+        setRedirectUrl(redirectParam);
+      }
       const nameParam = params.get("name");
       if (nameParam) {
         setName(nameParam);
@@ -110,7 +115,10 @@ export default function JoinPage() {
     if (authCode === expectedCode) {
       setErrorMsg("");
       const cleanPhone = phone.replace(/\D/g, "");
-      window.location.href = `/password?phone=${cleanPhone}&name=${encodeURIComponent(name.trim())}`;
+      const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get("redirect");
+      const redirectQuery = redirectParam ? `&redirect=${encodeURIComponent(redirectParam)}` : "";
+      window.location.href = `/password?phone=${cleanPhone}&name=${encodeURIComponent(name.trim())}${redirectQuery}`;
     }
   };
 
@@ -249,7 +257,7 @@ export default function JoinPage() {
           <div className="text-center pt-3 border-t border-outline-variant/20">
             <p className="text-[13px] text-on-surface-variant">
               이미 계정이 있으신가요?{" "}
-              <Link href="/login" className="font-bold text-primary hover:underline ml-1">
+              <Link href={redirectUrl && redirectUrl !== "/" ? `/login?redirect=${encodeURIComponent(redirectUrl)}` : "/login"} className="font-bold text-primary hover:underline ml-1">
                 로그인하기
               </Link>
             </p>

@@ -7,6 +7,7 @@ interface SocialLoginButtonsProps {
   subtitle?: string;
   showBanner?: boolean;
   className?: string;
+  redirect?: string;
 }
 
 export default function SocialLoginButtons({
@@ -14,9 +15,20 @@ export default function SocialLoginButtons({
   subtitle = "아이디와 비밀번호 입력하기 귀찮으시죠?\n1초 회원가입으로 입력없이 간편하게 로그인 하세요.",
   showBanner = true,
   className = "",
+  redirect,
 }: SocialLoginButtonsProps) {
   const kakaoClientId = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY || "576d20bc8a37554e4badd9e698428e2f";
   const naverClientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID || "NsHvqbGAlupjtc2yek0j";
+
+  const getRedirectTarget = () => {
+    if (typeof window !== "undefined") {
+      if (redirect) return redirect;
+      const params = new URLSearchParams(window.location.search);
+      const urlRedirect = params.get("redirect");
+      if (urlRedirect) return urlRedirect;
+    }
+    return "/";
+  };
 
   const getRedirectUri = () => {
     if (typeof window !== "undefined") {
@@ -29,15 +41,27 @@ export default function SocialLoginButtons({
 
   const handleKakaoLogin = () => {
     const redirectUri = getRedirectUri();
+    const target = getRedirectTarget();
+    if (typeof document !== "undefined") {
+      document.cookie = `oauth_redirect=${encodeURIComponent(target)}; path=/; max-age=600`;
+    }
+    const safeTarget = encodeURIComponent(target).replace(/%/g, "~");
+    const state = `kakao_redirect_${safeTarget}`;
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${encodeURIComponent(
       redirectUri
-    )}&response_type=code&state=kakao&scope=account_email,phone_number,name`;
+    )}&response_type=code&state=${encodeURIComponent(state)}&scope=account_email,phone_number,name`;
     window.location.href = kakaoAuthUrl;
   };
 
   const handleNaverLogin = () => {
     const redirectUri = getRedirectUri();
-    const state = "naver_" + Math.random().toString(36).substring(2, 10);
+    const target = getRedirectTarget();
+    if (typeof document !== "undefined") {
+      document.cookie = `oauth_redirect=${encodeURIComponent(target)}; path=/; max-age=600`;
+    }
+    const safeTarget = encodeURIComponent(target).replace(/%/g, "~");
+    const randomStr = Math.random().toString(36).substring(2, 8);
+    const state = `naver_${randomStr}_redirect_${safeTarget}`;
     const naverAuthUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${naverClientId}&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&state=${encodeURIComponent(state)}`;
