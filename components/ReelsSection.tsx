@@ -17,8 +17,8 @@ export const REELS_DATA: ReelItem[] = [
   {
     id: "cordy-sleep",
     title: "화장실 때문에 자다가 깨지 않는 밤",
-    subtitle: "개운한 아침을 위한 야간뇨 케어",
-    tag: "수면 & 야간뇨",
+    subtitle: "개운한 아침을 위한 편안한 밤 루틴",
+    tag: "나이트 루틴",
     duration: "00:57",
     videoSrc: "/videos/L14Cordy2.mp4?v=2",
     posterSrc: "/videos/L14Cordy2_thumb.jpg?v=2",
@@ -37,8 +37,8 @@ export const REELS_DATA: ReelItem[] = [
   {
     id: "l14-belly-fat",
     title: "나이 들수록 나오는 배, 원인은?",
-    subtitle: "체지방 & 대사 관리의 핵심",
-    tag: "대사 & 체지방",
+    subtitle: "가뿐한 일상을 위한 활력 밸런스",
+    tag: "바디 밸런스",
     duration: "01:25",
     videoSrc: "/videos/L14.mp4?v=2",
     posterSrc: "/videos/L14_thumb.jpg?v=2",
