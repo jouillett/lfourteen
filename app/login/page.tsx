@@ -66,6 +66,10 @@ export default function LoginPage() {
 
         if (String(data.grade) === "8" && redirect === "/") {
           redirect = "/confidential";
+        } else if (String(data.grade) === "7" && redirect === "/") {
+          redirect = "/bandwalk";
+        } else if (String(data.grade) !== "7" && (redirect.includes("bandwalk") || redirect.includes("올바른걷기") || redirect.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0"))) {
+          redirect = "/";
         }
 
         const pendingAction = sessionStorage.getItem("pendingAction");

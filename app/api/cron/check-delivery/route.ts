@@ -104,9 +104,15 @@ export async function GET(req: Request) {
               await connection.execute('UPDATE orders SET status = 2, received_at = NOW() WHERE id = ?', [order.id]);
             }
 
-            // Reward points
+            // Reward points & customer grade transition
             const customerId = parseBuffer(order.customer_id);
-            const rewardAmount = Number(parseBuffer(order.reward_point)) || 0;
+            const customerGrade = String(parseBuffer(order.customer_grade) || '');
+            const rewardAmount = customerGrade === '7' ? 0 : (Number(parseBuffer(order.reward_point)) || 0);
+
+            // 올바른걷기밴드 회원(grade 7)이 배송완료되면 1회성 혜택 소진 처리 -> 일반회원(grade 9)으로 전환
+            if (customerId && customerGrade === '7') {
+              await connection.execute('UPDATE customers SET grade = 9 WHERE id = ?', [customerId]);
+            }
 
             if (customerId && rewardAmount > 0) {
               const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [order.id]);

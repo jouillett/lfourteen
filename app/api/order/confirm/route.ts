@@ -191,11 +191,11 @@ export async function POST(req: Request) {
     const isPendingPayment = (paymentMethod === '가상계좌' || paymentMethod === '계좌이체') && payment.status === 'WAITING_FOR_DEPOSIT';
     const initialStatus = isPendingPayment ? 99 : 0;
 
-    // Calculate reward point (1% of paid amount, 0 for grade 8)
+    // Calculate reward point (1% of paid amount, 0 for grade 8 and grade 7)
     let rewardPoint = 0;
     if (customerId) {
       const [custRows]: any = await connection.execute('SELECT grade FROM customers WHERE id = ?', [customerId]);
-      if (custRows.length > 0 && String(custRows[0].grade) !== '8') {
+      if (custRows.length > 0 && String(custRows[0].grade) !== '8' && String(custRows[0].grade) !== '7') {
         rewardPoint = Math.round(Number(amount) * 0.01);
       }
     }

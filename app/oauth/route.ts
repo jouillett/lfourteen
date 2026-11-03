@@ -84,7 +84,7 @@ function renderLoginSuccessHtml(options: {
           }
 
           <button id="proceedBtn" onclick="proceed()" style="width: 100%; padding: 14px 0; background: #2B231D; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 2px 8px rgba(43,35,29,0.2);">
-            ${redirectTarget.includes("billing") ? "확인 (정기구매로 이동)" : "확인 (쇼핑하러 가기)"}
+            ${redirectTarget.includes("bandwalk") || redirectTarget.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0") ? "확인 (올바른걷기 특가로 이동)" : redirectTarget.includes("billing") ? "확인 (정기구매로 이동)" : "확인 (쇼핑하러 가기)"}
           </button>
 
           <p style="font-size: 12px; color: #9E9B95; margin-top: 14px; margin-bottom: 0;">
@@ -281,7 +281,44 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 5. Database Processing: Check if customer exists by mobile
+    // 5. Determine Redirect Target first (needed for conditional signup rules e.g. bandwalk)
+    let redirectTarget = "/";
+
+    // 1) Extract from state if present
+    if (state && state.includes("_redirect_")) {
+      try {
+        const raw = state.split("_redirect_")[1];
+        if (raw) {
+          redirectTarget = decodeURIComponent(raw.replace(/~/g, "%"));
+        }
+      } catch (e) {
+        console.error("Failed to parse redirect from state:", e);
+      }
+    }
+
+    // 2) Fallback to cookie
+    if (!redirectTarget || redirectTarget === "/") {
+      const cookieRedirect = request.cookies.get("oauth_redirect")?.value;
+      if (cookieRedirect) {
+        try {
+          redirectTarget = decodeURIComponent(cookieRedirect);
+        } catch (e) {
+          console.error("Failed to parse oauth_redirect cookie:", e);
+        }
+      }
+    }
+
+    // Security validation: must be a relative local path starting with /
+    if (!redirectTarget.startsWith("/") || redirectTarget.startsWith("//")) {
+      redirectTarget = "/";
+    }
+
+    const isBandwalk =
+      redirectTarget.includes("bandwalk") ||
+      redirectTarget.includes("올바른걷기") ||
+      redirectTarget.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0");
+
+    // 6. Database Processing: Check if customer exists by mobile
     const connection = await pool.getConnection();
     try {
       await connection.beginTransaction();
@@ -336,81 +373,62 @@ export async function GET(request: NextRequest) {
         const randomPlainPassword = Math.random().toString(36).slice(-10) + "!A1";
         const encryptedPassword = bf.base64Encode(bf.encrypt(randomPlainPassword));
 
+        const initialGrade = isBandwalk ? "7" : "9";
+        userGrade = initialGrade;
+
         const [insertResult]: any = await connection.execute(
-          `INSERT INTO customers (mobile, password, name, email, grade, login)
-           VALUES (?, ?, ?, ?, 9, NOW())`,
-          [mobile, encryptedPassword, name, email]
+          `INSERT INTO customers (mobile, password, name, email, grade, point, login)
+           VALUES (?, ?, ?, ?, ?, 0, NOW())`,
+          [mobile, encryptedPassword, name, email, initialGrade]
         );
         userId = insertResult.insertId;
 
-        // Check if user exists in quit table
-        const [quitRows]: any = await connection.execute(
-          "SELECT created_at FROM quit WHERE mobile = ? ORDER BY created_at DESC LIMIT 1",
-          [mobile]
-        );
-
-        let givePoints = true;
-        if (quitRows.length > 0) {
-          const quitDate = new Date(quitRows[0].created_at);
-          const oneYearAgo = new Date();
-          oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-          if (quitDate > oneYearAgo) {
-            givePoints = false;
-          }
-        }
-
+        // 올바른걷기 회원(grade 7)은 눈물의 세일로 웰컴 포인트 지급 제외
+        let givePoints = !isBandwalk;
         if (givePoints) {
-          await connection.execute(
-            `INSERT INTO points (customer_id, order_id, point_amount, expired_at)
-             VALUES (?, 0, 1000, DATE_ADD(NOW(), INTERVAL 1 MONTH))`,
-            [userId]
+          // Check if user exists in quit table
+          const [quitRows]: any = await connection.execute(
+            "SELECT created_at FROM quit WHERE mobile = ? ORDER BY created_at DESC LIMIT 1",
+            [mobile]
           );
-          userPoints = 1000;
+
           if (quitRows.length > 0) {
-            await connection.execute("DELETE FROM quit WHERE mobile = ?", [mobile]);
+            const quitDate = new Date(quitRows[0].created_at);
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            if (quitDate > oneYearAgo) {
+              givePoints = false;
+            }
+          }
+
+          if (givePoints) {
+            await connection.execute(
+              `INSERT INTO points (customer_id, order_id, point_amount, expired_at)
+               VALUES (?, 0, 1000, DATE_ADD(NOW(), INTERVAL 1 MONTH))`,
+              [userId]
+            );
+            await connection.execute("UPDATE customers SET point = 1000 WHERE id = ?", [userId]);
+            userPoints = 1000;
+            if (quitRows.length > 0) {
+              await connection.execute("DELETE FROM quit WHERE mobile = ?", [mobile]);
+            }
+          } else {
+            userPoints = 0;
           }
         } else {
-          // Reset point to 0 if quit within 1 year
-          await connection.execute("UPDATE customers SET point = 0 WHERE id = ?", [userId]);
           userPoints = 0;
         }
       }
 
       await connection.commit();
 
-      let redirectTarget = "/";
-
-      // 1) Extract from state if present
-      if (state && state.includes("_redirect_")) {
-        try {
-          const raw = state.split("_redirect_")[1];
-          if (raw) {
-            redirectTarget = decodeURIComponent(raw.replace(/~/g, "%"));
-          }
-        } catch (e) {
-          console.error("Failed to parse redirect from state:", e);
-        }
-      }
-
-      // 2) Fallback to cookie
-      if (!redirectTarget || redirectTarget === "/") {
-        const cookieRedirect = request.cookies.get("oauth_redirect")?.value;
-        if (cookieRedirect) {
-          try {
-            redirectTarget = decodeURIComponent(cookieRedirect);
-          } catch (e) {
-            console.error("Failed to parse oauth_redirect cookie:", e);
-          }
-        }
-      }
-
-      // Security validation: must be a relative local path starting with /
-      if (!redirectTarget.startsWith("/") || redirectTarget.startsWith("//")) {
-        redirectTarget = "/";
-      }
-
       if (userGrade === "8" && redirectTarget === "/") {
         redirectTarget = "/confidential";
+      } else if (userGrade === "7" && redirectTarget === "/") {
+        redirectTarget = "/bandwalk";
+      } else if (userGrade !== "7" && isBandwalk) {
+        // Not grade 7 customer cannot access bandwalk
+        redirectTarget = "/";
       }
 
       return renderLoginSuccessHtml({

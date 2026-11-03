@@ -34,9 +34,23 @@ export default function MobileHome({ initialReviewCount = 0, averageRating = 5.0
         { value: "7", label: "6개: 250,000원" },
         { value: "8", label: "12개: 480,000원" },
       ]
+    },
+    7: {
+      prices: {
+        "13": "50,000원",
+        "14": "95,000원",
+        "15": "250,000원",
+        "16": "470,000원",
+      },
+      options: [
+        { value: "13", label: "1개: 50,000원" },
+        { value: "14", label: "2개: 95,000원" },
+        { value: "15", label: "6개: 250,000원" },
+        { value: "16", label: "12개: 470,000원" },
+      ]
     }
   };
-  const config = productConfigs[productId as 1 | 2] || productConfigs[1];
+  const config = productConfigs[productId as 1 | 2 | 7] || productConfigs[1];
   const prices = config.prices as Record<string, string>;
   const initialValue = Object.keys(prices)[0];
 
@@ -549,15 +563,17 @@ export default function MobileHome({ initialReviewCount = 0, averageRating = 5.0
 
           <div className="flex flex-col gap-3">
             <button
-              className="w-full bg-[#7E715C] text-white font-bold py-3 rounded-lg flex items-center justify-center"
+              className="w-full bg-[#7E715C] text-white font-bold py-3 rounded-lg flex items-center justify-center active:scale-98"
               onClick={handleBuyClick}
             >
               구매하기
             </button>
-            <button className="w-full bg-surface-container text-primary font-bold py-3 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-all duration-200" onClick={handleSubscribeClick}>
-              정기구매 (할인혜택)
-            </button>
-            <button className="w-full bg-white border border-[#7E715C] text-[#7E715C] font-bold py-3 rounded-lg flex items-center justify-center" onClick={handleAddToCart}>
+            {productId !== 7 && (
+              <button className="w-full bg-surface-container text-primary font-bold py-3 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-all duration-200" onClick={handleSubscribeClick}>
+                정기구매 (할인혜택)
+              </button>
+            )}
+            <button className="w-full bg-white border border-[#7E715C] text-[#7E715C] font-bold py-3 rounded-lg flex items-center justify-center active:scale-98" onClick={handleAddToCart}>
               장바구니
             </button>
           </div>

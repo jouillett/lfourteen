@@ -6,7 +6,6 @@ export interface ReelItem {
   id: string;
   title: string;
   subtitle: string;
-  tag: string;
   duration: string;
   videoSrc: string;
   posterSrc: string;
@@ -18,7 +17,6 @@ export const REELS_DATA: ReelItem[] = [
     id: "cordy-sleep",
     title: "화장실 때문에 자다가 깨지 않는 밤",
     subtitle: "개운한 아침을 위한 편안한 밤 루틴",
-    tag: "나이트 루틴",
     duration: "00:57",
     videoSrc: "/videos/L14Cordy2.mp4?v=2",
     posterSrc: "/videos/L14Cordy2_thumb.jpg?v=2",
@@ -28,7 +26,6 @@ export const REELS_DATA: ReelItem[] = [
     id: "l14-intro-formula",
     title: "특허 기술로 완성된 압도적 포뮬러",
     subtitle: "엘포틴 유산균 + 발효 동충하초 듀얼 배합",
-    tag: "약학박사 개발",
     duration: "00:29",
     videoSrc: "/videos/L14Intro.mp4?v=2",
     posterSrc: "/videos/L14Intro_thumb.jpg?v=2",
@@ -38,7 +35,6 @@ export const REELS_DATA: ReelItem[] = [
     id: "l14-belly-fat",
     title: "나이 들수록 나오는 배, 원인은?",
     subtitle: "가뿐한 일상을 위한 활력 밸런스",
-    tag: "바디 밸런스",
     duration: "01:25",
     videoSrc: "/videos/L14.mp4?v=2",
     posterSrc: "/videos/L14_thumb.jpg?v=2",
@@ -48,7 +44,6 @@ export const REELS_DATA: ReelItem[] = [
     id: "cordyceps-power",
     title: "국제 학계가 주목하는 코디세핀의 힘",
     subtitle: "발효 동충하초 추출물의 놀라운 작용",
-    tag: "발효동충하초",
     duration: "01:13",
     videoSrc: "/videos/cordyceps.mp4?v=2",
     posterSrc: "/videos/cordyceps_thumb.jpg?v=2",
@@ -183,11 +178,8 @@ export default function ReelsSection() {
               {/* Gradient Dark Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/35 group-hover:from-black/90 transition-colors pointer-events-none" />
 
-              {/* Top Bar: Tag & Duration */}
-              <div className="absolute top-2.5 left-2.5 right-2.5 flex justify-between items-center z-10 pointer-events-none">
-                <span className="px-2 py-0.5 rounded-full bg-black/50 backdrop-blur-md text-[10px] md:text-[11px] font-semibold text-white/90 border border-white/20">
-                  {reel.tag}
-                </span>
+              {/* Top Bar: Duration */}
+              <div className="absolute top-2.5 right-2.5 flex items-center z-10 pointer-events-none">
                 <span className="px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] text-white/80 font-mono">
                   {reel.duration}
                 </span>
@@ -240,14 +232,9 @@ export default function ReelsSection() {
           >
             {/* Top Bar inside modal */}
             <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between p-3.5 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[#ee2a7b]/90 text-white font-semibold text-[11px] shadow-xs">
-                  {activeReel.tag}
-                </span>
-                <span className="text-white/80 text-[12px] font-medium truncate max-w-[200px]">
-                  {activeReel.title}
-                </span>
-              </div>
+              <span className="text-white/90 text-[13px] font-semibold truncate max-w-[280px]">
+                {activeReel.title}
+              </span>
               <button
                 type="button"
                 onClick={() => setActiveReelIndex(null)}

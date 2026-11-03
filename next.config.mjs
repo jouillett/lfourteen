@@ -15,6 +15,18 @@ const nextConfig = {
       './node_modules/lucide-react/**/*'
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0',
+        destination: '/bandwalk',
+      },
+      {
+        source: '/올바른걷기',
+        destination: '/bandwalk',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -66,6 +66,7 @@ export default function PasswordPage() {
           mobile: phoneVal,
           password: newPassword,
           name: nameVal,
+          redirect: redirectUrl,
         }),
       });
 
@@ -78,7 +79,7 @@ export default function PasswordPage() {
             document.cookie = "session_active=1; path=/";
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("customerId", data.userId);
-            localStorage.setItem("customerGrade", "9");
+            localStorage.setItem("customerGrade", String(data.grade || "9"));
             localStorage.setItem("loginType", "phone");
             localStorage.setItem("lastActivity", Date.now().toString());
           }

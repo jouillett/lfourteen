@@ -174,7 +174,10 @@ export async function PATCH(req: Request) {
         // If status is changed to 2 (Delivery Complete)
         if (status === 2) {
           const [orderRecs]: any = await connection.execute(
-            `SELECT customer_id, status as old_status, reward_point FROM orders WHERE id = ?`,
+            `SELECT o.customer_id, o.status as old_status, o.reward_point, c.grade as customer_grade
+             FROM orders o
+             LEFT JOIN customers c ON o.customer_id = c.id
+             WHERE o.id = ?`,
             [id]
           );
           if (orderRecs.length > 0) {
@@ -189,7 +192,13 @@ export async function PATCH(req: Request) {
               };
 
               const customerId = parseBuffer(orderRecord.customer_id);
-              const rewardAmount = Number(parseBuffer(orderRecord.reward_point)) || 0;
+              const customerGrade = String(parseBuffer(orderRecord.customer_grade) || '');
+              const rewardAmount = customerGrade === '7' ? 0 : (Number(parseBuffer(orderRecord.reward_point)) || 0);
+
+              // 올바른걷기밴드 회원(grade 7)이 배송완료되면 1회성 혜택 소진 처리 -> 일반회원(grade 9)으로 전환
+              if (customerId && customerGrade === '7') {
+                await connection.execute('UPDATE customers SET grade = 9 WHERE id = ?', [customerId]);
+              }
 
               if (customerId && rewardAmount > 0) {
                 // Check if already awarded
