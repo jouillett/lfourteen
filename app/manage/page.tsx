@@ -97,6 +97,7 @@ export default function ManagePage() {
                   const res = await fetch('/api/cron/check-delivery');
                   const data = await res.json();
                   alert('Check Delivery 실행 결과:\n' + JSON.stringify(data, null, 2));
+                  window.location.reload();
                 } catch (e: any) {
                   alert('실행 실패: ' + e.message);
                 }

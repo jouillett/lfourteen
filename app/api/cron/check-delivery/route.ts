@@ -72,7 +72,7 @@ export async function GET(req: Request) {
   try {
     const connection = await pool.getConnection();
     try {
-      // Fetch orders with status 1, 4, 5, or 7 — include fields needed for refund and emails
+      // Fetch orders with status 0, 1, 4, 5, or 7 — include fields needed for refund and emails
       const [orders]: any = await connection.execute(`
         SELECT o.id, o.status, o.shipment, o.\`return\`, o.reshipment, o.payment_key, o.total_price, o.reward_point, o.customer_id,
                o.order_number, o.order_name, o.created_at, o.receiver_name, o.receiver_address,
@@ -81,7 +81,7 @@ export async function GET(req: Request) {
                c.name as customer_name, c.email, c.mobile, c.grade as customer_grade
         FROM orders o
         LEFT JOIN customers c ON o.customer_id = c.id
-        WHERE o.status IN (1, 4, 5, 7)
+        WHERE o.status IN (0, 1, 4, 5, 7)
       `);
 
       let updatedCount = 0;
@@ -91,7 +91,7 @@ export async function GET(req: Request) {
         const returnField = parseBuffer(order.return);
         const reshipmentField = parseBuffer(order.reshipment);
 
-        if (order.status === 1 && shipmentField) {
+        if ((order.status === 0 || order.status === 1) && shipmentField) {
           // Shipment delivered → 배송완료(2)
           const { isDone, deliveredAt } = await checkDeliveryDone(shipmentField);
           if (isDone) {
@@ -392,6 +392,18 @@ export async function GET(req: Request) {
             }
           }
         }
+      }
+
+      // Grade 7 fallback: ensure any grade 7 customers with completed orders (status 2) are transitioned to grade 9
+      try {
+        await connection.execute(`
+          UPDATE customers c
+          JOIN orders o ON o.customer_id = c.id
+          SET c.grade = 9
+          WHERE c.grade = 7 AND o.status = 2
+        `);
+      } catch (syncErr) {
+        console.error('[check-delivery] Failed to sync grade 7 to 9:', syncErr);
       }
 
       return NextResponse.json({ success: true, updatedCount });
