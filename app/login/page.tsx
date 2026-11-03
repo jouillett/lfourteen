@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [redirectUrl, setRedirectUrl] = useState("/");
+  const [joinHref, setJoinHref] = useState("/join");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -28,6 +29,7 @@ export default function LoginPage() {
       }
       if (redirectParam) {
         setRedirectUrl(redirectParam);
+        setJoinHref(`/join?redirect=${encodeURIComponent(redirectParam)}`);
       }
     }
   }, []);
@@ -196,17 +198,7 @@ export default function LoginPage() {
             {/* Action Area */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-sm mt-xs sm:mt-sm">
               <div className="flex items-center justify-center gap-xs font-label-md text-label-md text-on-surface-variant w-full sm:w-auto order-2 sm:order-1 mt-xs sm:mt-0">
-                <Link
-                  className="hover:text-primary transition-colors"
-                  href={
-                    redirectUrl && redirectUrl !== "/"
-                      ? `/join?redirect=${encodeURIComponent(redirectUrl)}`
-                      : typeof document !== "undefined" &&
-                        (document.cookie.includes("bandwalk_entry=1") || sessionStorage.getItem("bandwalkRedirect"))
-                      ? `/join?redirect=${encodeURIComponent("/올바른걷기")}`
-                      : "/join"
-                  }
-                >
+                <Link className="hover:text-primary transition-colors" href={joinHref}>
                   회원가입
                 </Link>
                 <span className="text-outline-variant">|</span>

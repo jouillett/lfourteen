@@ -8,9 +8,21 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [logoHref, setLogoHref] = useState("/");
+  const [loginHref, setLoginHref] = useState("/login");
 
   useEffect(() => {
     setMounted(true);
+
+    if (
+      typeof window !== "undefined" &&
+      (window.location.pathname.includes("bandwalk") ||
+        window.location.pathname.includes("올바른걷기") ||
+        (typeof document !== "undefined" && document.cookie.includes("bandwalk_entry=1")))
+    ) {
+      setLoginHref(`/login?redirect=${encodeURIComponent("/올바른걷기")}`);
+    } else {
+      setLoginHref("/login");
+    }
 
     const checkLoginStatus = () => {
       const hasSessionCookie = document.cookie.includes("session_active=1");
@@ -193,14 +205,7 @@ export default function Header() {
             <>
               {!isLoggedIn ? (
                 <Link
-                  href={
-                    typeof window !== "undefined" &&
-                    (window.location.pathname.includes("bandwalk") ||
-                      window.location.pathname.includes("올바른걷기") ||
-                      (typeof document !== "undefined" && document.cookie.includes("bandwalk_entry=1")))
-                      ? `/login?redirect=${encodeURIComponent("/올바른걷기")}`
-                      : "/login"
-                  }
+                  href={loginHref}
                   className="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container inline-flex"
                   id="header-profile-btn"
                   title="로그인"
