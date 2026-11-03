@@ -127,8 +127,15 @@ export async function GET(req: Request) {
                 'UPDATE orders SET status = 2, received_at = NOW() WHERE id = ?',
                 [order.id]
               );
+
+              // Check customer grade
+              const [custRows]: any = await connection.execute('SELECT grade FROM customers WHERE id = ?', [customerId]);
+              const customerGrade = custRows.length > 0 ? String(custRows[0].grade) : '';
+              if (customerGrade === '7') {
+                await connection.execute('UPDATE customers SET grade = 9 WHERE id = ?', [customerId]);
+              }
               
-              const pointAmount = Number(order.reward_point) || 0;
+              const pointAmount = customerGrade === '7' ? 0 : (Number(order.reward_point) || 0);
               if (pointAmount > 0) {
                 await connection.execute(
                   'INSERT INTO points (customer_id, order_id, point_amount, expired_at) VALUES (?, ?, ?, DATE_ADD(CURDATE(), INTERVAL 30 DAY))',

@@ -210,42 +210,54 @@ export async function GET(req: Request) {
           };
 
           const customerId = parseBuffer(currentOrder.customer_id);
-          const rewardAmount = Number(parseBuffer(currentOrder.reward_point)) || 0;
-          
-          if (customerId && rewardAmount > 0) {
-            await connection.beginTransaction();
-            try {
-              // Check if already awarded
-              const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [id]);
-              let pointId = 0;
-              
-              if (awarded.length === 0) {
-                const [result]: any = await connection.execute(
-                  'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
-                  [customerId, id, rewardAmount]
-                );
-                pointId = result.insertId;
+
+          if (customerId) {
+            // Check customer grade
+            const [custRows]: any = await connection.execute('SELECT grade FROM customers WHERE id = ?', [customerId]);
+            const customerGrade = custRows.length > 0 ? String(custRows[0].grade) : '';
+
+            // 올바른걷기밴드 회원(grade 7)이 배송완료되면 1회 혜택 소진 처리 -> 일반회원(grade 9)으로 전환
+            if (customerGrade === '7') {
+              await connection.execute('UPDATE customers SET grade = 9 WHERE id = ?', [customerId]);
+            }
+
+            const rewardAmount = customerGrade === '7' ? 0 : (Number(parseBuffer(currentOrder.reward_point)) || 0);
+            
+            if (rewardAmount > 0) {
+              await connection.beginTransaction();
+              try {
+                // Check if already awarded
+                const [awarded]: any = await connection.execute('SELECT id FROM points WHERE order_id = ?', [id]);
+                let pointId = 0;
                 
-                const [sumRows]: any = await connection.execute(
-                  'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
-                  [customerId]
-                );
-                await connection.execute(
-                  'UPDATE customers SET point = ? WHERE id = ?',
-                  [sumRows[0].total, customerId]
-                );
-              } else {
-                pointId = awarded[0].id;
+                if (awarded.length === 0) {
+                  const [result]: any = await connection.execute(
+                    'INSERT INTO points (customer_id, order_id, point_amount, created_at, expired_at) VALUES (?, ?, ?, NOW(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH))',
+                    [customerId, id, rewardAmount]
+                  );
+                  pointId = result.insertId;
+                  
+                  const [sumRows]: any = await connection.execute(
+                    'SELECT IFNULL(SUM(point_amount), 0) as total FROM points WHERE customer_id = ?',
+                    [customerId]
+                  );
+                  await connection.execute(
+                    'UPDATE customers SET point = ? WHERE id = ?',
+                    [sumRows[0].total, customerId]
+                  );
+                } else {
+                  pointId = awarded[0].id;
+                }
+                
+                if (pointId > 0) {
+                  await connection.execute('UPDATE orders SET point_recnum = ? WHERE id = ?', [pointId, id]);
+                }
+                
+                await connection.commit();
+              } catch (err) {
+                await connection.rollback();
+                console.error('Failed to reward points during status update:', err);
               }
-              
-              if (pointId > 0) {
-                await connection.execute('UPDATE orders SET point_recnum = ? WHERE id = ?', [pointId, id]);
-              }
-              
-              await connection.commit();
-            } catch (err) {
-              await connection.rollback();
-              console.error('Failed to reward points during status update:', err);
             }
           }
         }
