@@ -20,7 +20,12 @@ export default function LoginPage() {
       if (phoneParam) {
         setPhone(phoneParam);
       }
-      const redirectParam = params.get("redirect");
+      let redirectParam = params.get("redirect");
+      if (!redirectParam || redirectParam === "/") {
+        if (document.cookie.includes("bandwalk_entry=1") || sessionStorage.getItem("bandwalkRedirect")) {
+          redirectParam = "/올바른걷기";
+        }
+      }
       if (redirectParam) {
         setRedirectUrl(redirectParam);
       }
@@ -62,12 +67,19 @@ export default function LoginPage() {
         localStorage.setItem("loginType", "phone");
         localStorage.setItem("lastActivity", Date.now().toString());
         const params = new URLSearchParams(window.location.search);
-        let redirect = params.get("redirect") || "/";
+        let redirect = params.get("redirect") || redirectUrl;
+        if (!redirect || redirect === "/") {
+          if (document.cookie.includes("bandwalk_entry=1") || sessionStorage.getItem("bandwalkRedirect")) {
+            redirect = "/올바른걷기";
+          } else {
+            redirect = "/";
+          }
+        }
 
-        if (String(data.grade) === "8" && redirect === "/") {
+        if (String(data.grade) === "8" && (redirect === "/" || !redirect)) {
           redirect = "/confidential";
-        } else if (String(data.grade) === "7" && redirect === "/") {
-          redirect = "/bandwalk";
+        } else if (String(data.grade) === "7") {
+          redirect = "/올바른걷기";
         } else if (String(data.grade) !== "7" && (redirect.includes("bandwalk") || redirect.includes("올바른걷기") || redirect.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0"))) {
           redirect = "/";
         }
@@ -134,6 +146,7 @@ export default function LoginPage() {
             title="로그인"
             subtitle={"아이디와 비밀번호 입력하기 귀찮으시죠?\n1초 회원가입으로 입력없이 간편하게 로그인 하세요."}
             showBanner={false}
+            redirect={redirectUrl}
           />
 
           <div className="relative flex items-center justify-center my-1">
@@ -183,7 +196,19 @@ export default function LoginPage() {
             {/* Action Area */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-sm mt-xs sm:mt-sm">
               <div className="flex items-center justify-center gap-xs font-label-md text-label-md text-on-surface-variant w-full sm:w-auto order-2 sm:order-1 mt-xs sm:mt-0">
-                <Link className="hover:text-primary transition-colors" href={redirectUrl && redirectUrl !== "/" ? `/join?redirect=${encodeURIComponent(redirectUrl)}` : "/join"}>회원가입</Link>
+                <Link
+                  className="hover:text-primary transition-colors"
+                  href={
+                    redirectUrl && redirectUrl !== "/"
+                      ? `/join?redirect=${encodeURIComponent(redirectUrl)}`
+                      : typeof document !== "undefined" &&
+                        (document.cookie.includes("bandwalk_entry=1") || sessionStorage.getItem("bandwalkRedirect"))
+                      ? `/join?redirect=${encodeURIComponent("/올바른걷기")}`
+                      : "/join"
+                  }
+                >
+                  회원가입
+                </Link>
                 <span className="text-outline-variant">|</span>
                 <button type="button" onClick={handleFindPassword} className="hover:text-primary transition-colors">비밀번호 찾기</button>
               </div>

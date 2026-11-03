@@ -7,6 +7,12 @@ export default function BandwalkGuard({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // Set cookies and session storage so all login/signup links keep this destination
+      document.cookie = "bandwalk_entry=1; path=/; max-age=7200";
+      document.cookie = `oauth_redirect=${encodeURIComponent("/올바른걷기")}; path=/; max-age=7200`;
+      sessionStorage.setItem("bandwalkRedirect", "/올바른걷기");
+      sessionStorage.setItem("specialEntry", "bandwalk");
+
       const loggedIn = localStorage.getItem("isLoggedIn") === "true";
       const customerGrade = localStorage.getItem("customerGrade");
 

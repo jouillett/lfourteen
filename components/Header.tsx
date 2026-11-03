@@ -48,6 +48,8 @@ export default function Header() {
       const grade = localStorage.getItem("customerGrade");
       if (trulyLoggedIn && grade === "8") {
         setLogoHref("/confidential");
+      } else if (trulyLoggedIn && grade === "7") {
+        setLogoHref("/올바른걷기");
       } else {
         setLogoHref("/");
       }
@@ -191,7 +193,14 @@ export default function Header() {
             <>
               {!isLoggedIn ? (
                 <Link
-                  href="/login"
+                  href={
+                    typeof window !== "undefined" &&
+                    (window.location.pathname.includes("bandwalk") ||
+                      window.location.pathname.includes("올바른걷기") ||
+                      (typeof document !== "undefined" && document.cookie.includes("bandwalk_entry=1")))
+                      ? `/login?redirect=${encodeURIComponent("/올바른걷기")}`
+                      : "/login"
+                  }
                   className="text-on-surface-variant hover:text-primary transition-all duration-200 p-1.5 rounded-full hover:bg-surface-container inline-flex"
                   id="header-profile-btn"
                   title="로그인"

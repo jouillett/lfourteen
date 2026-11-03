@@ -84,7 +84,7 @@ function renderLoginSuccessHtml(options: {
           }
 
           <button id="proceedBtn" onclick="proceed()" style="width: 100%; padding: 14px 0; background: #2B231D; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform 0.1s, opacity 0.2s; box-shadow: 0 2px 8px rgba(43,35,29,0.2);">
-            ${redirectTarget.includes("bandwalk") || redirectTarget.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0") ? "확인 (올바른걷기 특가로 이동)" : redirectTarget.includes("billing") ? "확인 (정기구매로 이동)" : "확인 (쇼핑하러 가기)"}
+            ${redirectTarget.includes("bandwalk") || redirectTarget.includes("올바른걷기") || redirectTarget.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0") ? "확인 (올바른걷기 특가로 이동)" : redirectTarget.includes("billing") ? "확인 (정기구매로 이동)" : "확인 (쇼핑하러 가기)"}
           </button>
 
           <p style="font-size: 12px; color: #9E9B95; margin-top: 14px; margin-bottom: 0;">
@@ -313,10 +313,17 @@ export async function GET(request: NextRequest) {
       redirectTarget = "/";
     }
 
+    const cookieBandwalk = request.cookies.get("bandwalk_entry")?.value === "1";
+
     const isBandwalk =
+      cookieBandwalk ||
       redirectTarget.includes("bandwalk") ||
       redirectTarget.includes("올바른걷기") ||
       redirectTarget.includes("%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0");
+
+    if (isBandwalk) {
+      redirectTarget = "/올바른걷기";
+    }
 
     // 6. Database Processing: Check if customer exists by mobile
     const connection = await pool.getConnection();
@@ -424,8 +431,8 @@ export async function GET(request: NextRequest) {
 
       if (userGrade === "8" && redirectTarget === "/") {
         redirectTarget = "/confidential";
-      } else if (userGrade === "7" && redirectTarget === "/") {
-        redirectTarget = "/bandwalk";
+      } else if (userGrade === "7") {
+        redirectTarget = "/올바른걷기";
       } else if (userGrade !== "7" && isBandwalk) {
         // Not grade 7 customer cannot access bandwalk
         redirectTarget = "/";

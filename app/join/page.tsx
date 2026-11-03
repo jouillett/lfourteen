@@ -20,7 +20,12 @@ export default function JoinPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const redirectParam = params.get("redirect");
+      let redirectParam = params.get("redirect");
+      if (!redirectParam || redirectParam === "/") {
+        if (document.cookie.includes("bandwalk_entry=1") || sessionStorage.getItem("bandwalkRedirect")) {
+          redirectParam = "/올바른걷기";
+        }
+      }
       if (redirectParam) {
         setRedirectUrl(redirectParam);
       }
@@ -116,7 +121,12 @@ export default function JoinPage() {
       setErrorMsg("");
       const cleanPhone = phone.replace(/\D/g, "");
       const params = new URLSearchParams(window.location.search);
-      const redirectParam = params.get("redirect");
+      let redirectParam = params.get("redirect") || redirectUrl;
+      if (!redirectParam || redirectParam === "/") {
+        if (document.cookie.includes("bandwalk_entry=1") || sessionStorage.getItem("bandwalkRedirect")) {
+          redirectParam = "/올바른걷기";
+        }
+      }
       const redirectQuery = redirectParam ? `&redirect=${encodeURIComponent(redirectParam)}` : "";
       window.location.href = `/password?phone=${cleanPhone}&name=${encodeURIComponent(name.trim())}${redirectQuery}`;
     }
@@ -133,6 +143,7 @@ export default function JoinPage() {
             title="회원가입 / 로그인"
             subtitle={"아이디와 비밀번호 입력하기 귀찮으시죠?\n1초 회원가입으로 입력없이 간편하게 로그인 하세요."}
             showBanner={true}
+            redirect={redirectUrl}
           />
 
           {/* Divider to Phone Signup */}

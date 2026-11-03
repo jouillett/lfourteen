@@ -22,10 +22,18 @@ export default function SocialLoginButtons({
 
   const getRedirectTarget = () => {
     if (typeof window !== "undefined") {
-      if (redirect) return redirect;
+      if (redirect && redirect !== "/") return redirect;
       const params = new URLSearchParams(window.location.search);
       const urlRedirect = params.get("redirect");
-      if (urlRedirect) return urlRedirect;
+      if (urlRedirect && urlRedirect !== "/") return urlRedirect;
+      if (
+        (typeof document !== "undefined" && document.cookie.includes("bandwalk_entry=1")) ||
+        sessionStorage.getItem("bandwalkRedirect") ||
+        window.location.pathname.includes("bandwalk") ||
+        window.location.pathname.includes("올바른걷기")
+      ) {
+        return "/올바른걷기";
+      }
     }
     return "/";
   };

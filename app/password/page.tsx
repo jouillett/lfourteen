@@ -49,6 +49,16 @@ export default function PasswordPage() {
     const mode = urlParams.get("mode");
     const redirectUrl = urlParams.get("redirect");
 
+    let targetRedirect = redirectUrl;
+    if (!targetRedirect || targetRedirect === "/") {
+      if (
+        (typeof document !== "undefined" && document.cookie.includes("bandwalk_entry=1")) ||
+        sessionStorage.getItem("bandwalkRedirect")
+      ) {
+        targetRedirect = "/올바른걷기";
+      }
+    }
+
     if (!phoneVal) {
       setErrorMsg("인증된 휴대폰 번호 정보가 없습니다. 다시 인증을 진행해 주세요.");
       setIsSubmitting(false);
@@ -66,7 +76,7 @@ export default function PasswordPage() {
           mobile: phoneVal,
           password: newPassword,
           name: nameVal,
-          redirect: redirectUrl,
+          redirect: targetRedirect,
         }),
       });
 
@@ -79,17 +89,20 @@ export default function PasswordPage() {
             document.cookie = "session_active=1; path=/";
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("customerId", data.userId);
-            localStorage.setItem("customerGrade", String(data.grade || "9"));
+            const userGrade = String(data.grade || "9");
+            localStorage.setItem("customerGrade", userGrade);
             localStorage.setItem("loginType", "phone");
             localStorage.setItem("lastActivity", Date.now().toString());
-          }
 
-          alert("회원가입이 완료되었습니다.");
-          window.location.href = redirectUrl || `/`;
+            alert("회원가입이 완료되었습니다.");
+            const destination = userGrade === "7" ? "/올바른걷기" : (targetRedirect || "/");
+            window.location.href = destination;
+            return;
+          }
         } else {
           alert("비밀번호가 성공적으로 설정되었습니다.");
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
+          if (targetRedirect) {
+            window.location.href = targetRedirect;
           } else {
             window.location.href = `/login?phone=${encodeURIComponent(phoneVal)}`;
           }

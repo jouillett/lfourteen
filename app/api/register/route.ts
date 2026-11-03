@@ -17,11 +17,18 @@ export async function POST(req: Request) {
       const bf = new Blowfish('yrhan');
       const encryptedPassword = bf.base64Encode(bf.encrypt(password));
 
+      const cookieHeader = req.headers.get('cookie') || '';
+      const cookieHasBandwalk =
+        cookieHeader.includes('bandwalk_entry=1') ||
+        cookieHeader.includes('bandwalk') ||
+        cookieHeader.includes('%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0');
+
       const isBandwalk =
-        typeof redirect === 'string' &&
-        (redirect.includes('bandwalk') ||
-          redirect.includes('올바른걷기') ||
-          redirect.includes('%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0'));
+        cookieHasBandwalk ||
+        (typeof redirect === 'string' &&
+          (redirect.includes('bandwalk') ||
+            redirect.includes('올바른걷기') ||
+            redirect.includes('%EC%98%AC%EB%B0%94%EB%A5%B8%EA%B1%B7%EA%B8%B0')));
 
       const initialGrade = isBandwalk ? 7 : 9;
 
@@ -70,7 +77,13 @@ export async function POST(req: Request) {
       }
 
       await connection.commit();
-      return NextResponse.json({ success: true, message: 'Customer registered successfully', userId: customerId, grade: initialGrade });
+      return NextResponse.json({
+        success: true,
+        message: 'Customer registered successfully',
+        userId: customerId,
+        grade: initialGrade,
+        redirect: initialGrade === 7 ? '/올바른걷기' : (redirect || '/')
+      });
     } catch (err) {
       await connection.rollback();
       throw err;

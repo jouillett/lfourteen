@@ -114,7 +114,8 @@ export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.
       sessionStorage.setItem("pendingAction", "cart");
       sessionStorage.setItem("pendingCartPricedId", pricedId.toString());
       alert("로그인이 필요합니다.");
-      window.location.href = "/login";
+      const redirectTarget = productId === 7 ? "/올바른걷기" : "/";
+      window.location.href = `/login?redirect=${encodeURIComponent(redirectTarget)}`;
       return;
     }
 
@@ -203,7 +204,8 @@ export default function DesktopHome({ initialReviewCount = 0, averageRating = 5.
       sessionStorage.setItem("pendingAction", "buy");
       sessionStorage.setItem("pendingBuyPricedId", pricedId.toString());
       alert("로그인이 필요합니다.");
-      window.location.href = "/login";
+      const redirectTarget = productId === 7 ? "/올바른걷기" : "/";
+      window.location.href = `/login?redirect=${encodeURIComponent(redirectTarget)}`;
       return;
     }
 
