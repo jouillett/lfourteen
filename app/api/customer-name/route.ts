@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const customerId = searchParams.get('customerId');
@@ -14,7 +16,9 @@ export async function GET(req: Request) {
       // name may come back as a Buffer due to charset — convert it
       const rawName = rows[0].name;
       const name = Buffer.isBuffer(rawName) ? rawName.toString('utf8') : (rawName ?? '');
-      return NextResponse.json({ success: true, name, grade: rows[0].grade });
+      const rawGrade = rows[0].grade;
+      const grade = Buffer.isBuffer(rawGrade) ? rawGrade.toString('utf8') : (rawGrade !== null && rawGrade !== undefined ? String(rawGrade) : null);
+      return NextResponse.json({ success: true, name, grade });
     } finally {
       connection.release();
     }

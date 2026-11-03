@@ -38,7 +38,7 @@ export default function PersonManagePage() {
 
   const fetchCustomer = async (id: string) => {
     try {
-      const res = await fetch(`/api/manage/customer?id=${id}`);
+      const res = await fetch(`/api/manage/customer?id=${id}`, { cache: 'no-store' });
       const data = await res.json();
       if (data.success && data.customer) {
         setFormData({

@@ -3,6 +3,8 @@ import pool from '../../../lib/db';
 import { sendShippingEmail, sendReturnEmail, sendExchangeEmail } from '../../../lib/email';
 import { sendShipmentAlimtalk, sendReturnAlimtalk } from '../../../lib/alimtalk';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

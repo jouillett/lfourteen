@@ -6,7 +6,11 @@ export default function BandwalkGuard({ children }: { children: React.ReactNode 
   const [authorized, setAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    let isMounted = true;
+
+    async function checkAccess() {
+      if (typeof window === "undefined") return;
+
       // Set cookies and session storage so all login/signup links keep this destination
       document.cookie = "bandwalk_entry=1; path=/; max-age=7200";
       document.cookie = `oauth_redirect=${encodeURIComponent("/올바른걷기")}; path=/; max-age=7200`;
@@ -14,11 +18,29 @@ export default function BandwalkGuard({ children }: { children: React.ReactNode 
       sessionStorage.setItem("specialEntry", "bandwalk");
 
       const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const customerGrade = localStorage.getItem("customerGrade");
+      const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");
 
       if (loggedIn) {
+        let currentGrade = localStorage.getItem("customerGrade");
+
+        // Verify latest grade from server to ensure fresh state
+        if (customerId) {
+          try {
+            const res = await fetch(`/api/customer-name?customerId=${customerId}`, { cache: "no-store" });
+            const data = await res.json();
+            if (data.success && data.grade !== undefined && data.grade !== null) {
+              currentGrade = String(data.grade);
+              localStorage.setItem("customerGrade", currentGrade);
+            }
+          } catch (e) {
+            console.error("Failed to verify customer grade:", e);
+          }
+        }
+
+        if (!isMounted) return;
+
         // If logged in, only grade '7' is allowed to access
-        if (customerGrade === "7") {
+        if (currentGrade === "7") {
           setAuthorized(true);
         } else {
           setAuthorized(false);
@@ -30,6 +52,12 @@ export default function BandwalkGuard({ children }: { children: React.ReactNode 
         setAuthorized(true);
       }
     }
+
+    checkAccess();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (authorized === null) {

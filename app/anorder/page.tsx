@@ -19,7 +19,7 @@ function OrderDetails() {
 
   useEffect(() => {
     if (id) {
-      fetch(`/api/anorder?id=${id}`)
+      fetch(`/api/anorder?id=${id}`, { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           if (data.success && data.order) {

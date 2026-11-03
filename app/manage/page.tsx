@@ -22,7 +22,7 @@ export default function ManagePage() {
       }
 
       try {
-        const gradeRes = await fetch(`/api/customer-name?customerId=${userId}`);
+        const gradeRes = await fetch(`/api/customer-name?customerId=${userId}`, { cache: 'no-store' });
         const gradeData = await gradeRes.json();
         
         if (!gradeData.success || typeof gradeData.grade === 'undefined' || gradeData.grade >= 3) {
@@ -31,7 +31,7 @@ export default function ManagePage() {
           return;
         }
 
-        const dataRes = await fetch('/api/manage');
+        const dataRes = await fetch('/api/manage', { cache: 'no-store' });
         const data = await dataRes.json();
         
         if (data.success) {

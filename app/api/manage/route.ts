@@ -1,10 +1,24 @@
 import { NextResponse } from 'next/server';
 import pool from '../../../lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   try {
     const connection = await pool.getConnection();
     try {
+      // Sync grade 7 customers with completed orders (status 2) to grade 9
+      try {
+        await connection.execute(`
+          UPDATE customers c
+          JOIN orders o ON o.customer_id = c.id
+          SET c.grade = 9
+          WHERE c.grade = 7 AND o.status = 2
+        `);
+      } catch (syncErr) {
+        console.error('Failed to sync grade 7 to 9 in /api/manage:', syncErr);
+      }
+
       const [accuseRows]: any = await connection.query('SELECT * FROM accuse ORDER BY created_at DESC');
       const processedAccuse = accuseRows.map((item: any) => {
         const pItem = { ...item };
