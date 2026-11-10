@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { generateTossCustomerKey } from "@/lib/tossCustomerKey";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -54,9 +55,8 @@ export default function BillingPage() {
         const clientKey = process.env.NEXT_PUBLIC_TOSS_API_CLIENT_KEY || process.env.NEXT_PUBLIC_TOSS_API_CL || "live_ck_yL0qZ4G1VO1m4aeQ66pM8oWb2MQY";
         const tossPayments = await loadTossPayments(clientKey);
         
-        // Toss requires customerKey to be alphanumeric (not purely numeric)
-        const baseUserId = userId || "loginid";
-        const validCustomerKey = `user_${baseUserId}`;
+        // Toss requires customerKey to be between 22 and 255 characters (enforced starting 2026.12.01)
+        const validCustomerKey = generateTossCustomerKey(userId);
         
         const paymentInstance = tossPayments.payment({ customerKey: validCustomerKey });
         setPayment(paymentInstance);

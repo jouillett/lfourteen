@@ -36,8 +36,9 @@ export async function issueBillingKeyAndSave(
   if (!response.ok) {
     // If the authKey was already used, Toss returns ALREADY_PROCESSED_PAYMENT or similar.
     // Try to find any existing billing key in DB for this customer and reuse it.
-    const numericKeyFallback = customerKey.replace(/^user_/, "");
-    const customerIdFallback = parseInt(numericKeyFallback, 10) || 1;
+    // Parse customerId from customerKey (supports both legacy user_1 and new user_1_hash...)
+    const matchFallback = customerKey.match(/^user_(\d+)/);
+    const customerIdFallback = matchFallback ? parseInt(matchFallback[1], 10) : (parseInt(customerKey.replace(/^user_/, ""), 10) || 1);
     const [existingFallback]: any = await pool.query(
       "SELECT billing_key, customer_key FROM billing WHERE customer_id = ? LIMIT 1",
       [customerIdFallback]
@@ -52,9 +53,9 @@ export async function issueBillingKeyAndSave(
   const billingKey = data.billingKey;
   
   // Save to DB
-  // Parse customerId from customerKey (which might be prefixed with "user_") or fallback to 1
-  const numericKey = customerKey.replace(/^user_/, "");
-  const customerId = parseInt(numericKey, 10) || 1;
+  // Parse customerId from customerKey (supports both legacy user_1 and new user_1_hash...)
+  const match = customerKey.match(/^user_(\d+)/);
+  const customerId = match ? parseInt(match[1], 10) : (parseInt(customerKey.replace(/^user_/, ""), 10) || 1);
 
   const eligibility = await checkSubscriptionEligibility(pool, customerId);
   if (!eligibility.eligible && eligibility.nextDate) {

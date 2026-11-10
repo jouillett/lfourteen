@@ -8,6 +8,7 @@ import AddressListPopup from "./AddressListPopup";
 import PhoneInput from "@/components/PhoneInput";
 import { z } from "zod";
 import { formatCardPaymentMethod } from "@/lib/card";
+import { generateTossCustomerKey } from "@/lib/tossCustomerKey";
 
 interface OrderItem {
   product_name: string;
@@ -173,7 +174,7 @@ export default function MobileOrder() {
         tossInitializedRef.current = true;
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || process.env.NEXT_PUBLIC_TOSS_CLIENT || "live_gck_yL0qZ4G1VOvG7ex2LyAn3oWb2MQY";
         const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
-        const customerKey = userId ? "user_" + userId : "customer_" + Date.now();
+        const customerKey = generateTossCustomerKey(userId);
         const tossPayments = (window as any).TossPayments(clientKey);
         const widgets = tossPayments.widgets({ customerKey });
         widgetsRef.current = widgets;
