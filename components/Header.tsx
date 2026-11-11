@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { isSessionExpired, clearUserSession, recordSessionActivity } from "../lib/session";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,18 +26,17 @@ export default function Header() {
     }
 
     const checkLoginStatus = () => {
+      // First check if inactivity limit has passed
+      if (isSessionExpired()) {
+        clearUserSession();
+      }
+
       const hasSessionCookie = document.cookie.includes("session_active=1");
       let loggedInFlag = localStorage.getItem("isLoggedIn") === "true";
       
       // If localStorage says we're logged in, but the session cookie is gone (browser was restarted)
       if (loggedInFlag && !hasSessionCookie) {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("customerId");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("lastActivity");
-        localStorage.removeItem("authPhone");
-        localStorage.removeItem("customerGrade");
-        sessionStorage.removeItem("confidentialAuth");
+        clearUserSession();
         loggedInFlag = false;
       }
       
@@ -49,10 +49,7 @@ export default function Header() {
       const trulyLoggedIn = loggedInFlag && hasId;
       
       if (loggedInFlag && !hasId) {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("lastActivity");
-        localStorage.removeItem("authPhone");
-        localStorage.removeItem("customerGrade");
+        clearUserSession();
       }
       
       setIsLoggedIn(trulyLoggedIn);
@@ -69,31 +66,57 @@ export default function Header() {
       return trulyLoggedIn;
     };
 
-    const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1 hour
+    let isLoggingOut = false;
 
-    const resetTimer = () => {
-      if (localStorage.getItem("isLoggedIn") === "true") {
-        localStorage.setItem("lastActivity", Date.now().toString());
+    const handleLogoutTimeout = () => {
+      if (isLoggingOut) return;
+      isLoggingOut = true;
+
+      clearUserSession();
+      setIsLoggedIn(false);
+
+      alert("1시간 동안 활동이 없어 안전을 위해 자동 로그아웃되었습니다.");
+
+      const currentPath = typeof window !== "undefined" ? window.location.pathname : "/";
+      if (
+        currentPath.includes("manage") ||
+        currentPath.includes("confidential") ||
+        currentPath.includes("mypage") ||
+        currentPath.includes("cart") ||
+        currentPath.includes("billing")
+      ) {
+        window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+      } else {
+        window.location.href = "/";
       }
     };
 
-    const handleLogoutTimeout = () => {
-      document.cookie = "session_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("customerId");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("lastActivity");
-      localStorage.removeItem("authPhone");
-      sessionStorage.removeItem("confidentialAuth");
-      window.location.href = "/";
+    let lastThrottleTime = 0;
+    const handleUserActivity = () => {
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        if (isSessionExpired()) {
+          handleLogoutTimeout();
+          return;
+        }
+        const now = Date.now();
+        if (now - lastThrottleTime > 5000) {
+          lastThrottleTime = now;
+          recordSessionActivity();
+        }
+      }
     };
 
     const checkInactivity = () => {
       if (localStorage.getItem("isLoggedIn") === "true") {
-        const last = localStorage.getItem("lastActivity");
-        if (last && Date.now() - parseInt(last) > INACTIVITY_LIMIT) {
+        if (isSessionExpired()) {
           handleLogoutTimeout();
         }
+      }
+    };
+
+    const handleVisibilityOrFocus = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        checkInactivity();
       }
     };
 
@@ -101,13 +124,16 @@ export default function Header() {
     checkLoginStatus();
 
     // Attach event listeners for activity
-    window.addEventListener("mousemove", resetTimer);
-    window.addEventListener("keydown", resetTimer);
-    window.addEventListener("click", resetTimer);
-    window.addEventListener("scroll", resetTimer);
+    window.addEventListener("mousemove", handleUserActivity);
+    window.addEventListener("keydown", handleUserActivity);
+    window.addEventListener("click", handleUserActivity);
+    window.addEventListener("scroll", handleUserActivity);
+    window.addEventListener("touchstart", handleUserActivity);
+    window.addEventListener("focus", handleVisibilityOrFocus);
+    document.addEventListener("visibilitychange", handleVisibilityOrFocus);
 
-    // Check inactivity periodically
-    const interval = setInterval(checkInactivity, 60000); // Check every 1 minute
+    // Check inactivity periodically every 30 seconds
+    const interval = setInterval(checkInactivity, 30000);
 
     const fetchCartCount = async () => {
       if (localStorage.getItem("isLoggedIn") === "true") {
@@ -131,24 +157,20 @@ export default function Header() {
     window.addEventListener("cartUpdated", fetchCartCount);
 
     return () => {
-      window.removeEventListener("mousemove", resetTimer);
-      window.removeEventListener("keydown", resetTimer);
-      window.removeEventListener("click", resetTimer);
-      window.removeEventListener("scroll", resetTimer);
+      window.removeEventListener("mousemove", handleUserActivity);
+      window.removeEventListener("keydown", handleUserActivity);
+      window.removeEventListener("click", handleUserActivity);
+      window.removeEventListener("scroll", handleUserActivity);
+      window.removeEventListener("touchstart", handleUserActivity);
+      window.removeEventListener("focus", handleVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
       window.removeEventListener("cartUpdated", fetchCartCount);
       clearInterval(interval);
     };
   }, []);
 
   const handleLogoutClick = () => {
-    document.cookie = "session_active=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("customerId");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("lastActivity");
-    localStorage.removeItem("authPhone");
-    localStorage.removeItem("customerGrade");
-    sessionStorage.removeItem("confidentialAuth");
+    clearUserSession();
     window.location.href = "/";
   };
 

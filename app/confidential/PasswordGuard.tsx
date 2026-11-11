@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { isSessionExpired, clearUserSession } from "../../lib/session";
 
 export default function PasswordGuard({ children, correctPassword }: { children: React.ReactNode, correctPassword: string }) {
   const [password, setPassword] = useState("");
@@ -11,6 +12,13 @@ export default function PasswordGuard({ children, correctPassword }: { children:
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (isSessionExpired()) {
+        clearUserSession();
+        alert("1시간 동안 활동이 없어 안전을 위해 자동 로그아웃되었습니다.");
+        window.location.href = "/login?redirect=/confidential";
+        return;
+      }
+
       const loggedIn = localStorage.getItem("isLoggedIn") === "true";
       const customerId = localStorage.getItem("customerId");
       

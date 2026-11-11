@@ -9,6 +9,7 @@ import PhoneInput from "@/components/PhoneInput";
 import { z } from "zod";
 import { formatCardPaymentMethod } from "@/lib/card";
 import { generateTossCustomerKey } from "@/lib/tossCustomerKey";
+import { isSessionExpired, clearUserSession } from "@/lib/session";
 
 interface OrderItem {
   product_name: string;
@@ -61,6 +62,13 @@ export default function MobileOrder() {
   const tossInitializedRef = useRef(false);
 
   useEffect(() => {
+    if (isSessionExpired()) {
+      clearUserSession();
+      alert("1시간 동안 활동이 없어 안전을 위해 자동 로그아웃되었습니다.");
+      window.location.href = "/login?redirect=/order";
+      return;
+    }
+
     const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
     if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
       alert("로그인이 필요합니다.");

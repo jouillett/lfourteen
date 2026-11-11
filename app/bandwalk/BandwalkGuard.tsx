@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { isSessionExpired, clearUserSession } from "../../lib/session";
 
 export default function BandwalkGuard({ children }: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
@@ -16,6 +17,13 @@ export default function BandwalkGuard({ children }: { children: React.ReactNode 
       document.cookie = `oauth_redirect=${encodeURIComponent("/올바른걷기")}; path=/; max-age=7200`;
       sessionStorage.setItem("bandwalkRedirect", "/올바른걷기");
       sessionStorage.setItem("specialEntry", "bandwalk");
+
+      if (isSessionExpired()) {
+        clearUserSession();
+        alert("1시간 동안 활동이 없어 안전을 위해 자동 로그아웃되었습니다.");
+        window.location.href = `/login?redirect=${encodeURIComponent("/올바른걷기")}`;
+        return;
+      }
 
       const loggedIn = localStorage.getItem("isLoggedIn") === "true";
       const customerId = localStorage.getItem("customerId") || localStorage.getItem("userId");

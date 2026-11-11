@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Link from "next/link";
+import { isSessionExpired, clearUserSession } from "../../lib/session";
 
 export default function ManagePage() {
   const [accuses, setAccuses] = useState<any[]>([]);
@@ -14,6 +15,13 @@ export default function ManagePage() {
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
+      if (isSessionExpired()) {
+        clearUserSession();
+        alert("1시간 동안 활동이 없어 안전을 위해 자동 로그아웃되었습니다.");
+        window.location.href = "/login?redirect=/manage";
+        return;
+      }
+
       const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
       if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
         alert("로그인이 필요합니다.");

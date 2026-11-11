@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { isSessionExpired, clearUserSession } from "../../lib/session";
 
 // Cart Item type
 interface CartItem {
@@ -27,6 +28,12 @@ export default function CartPage() {
 
   const fetchCartItems = async () => {
     try {
+      if (isSessionExpired()) {
+        clearUserSession();
+        alert("1시간 동안 활동이 없어 안전을 위해 자동 로그아웃되었습니다.");
+        window.location.href = "/login?redirect=/cart";
+        return;
+      }
       const userId = localStorage.getItem("customerId") || localStorage.getItem("userId");
       if (!userId || localStorage.getItem("isLoggedIn") !== "true") {
         alert("로그인이 필요합니다.");
